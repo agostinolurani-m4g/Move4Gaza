@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
-
+const PAYPAL = {
+  clientId: "AcPf3zsNKjJ5n3pWq0kT7pW-cF0g4XpeFYpJ5APkriDmvplCqUk2qXq1OOJzoE7pTT12MAA0NUmD0kIJ", // vedi sezione "Dove trovo i link"
+  currency: "EUR",
+};
 const EVENT_CONFIG = {
   title: "Move for Gaza",
   tagline: "Pedala, gioca, corri — insieme per Gaza",
@@ -49,7 +52,19 @@ const THEME = {
 };
 
 const DB_KEY = "rfg_db_v1";
+
 const defaultDB = { pledges: [], registrations: { bike: [], soccer: [], run: [] } };
+function usePayPalSdk() {
+  const [ready, setReady] = React.useState(!!window.paypal);
+  React.useEffect(() => {
+    if (window.paypal) return;
+    const s = document.createElement("script");
+    s.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL.clientId}&currency=${PAYPAL.currency}&components=buttons`;
+    s.onload = () => (setReady(true));
+    document.body.appendChild(s);
+  }, []);
+  return ready || !!window.paypal;
+}
 
 function useDB() {
   const [db, setDB] = useState(defaultDB);
@@ -61,9 +76,23 @@ function useDB() {
     const rec = { id, status: "pledged", createdAt: new Date().toISOString(), ...p };
     setDB((d) => ({ ...d, pledges: [rec, ...d.pledges] })); return rec;
   };
-  const markPledgePaid = (id, reference = "") => {
-    setDB((d) => ({ ...d, pledges: d.pledges.map(pl => pl.id === id ? { ...pl, status: "paid", paidAt: new Date().toISOString(), reference } : pl) }));
+  const markPledgePaid = (id, reference = "", confirmedAmount) => {
+    setDB((d) => ({
+      ...d,
+      pledges: d.pledges.map((pl) =>
+        pl.id === id
+          ? {
+              ...pl,
+              status: "paid",
+              paidAt: new Date().toISOString(),
+              reference,
+              amount: confirmedAmount ?? pl.amount,
+            }
+          : pl
+      ),
+    }));
   };
+
   const addRegistration = (type, rec) => {
     const id = `reg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`;
     const record = { id, createdAt: new Date().toISOString(), ...rec };
@@ -186,7 +215,18 @@ function PreCheckout({ addPledge, navigate }) {
       </form>
       {justCreated && (<div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm">
         <p><strong>Pledge registrato.</strong> ID: <code>{justCreated.id}</code></p>
-        {method === 'paypal' && (<div className="mt-3 flex flex-wrap gap-2"><button onClick={openPayPal} className="rounded-lg px-3 py-2 text-white" style={{ backgroundColor: THEME.primary }}>Apri PayPal</button><button onClick={()=>navigate(`confirm?${justCreated.id}`)} className="rounded-lg px-3 py-2 ring-1 ring-black/10 bg-white">Ho pagato, conferma</button></div>)}
+        {method === 'paypal' && justCreated && (
+          <PayPalPayBox
+            pledge={justCreated}
+            onPaid={(amt, orderID) => {
+              // 1) aggiorna subito il DB locale con importo reale
+              markPledgePaid(justCreated.id, orderID, Number(amt || 0));
+
+              // 2) chiedi verifica al server (Apps Script), che scriverà sullo Sheet
+              postSheet('paypal_verify', { pledgeId: justCreated.id, orderID });
+            }}
+          />
+        )}
         {method === 'iban' && (<div className="mt-3"><p className="mb-1">Esegui un bonifico a:</p><ul className="list-disc pl-5"><li><strong>Intestatario:</strong> {EVENT_CONFIG.payments.ibanOwner}</li><li><strong>IBAN:</strong> {EVENT_CONFIG.payments.iban}</li><li><strong>Banca:</strong> {EVENT_CONFIG.payments.ibanBank}</li><li><strong>Causale:</strong> {`Donazione ${EVENT_CONFIG.title} — ${justCreated.id}`}</li></ul><div className="mt-3 flex flex-wrap gap-2"><button onClick={()=>navigator.clipboard?.writeText(EVENT_CONFIG.payments.iban)} className="rounded-lg px-3 py-2 ring-1 ring-black/10 bg-white">Copia IBAN</button><button onClick={()=>navigate(`confirm?${justCreated.id}`)} className="rounded-lg px-3 py-2 text-white" style={{ backgroundColor: THEME.primary }}>Ho effettuato il bonifico</button></div></div>)}
       </div>)}
     </div>
@@ -216,6 +256,38 @@ function DonatePage({ addPledge, navigate }) {
         <PreCheckout addPledge={addPledge} navigate={navigate} />
       </div>
     </section>
+  );
+}
+function PayPalPayBox({ pledge, onPaid }) {
+  const ready = usePayPalSdk();
+  const boxRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!ready || !window.paypal || !boxRef.current) return;
+    boxRef.current.innerHTML = ""; // reset sul rerender
+
+    window.paypal.Buttons({
+      style: { layout: "vertical", shape: "rect" },
+      createOrder: (_, actions) => actions.order.create({
+        purchase_units: [{ amount: { value: String(pledge.amount || 20) } }]
+      }),
+      onApprove: async (_, actions) => {
+        const details = await actions.order.capture();
+        const cap = details?.purchase_units?.[0]?.payments?.captures?.[0];
+        const amt = cap?.amount?.value ?? pledge.amount;
+        const orderID = details?.id;
+        onPaid?.(amt, orderID);
+      },
+    }).render(boxRef.current);
+  }, [ready, pledge?.id, pledge?.amount]);
+
+  return (
+    <div className="mt-3">
+      <div ref={boxRef} />
+      <p className="text-xs text-slate-600 mt-2">
+        Dopo il pagamento il totale si aggiorna automaticamente.
+      </p>
+    </div>
   );
 }
 
@@ -253,7 +325,6 @@ function PageHome({ navigate, derived }) {
         </div>
       </div>
     </section>
-    <Footer />
   </>);
 }
 
@@ -290,7 +361,6 @@ function PageBike({ addRegistration, navigate }) {
         <div className="mt-6"><a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}} className="text-sm font-semibold" style={{ color: THEME.primary }}>← Torna alla home</a></div>
       </div>
     </section>
-    <Footer />
   </>);
 }
 
@@ -323,7 +393,6 @@ function PageSoccer({ addRegistration, navigate }) {
         <div className="mt-6"><a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}} className="text-sm font-semibold" style={{ color: THEME.primary }}>← Torna alla home</a></div>
       </div>
     </section>
-    <Footer />
   </>);
 }
 
@@ -364,7 +433,6 @@ function PageRun({ addRegistration, navigate }) {
         <div className="mt-6"><a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}} className="text-sm font-semibold" style={{ color: THEME.primary }}>← Torna alla home</a></div>
       </div>
     </section>
-    <Footer />
   </>);
 }
 
