@@ -22,23 +22,17 @@ const EVENT_CONFIG = {
   ],
 };
 
-const SHEETS_CONFIG = { url: "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhwWGdQzAb1GpiLUJOxbsHwBwYYW0D4etej0Ljzz6ZOAl4h7Ue7PZDmIjhIAhOhFH7NMm1iEVbBnim0TLqARhoV031S6up9PO4rx6Pl_xYBYEoIT-aSpvp5bSPGvK2PxoQrVEc5KCHgiDT2Q2QU6kPFidEFlL3mbyEX5cDs9WGdGOXYIgYGtEN7C5_sMGUbw4Y9AGuZhZD3OYdhM-_tWSSorUGlUmjuRsBBpibQlai4qKg56-XspTDQZqpuCa4fmag5MzrTx1UqgtkCmV4XmPu0KG_etg&lib=MsSK6EhY6wMJxf059wBdsbfjQiZNxA3Qf", secret: "Amaro25" };
+const SHEETS_CONFIG = { url: "https://script.google.com/macros/s/AKfycbyEKDN2HmxGf7u2J4OMoYPHPRu-e7MkxEOG8qQCG5GrhdRlUJWs2FWeRo-CsvB2TTd9/exec", secret: "Amaro25" };
 async function postSheet(type, payload) {
   try {
     if (!SHEETS_CONFIG.url) return;
     await fetch(SHEETS_CONFIG.url, {
-      method: "POST",
-      mode: "no-cors",
-      redirect: "follow",
-      // Content-Type "simple" per evitare preflight e corpi scartati
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      method: "POST", mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ secret: SHEETS_CONFIG.secret, type, payload }),
     });
-  } catch (e) {
-    /* no-op */
-  }
+  } catch {}
 }
-
 
 const THEME = {
   gradientFrom: "#34d399",
