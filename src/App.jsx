@@ -22,7 +22,7 @@ const EVENT_CONFIG = {
   ],
 };
 
-const SHEETS_CONFIG = { url: "https://script.google.com/macros/s/AKfycbyEKDN2HmxGf7u2J4OMoYPHPRu-e7MkxEOG8qQCG5GrhdRlUJWs2FWeRo-CsvB2TTd9/exec", secret: "Amaro25" };
+const SHEETS_CONFIG = { url: "https://script.google.com/macros/s/AKfycbxhMYG8a212EL1yPx6VnRqVYseAPoutzHaYudPScP1lv5_Z-s10-ABghgI6DzI8nlem/exec", secret: "Amaro25" };
 async function postSheet(type, payload) {
   try {
     if (!SHEETS_CONFIG.url) return;
