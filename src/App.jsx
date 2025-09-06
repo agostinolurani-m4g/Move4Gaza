@@ -26,18 +26,15 @@ const SHEETS_CONFIG = { url: "https://script.google.com/macros/s/AKfycbyEKDN2Hmx
 async function postSheet(type, payload) {
   try {
     if (!SHEETS_CONFIG.url) return;
-    // invio via GET (compatibile con redirect 302)
-    const url = new URL(SHEETS_CONFIG.url);
-    const qs = new URLSearchParams();
-    qs.set("secret", SHEETS_CONFIG.secret);
-    qs.set("type", type);
-    qs.set("payload", JSON.stringify(payload));
-    // trucco "beacon" senza CORS: immagine che chiama la GET
+    const u = new URL(SHEETS_CONFIG.url);     // deve essere l’URL /exec
+    u.searchParams.set("secret", SHEETS_CONFIG.secret);
+    u.searchParams.set("type", type);
+    u.searchParams.set("payload", JSON.stringify(payload));
+    u.searchParams.set("t", Date.now());      // anti-cache
+    // beacon senza CORS: la vedi in Network come tipo "Img"
     const img = new Image();
-    img.src = `${url.toString()}?${qs.toString()}`;
-  } catch (e) {
-    // silenzioso
-  }
+    img.src = u.toString();
+  } catch {}
 }
 
 
