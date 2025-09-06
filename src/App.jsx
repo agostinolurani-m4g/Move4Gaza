@@ -44,6 +44,13 @@ const THEME = {
   ink: "#082a23",
 };
 
+function doGet(e) {
+  if ((e.parameter.secret || "") !== SECRET) return json({ ok:false, error:"forbidden" });
+  const sh = ensureSheet('log', ['ts','note']);
+  sh.appendRow([new Date().toISOString(), 'ping']);
+  return json({ ok:true });
+}
+
 const DB_KEY = "rfg_db_v1";
 const defaultDB = { pledges: [], registrations: { bike: [], soccer: [], run: [] } };
 
