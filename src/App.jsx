@@ -173,13 +173,13 @@ function Nav({ navigate }) {
         <a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}}>{title}</a>
         <div className="flex items-center gap-3 text-sm font-medium">
           {/* Link Associazione/Beneficiario */}
+          <a href="#/home" onClick={(e)=>{e.preventDefault(); navigate('home');}} className="hover:underline">Home</a>
           <a href="#/beneficiary" onClick={(e)=>{e.preventDefault(); navigate('beneficiary');}} className="hover:underline">
             Beneficiario
           </a>
           <a href="#/bike" onClick={(e)=>{e.preventDefault(); navigate('bike');}} className="hover:underline">Bici</a>
           <a href="#/soccer" onClick={(e)=>{e.preventDefault(); navigate('soccer');}} className="hover:underline">Calcio</a>
           <a href="#/run" onClick={(e)=>{e.preventDefault(); navigate('run');}} className="hover:underline">Corsa</a>
-          <a href="#/db" onClick={(e)=>{e.preventDefault(); navigate('db');}} className="hover:underline">DB</a>
           <a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="inline-flex items-center rounded-lg px-3 py-1.5 text-white" style={{ backgroundColor: THEME.primary }}>Dona</a>
         </div>
       </div>
@@ -757,46 +757,6 @@ function PageRun({ addRegistration, navigate }) {
   </>);
 }
 
-/** ---------- DB Page ---------- **/
-function DBPage({ db, markPledgePaid }) {
-  return (
-    <section className="py-12 bg-white">
-      <div className="max-w-6xl mx-auto px-4 space-y-8">
-        <div>
-          <h2 className="text-2xl font-bold">Pledges</h2>
-          <div className="mt-3 overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead><tr className="text-left border-b"><th className="py-2 pr-3">ID</th><th className="py-2 pr-3">Nome</th><th className="py-2 pr-3">Email</th><th className="py-2 pr-3">Scopo</th><th className="py-2 pr-3">Metodo</th><th className="py-2 pr-3">€</th><th className="py-2 pr-3">Stato</th><th className="py-2 pr-3">Azioni</th></tr></thead>
-              <tbody>
-                {db.pledges.map((p)=> (
-                  <tr key={p.id} className="border-b">
-                    <td className="py-2 pr-3 whitespace-nowrap"><code>{p.id}</code></td>
-                    <td className="py-2 pr-3">{p.name}</td>
-                    <td className="py-2 pr-3">{p.email}</td>
-                    <td className="py-2 pr-3">{p.purpose}</td>
-                    <td className="py-2 pr-3">{p.method}</td>
-                    <td className="py-2 pr-3">{formatCurrency(p.amount, EVENT_CONFIG.currency)}</td>
-                    <td className="py-2 pr-3">{p.status}</td>
-                    <td className="py-2 pr-3">{p.status !== 'paid' && (<button onClick={()=>markPledgePaid(p.id)} className="rounded-lg px-3 py-1 text-xs text-white" style={{ backgroundColor: THEME.primary }}>Segna pagato</button>)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold">Squadre & iscritti</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div><h3 className="font-semibold">Calcio</h3><ul className="mt-2 text-sm list-disc pl-5">{db.registrations.soccer.map(t => (<li key={t.id}><span className="font-medium">{t.teamName}</span>{t.instagram ? <> — <a className="underline" href={t.instagram} target="_blank" rel="noreferrer">Instagram</a></> : null} ({t.count||0} giocatori)</li>))}</ul></div>
-            <div><h3 className="font-semibold">Corsa</h3><ul className="mt-2 text-sm list-disc pl-5">{db.registrations.run.map(t => (<li key={t.id}><span className="font-medium">{t.teamName}</span>{t.instagram ? <> — <a className="underline" href={t.instagram} target="_blank" rel="noreferrer">Instagram</a></> : null} ({t.count||0} componenti)</li>))}</ul></div>
-            <div><h3 className="font-semibold">Bici</h3><ul className="mt-2 text-sm list-disc pl-5">{db.registrations.bike.map(t => (<li key={t.id}><span className="font-medium">{t.name} {t.surname}</span>{t.teamName ? <> — squadra: <span className="font-medium">{t.teamName}</span></> : null}</li>))}</ul></div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /** ---------- APP ---------- **/
 export default function App() {
   const { db, addPledge, markPledgePaid, addRegistration, derived } = useDB();
@@ -825,7 +785,6 @@ export default function App() {
       : route === 'bike' ? (<PageBike addRegistration={addRegistration} navigate={navigate} />)
       : route === 'soccer' ? (<PageSoccer addRegistration={addRegistration} navigate={navigate} />)
       : route === 'run' ? (<PageRun addRegistration={addRegistration} navigate={navigate} />)
-      : route === 'db' ? (<DBPage db={db} markPledgePaid={markPledgePaid} />)
       : (<PageHome navigate={navigate} derived={derived} remoteStats={remoteStats} />)}
       <Footer />
     </div>
