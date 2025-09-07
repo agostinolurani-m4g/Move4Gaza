@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 const PAYPAL = {
-  clientId: "AcPf3zsNKjJ5n3pWq0kT7pW-cF0g4XpeFYpJ5APkriDmvplCqUk2qXq1OOJzoE7pTT12MAA0NUmD0kIJ", // vedi sezione "Dove trovo i link"
+  clientId: "AQJGJ8rTlz29WFa-X433va3K41KM85VYRGr6NhOjkexoJNMfqcQROL5ycfTuZ87-v7zMmGlqOBLvre9f", // vedi sezione "Dove trovo i link"
   currency: "EUR",
 };
 const EVENT_CONFIG = {
   title: "Move for Gaza",
   tagline: "Pedala, gioca, corri — insieme per Gaza",
-  date: "18–19 ottobre 2025 (terzo weekend)",
-  location: "Santambreus, Gorla, Milano",
+  date: "25 ottobre 2025",
+  location: "Campo sportivo Olmi, Milano",
   currency: "EUR",
   payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
   forms: { bike: "", soccer: "", run: "" },
@@ -18,11 +18,12 @@ const EVENT_CONFIG = {
     heading: "Perché lo facciamo",
     text: "Evento solidale non competitivo: pedaliamo, giochiamo e corriamo per raccogliere fondi a sostegno degli aiuti umanitari a Gaza. Trasparenza totale su fondi e destinazione.",
   },
-  beneficiaries: [
-    { name: "Da annunciare", link: "#", blurb: "L'elenco ufficiale verrà pubblicato a breve." },
-    { name: "Da annunciare", link: "#", blurb: "Sostegno ad iniziative umanitarie e di comunità." },
-    { name: "Da annunciare", link: "#", blurb: "Trasparenza totale: pubblicheremo report finale." },
-  ],
+  beneficiary: {
+  name: "Gaza Sunbirds",
+  url: "https://gazasunbirds.org/",
+  cf: "-",
+  blurb: "In light of the ongoing genocide, our para-cycling team has reverted all its resources to providing community-led aid to Gaza. To date, our athletes and staff have distributed over $400,000 USD worth of aid. Regardless of how bad the situation gets, we are determined to continue supporting our communities through these tough times. Our grass roots network prepares and distributes parcels of essentials to the communities around us."
+  },
 };
 
 const SHEETS_CONFIG = { url: "https://script.google.com/macros/s/AKfycbw_tcxSBg99HWfLSLp4JkE8BlQWd-XgLEMCwWwnRVyUclLI9aw7vqhyAaufND1qqJkD/exec", secret: "Amaro25" };
@@ -149,6 +150,27 @@ function Nav({ navigate }) {
     </nav>
   );
 }
+function PageBeneficiary() {
+  const B = EVENT_CONFIG.beneficiary || {};
+  return (
+    <section className="py-12 bg-white">
+      <div className="max-w-3xl mx-auto px-4 space-y-4">
+        <h1 className="text-3xl font-extrabold">Beneficiario</h1>
+        <p className="text-slate-800">{B.blurb || 'Informazioni sul beneficiario dei fondi.'}</p>
+        <div className="rounded-2xl border border-slate-200 p-6">
+          <p><strong>Nome:</strong> {B.name || '—'}</p>
+          <p><strong>Sito:</strong> {B.url ? <a className="underline" href={B.url} target="_blank">{B.url}</a> : '—'}</p>
+          <p><strong>CF/P.IVA:</strong> {B.cf || '—'}</p>
+          <p><strong>Indirizzo:</strong> {B.address || '—'}</p>
+        </div>
+        <p className="text-sm text-slate-600">
+          Pubblicheremo un rendiconto post-evento con fondi raccolti e destinazione.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 
 function Hero({ navigate }) {
   return (
@@ -166,6 +188,7 @@ function Hero({ navigate }) {
           </div>
           <div className="flex flex-wrap gap-3 pt-2">
             <a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold text-white shadow focus:outline-none focus:ring-2" style={{ backgroundColor: THEME.primary }}>Dona ora</a>
+            <a href="#/about" onClick={(e)=>{e.preventDefault(); navigate('about');}} className="hover:underline">Associazione</a>
             <a href="#/bike" onClick={(e)=>{e.preventDefault(); navigate('bike');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Bici</a>
             <a href="#/soccer" onClick={(e)=>{e.preventDefault(); navigate('soccer');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Calcio</a>
             <a href="#/run" onClick={(e)=>{e.preventDefault(); navigate('run');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Corsa</a>
@@ -232,6 +255,24 @@ function PreCheckout({ addPledge, navigate }) {
     </div>
   );
 }
+// === JSONP loader stats dallo Sheet ===
+function fetchSheetStatsJSONP() {
+  return new Promise((resolve, reject) => {
+    if (!SHEETS_CONFIG.url) return resolve(null);
+    const cb = 'cb_stats_' + Math.random().toString(36).slice(2);
+    window[cb] = (data) => { resolve(data); try { delete window[cb]; } catch {} };
+    const s = document.createElement('script');
+    const u = new URL(SHEETS_CONFIG.url);
+    u.searchParams.set('secret', SHEETS_CONFIG.secret);
+    u.searchParams.set('type', 'stats');
+    u.searchParams.set('callback', cb);
+    s.src = u.toString();
+    s.onerror = reject;
+    document.body.appendChild(s);
+    // timeout di sicurezza
+    setTimeout(() => resolve(null), 8000);
+  });
+}
 
 function ConfirmPayment({ markPledgePaid, route }) {
   const id = typeof window !== 'undefined' ? (window.location.hash.split('?')[1] || '').replace('#','') : '';
@@ -252,6 +293,9 @@ function DonatePage({ addPledge, navigate }) {
   return (
     <section className="py-12 bg-white">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <p className="mt-2 text-sm text-slate-700">
+          Ente beneficiario: <a className="underline" href={EVENT_CONFIG.beneficiary.url} target="_blank">{EVENT_CONFIG.beneficiary.name}</a> — {EVENT_CONFIG.beneficiary.cf}.
+        </p>
         <div><h2 className="text-2xl sm:text-3xl font-bold">Sostieni l'evento</h2><p className="mt-2 text-slate-700">La donazione minima consigliata è <strong>20 €</strong>. Puoi anche <strong>iscriverti senza donare subito</strong>.</p><ul className="mt-3 text-sm list-disc pl-5 space-y-1"><li>PayPal / Bonifico (IBAN) — Stripe in arrivo.</li><li>Ricevuta della donazione = prova di iscrizione (se scegli un'attività).</li><li>Trasparenza: pubblicheremo report finale.</li></ul></div>
         <PreCheckout addPledge={addPledge} navigate={navigate} />
       </div>
@@ -298,10 +342,19 @@ function PageHome({ navigate, derived }) {
     <Hero navigate={navigate} />
     <section className="-mt-10 relative z-10">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[{ label: "Soldi raccolti", value: formatCurrency(derived.raised, EVENT_CONFIG.currency) },
-          { label: "Squadre calcio", value: derived.teamsSoccer },
-          { label: "Squadre corsa", value: derived.teamsRun },
-          { label: "Iscritti bici", value: derived.riders }].map((s,i)=> (
+        {[{
+          label: "Soldi raccolti",
+          value: formatCurrency((remoteStats?.totals?.raised ?? derived.raised), EVENT_CONFIG.currency)
+        },{
+          label: "Squadre calcio",
+          value: (remoteStats?.totals?.teamsSoccer ?? derived.teamsSoccer)
+        },{
+          label: "Squadre corsa",
+          value: (remoteStats?.totals?.teamsRun ?? derived.teamsRun)
+        },{
+          label: "Iscritti bici",
+          value: (remoteStats?.totals?.riders ?? derived.riders)
+        }].map((s,i)=> (
           <div key={i} className="rounded-2xl bg-white p-5 shadow ring-1 ring-black/10">
             <p className="text-sm text-slate-600">{s.label}</p>
             <p className="mt-1 text-2xl font-extrabold" style={{ color: THEME.primary }}>{String(s.value)}</p>
@@ -323,6 +376,17 @@ function PageHome({ navigate, derived }) {
           <a href="#/soccer" onClick={(e)=>{e.preventDefault(); navigate('soccer');}} className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"><h3 className="text-xl font-semibold">Torneo di calcio</h3><p className="mt-2 text-sm text-slate-700">5 vs 5 per l'inclusione. 4 partite da 15'. Aperto a tuttə.</p><div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold" style={{ color: THEME.primary }}>Dettagli & iscrizione →</div></a>
           <a href="#/run" onClick={(e)=>{e.preventDefault(); navigate('run');}} className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"><h3 className="text-xl font-semibold">Corsa a squadre</h3><p className="mt-2 text-sm text-slate-700">Manifestazione silenziosa e pacifica, partenza dal Duomo.</p><div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold" style={{ color: THEME.primary }}>Dettagli & iscrizione →</div></a>
         </div>
+          {EVENT_CONFIG.beneficiary && (
+            <div className="mt-8 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+              <h3 className="text-lg font-semibold">Beneficiario</h3>
+              <p className="mt-1 text-sm text-slate-700">{EVENT_CONFIG.beneficiary.blurb}</p>
+              <p className="mt-2 text-sm">
+                <a className="underline" href={EVENT_CONFIG.beneficiary.url} target="_blank">
+                  {EVENT_CONFIG.beneficiary.name}
+                </a> — {EVENT_CONFIG.beneficiary.cf}
+              </p>
+            </div>
+          )}
       </div>
     </section>
   </>);
@@ -343,7 +407,11 @@ function PageBike({ addRegistration, navigate }) {
     <section className="py-6">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <div className="lg:col-span-2"><h2 className="text-xl font-semibold mb-2">Mappa</h2><MapPlaceholder label="bici" /></div>
-        <aside className="lg:col-span-1 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10"><h3 className="font-semibold">Iscrizione</h3><ul className="mt-2 text-sm list-disc pl-5 space-y-1"><li>Iscrizione <strong>indipendente dalla donazione</strong> (puoi donare dopo).</li><li>Donazione consigliata: <strong>≥ 20 €</strong>.</li></ul><div className="mt-3 flex gap-2"><a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Vai a donazioni</a></div></aside>
+        <aside className="lg:col-span-1 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10"><h3 className="font-semibold">Iscrizione</h3><ul className="mt-2 text-sm list-disc pl-5 space-y-1"><li>Iscrizione <strong>indipendente dalla donazione</strong> (puoi donare dopo).</li><li>Donazione consigliata: <strong>≥ 20 €</strong>.</li></ul><div className="mt-3 flex gap-2"><a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Vai a donazioni</a></div>
+          <p className="mt-3 text-xs text-slate-600">
+            Donazioni destinate a <a className="underline" href={EVENT_CONFIG.beneficiary.url} target="_blank">{EVENT_CONFIG.beneficiary.name}</a>.
+          </p>
+        </aside>
       </div>
     </section>
     <section className="py-2">
@@ -478,16 +546,22 @@ function DBPage({ db, markPledgePaid }) {
 export default function App() {
   const { db, addPledge, markPledgePaid, addRegistration, derived } = useDB();
   const [route, navigate] = useRoute();
+  const [remoteStats, setRemoteStats] = React.useState(null);
+  React.useEffect(() => {
+    fetchSheetStatsJSONP().then(setRemoteStats).catch(()=>setRemoteStats(null));
+  }, []);
+
   return (
     <div className="min-h-screen text-slate-900" style={{ background: `linear-gradient(180deg, ${THEME.gradientFrom}, ${THEME.gradientVia}, ${THEME.gradientTo})` }}>
       <Nav navigate={navigate} />
       {route.startsWith('donate') ? (<DonatePage addPledge={addPledge} navigate={navigate} />)
       : route.startsWith('confirm') ? (<ConfirmPayment markPledgePaid={markPledgePaid} route={route} />)
+      : route === 'about' ? (<PageBeneficiary />)
       : route === 'bike' ? (<PageBike addRegistration={addRegistration} navigate={navigate} />)
       : route === 'soccer' ? (<PageSoccer addRegistration={addRegistration} navigate={navigate} />)
       : route === 'run' ? (<PageRun addRegistration={addRegistration} navigate={navigate} />)
       : route === 'db' ? (<DBPage db={db} markPledgePaid={markPledgePaid} />)
-      : (<PageHome navigate={navigate} derived={derived} />)}
+      : (<PageHome navigate={navigate} derived={derived} remoteStats={remoteStats} />)}
       <Footer />
     </div>
   );
