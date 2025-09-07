@@ -29,7 +29,7 @@ const EVENT_CONFIG = {
     logoUrl: import.meta.env.BASE_URL + "sunbirds-logo.png",
     cf: "",
     address: "Gaza / London (team & fiscal hosts)",
-    blurb: "Team di paraciclismo nato a Gaza, oggi focalizzato su mutual aid e programmi sportivi per amputati; attiv* dal 2020.",
+    blurb: "The Gaza Sunbirds are Palestine’s para-cycling team, gaining global recognition over the last 22 months for their courageous aid missions and global sporting achievements.",
     links: {
       missionUrl: "https://gazasunbirds.org/about-us/mission/",
       aboutUrl: "https://gazasunbirds.org/about-us/",
@@ -69,7 +69,7 @@ const THEME = {
   primary: "#007A3D",       // verde Palestina
   primaryHover: "#005c2d",
   accentRed: "#CE1126",
-  ink: "#ece829ff",
+  ink: "#319052ff",
 };
 
 // Motivo palestinese leggero (triangoli/chevron) – inline SVG
@@ -323,7 +323,7 @@ function Hero({ navigate }) {
           </div>
           <div className="flex flex-wrap gap-3 pt-2">
             <a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold text-white shadow focus:outline-none focus:ring-2" style={{ backgroundColor: THEME.primary }}>Dona ora</a>
-            <a href="#/beneficiary" onClick={(e)=>{e.preventDefault(); navigate('beneficiary');}} className="hover:underline">Beneficiario</a>
+            <a href="#/beneficiary" onClick={(e)=>{e.preventDefault(); navigate('beneficiary');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Beneficiario</a>
             <a href="#/bike" onClick={(e)=>{e.preventDefault(); navigate('bike');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Bici</a>
             <a href="#/soccer" onClick={(e)=>{e.preventDefault(); navigate('soccer');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Calcio</a>
             <a href="#/run" onClick={(e)=>{e.preventDefault(); navigate('run');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Corsa</a>
@@ -447,6 +447,7 @@ function fetchSheetStatsJSONP() {
     u.searchParams.set('secret', SHEETS_CONFIG.secret);
     u.searchParams.set('type', 'stats');
     u.searchParams.set('callback', cb);
+    u.searchParams.set('t', Date.now()); 
     s.src = u.toString();
     s.onerror = reject;
     document.body.appendChild(s);
@@ -767,7 +768,12 @@ export default function App() {
   const [route, navigate] = useRoute();
   const [remoteStats, setRemoteStats] = React.useState(null);
   React.useEffect(() => {
-    fetchSheetStatsJSONP().then(setRemoteStats).catch(()=>setRemoteStats(null));
+    const load = () => fetchSheetStatsJSONP().then(setRemoteStats).catch(()=>{});
+    load();                               // subito
+    const id = setInterval(load, 60000);  // ogni 60s
+    const onVis = () => { if (!document.hidden) load(); };
+    document.addEventListener('visibilitychange', onVis);
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVis); };
   }, []);
 
   return (
