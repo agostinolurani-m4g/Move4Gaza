@@ -337,7 +337,7 @@ function Hero({ navigate }) {
 /** ---------- FOOTER ---------- **/
 function Footer() {
   return (
-    <footer className="py-10 text-white" style={{ backgroundColor: THEME.primary }}>
+    <footer className="py-10 text-white" style={{ backgroundColor: THEME.gradientVia}}>
       <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <p className="font-semibold">{EVENT_CONFIG.title}</p>
@@ -376,7 +376,7 @@ function Footer() {
       <div className="mt-8 h-1 w-full grid grid-cols-12 opacity-90">
         <div className="col-span-3" style={{ backgroundColor: '#000' }} />
         <div className="col-span-3" style={{ backgroundColor: '#fff' }} />
-        <div className="col-span-3" style={{ backgroundColor: THEME.gradientVia }} />
+        <div className="col-span-3" style={{ backgroundColor: THEME.primary }} />
         <div className="col-span-3" style={{ backgroundColor: THEME.accentRed }} />
       </div>
 
