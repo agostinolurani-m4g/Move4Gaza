@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 
+/** ---------- CONFIG ---------- **/
 const PAYPAL = {
-  clientId: "AQJGJ8rTlz29WFa-X433va3K41KM85VYRGr6NhOjkexoJNMfqcQROL5ycfTuZ87-v7zMmGlqOBLvre9f", // PayPal Client ID
+  // Sostituisci con il tuo Client ID (Live o Sandbox)
+  clientId: "AQJGJ8rTlz29WFa-X433va3K41KM85VYRGr6NhOjkexoJNMfqcQROL5ycfTuZ87-v7zMmGlqOBLvre9f",
   currency: "EUR",
 };
 
@@ -13,7 +15,7 @@ const EVENT_CONFIG = {
   currency: "EUR",
   payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
   forms: { bike: "", soccer: "", run: "" },
-  logoUrl: "",
+  logoUrl: "", // logo evento (se ne hai uno)
   contactEmail: "",
   whatsapp: "",
   cause: {
@@ -23,8 +25,9 @@ const EVENT_CONFIG = {
   beneficiary: {
     name: "Gaza Sunbirds",
     url: "https://gazasunbirds.org/",
-    logoUrl: "https://gazasunbirds.org/wp-content/uploads/2024/04/cropped-Gaza-Sunbirds-Logo-Blue-1-192x192.png",
-    cf: "", // se non disponibile, lascia vuoto
+    // Metti il file in /public/sunbirds-logo.png (consigliato) oppure usa import da src/assets
+    logoUrl: import.meta.env.BASE_URL + "sunbirds-logo.png",
+    cf: "",
     address: "Gaza / London (team & fiscal hosts)",
     blurb: "Team di paraciclismo nato a Gaza, oggi focalizzato su mutual aid e programmi sportivi per amputati; attiv* dal 2020.",
     links: {
@@ -45,45 +48,65 @@ const SHEETS_CONFIG = {
   secret: "Amaro25"
 };
 
+// POST → via GET “beacon” per evitare CORS e 302
 async function postSheet(type, payload) {
   try {
     if (!SHEETS_CONFIG.url) return;
-    const u = new URL(SHEETS_CONFIG.url);     // deve essere l’URL /exec
+    const u = new URL(SHEETS_CONFIG.url);
     u.searchParams.set("secret", SHEETS_CONFIG.secret);
     u.searchParams.set("type", type);
     u.searchParams.set("payload", JSON.stringify(payload));
-    u.searchParams.set("t", Date.now());      // anti-cache
-    // beacon senza CORS: la vedi in Network come tipo "Img"
-    const img = new Image();
-    img.src = u.toString();
+    u.searchParams.set("t", Date.now());
+    new Image().src = u.toString();
   } catch {}
 }
 
+/** ---------- THEME & BG ---------- **/
 const THEME = {
   gradientFrom: "#34d399",
   gradientVia: "#10b981",
   gradientTo: "#059669",
-  primary: "#007A3D",
+  primary: "#007A3D",       // verde Palestina
   primaryHover: "#005c2d",
   accentRed: "#CE1126",
   ink: "#ece829ff",
 };
 
+// Motivo palestinese leggero (triangoli/chevron) – inline SVG
+const PALESTINE_PATTERN = (() => {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'>
+    <rect width='60' height='60' fill='white'/>
+    <g opacity='0.06'>
+      <path d='M0 30 L30 0 L60 30 L30 60 Z' fill='${THEME.primary}'/>
+      <path d='M-30 30 L0 0 L30 30 L0 60 Z' fill='#000000'/>
+      <path d='M30 30 L60 0 L90 30 L60 60 Z' fill='${THEME.accentRed}'/>
+    </g>
+    <g opacity='0.05'>
+      <path d='M0 0 L60 60' stroke='#000' stroke-width='1'/>
+      <path d='M60 0 L0 60' stroke='${THEME.primary}' stroke-width='1'/>
+    </g>
+  </svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+})();
+
+/** ---------- STATE (Local DB) ---------- **/
 const DB_KEY = "rfg_db_v1";
 const defaultDB = { pledges: [], registrations: { bike: [], soccer: [], run: [] } };
 
+/** ---------- PAYPAL SDK ---------- **/
 function usePayPalSdk() {
   const [ready, setReady] = React.useState(!!window.paypal);
   React.useEffect(() => {
     if (window.paypal) return;
     const s = document.createElement("script");
     s.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL.clientId}&currency=${PAYPAL.currency}&components=buttons`;
-    s.onload = () => (setReady(true));
+    s.onload = () => setReady(true);
     document.body.appendChild(s);
   }, []);
   return ready || !!window.paypal;
 }
 
+/** ---------- Local DB hooks ---------- **/
 function useDB() {
   const [db, setDB] = useState(defaultDB);
   useEffect(() => { try { const raw = localStorage.getItem(DB_KEY); if (raw) setDB(JSON.parse(raw)); } catch {} }, []);
@@ -92,7 +115,8 @@ function useDB() {
   const addPledge = (p) => {
     const id = `plg_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,6)}`;
     const rec = { id, status: "pledged", createdAt: new Date().toISOString(), ...p };
-    setDB((d) => ({ ...d, pledges: [rec, ...d.pledges] })); return rec;
+    setDB((d) => ({ ...d, pledges: [rec, ...d.pledges] }));
+    return rec;
   };
 
   const markPledgePaid = (id, reference = "", confirmedAmount) => {
@@ -100,13 +124,7 @@ function useDB() {
       ...d,
       pledges: d.pledges.map((pl) =>
         pl.id === id
-          ? {
-              ...pl,
-              status: "paid",
-              paidAt: new Date().toISOString(),
-              reference,
-              amount: confirmedAmount ?? pl.amount,
-            }
+          ? { ...pl, status: "paid", paidAt: new Date().toISOString(), reference, amount: confirmedAmount ?? pl.amount }
           : pl
       ),
     }));
@@ -130,6 +148,7 @@ function useDB() {
   return { db, addPledge, markPledgePaid, addRegistration, derived };
 }
 
+/** ---------- Utils ---------- **/
 function formatCurrency(amount, currency = "EUR") {
   try { return new Intl.NumberFormat("it-IT", { style: "currency", currency }).format(Number(amount||0)); } catch { return `${amount} ${currency}`; }
 }
@@ -141,6 +160,7 @@ function useRoute() {
   return [route, (to) => { if (typeof window !== 'undefined') window.location.hash = to ? `#/${to}` : '#/'; }];
 }
 
+/** ---------- NAV ---------- **/
 function Nav({ navigate }) {
   const title = EVENT_CONFIG.logoUrl ? (
     <img src={EVENT_CONFIG.logoUrl} alt={EVENT_CONFIG.title} className="h-8 w-auto" />
@@ -152,7 +172,10 @@ function Nav({ navigate }) {
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}}>{title}</a>
         <div className="flex items-center gap-3 text-sm font-medium">
-          <a href="#/beneficiary" onClick={(e)=>{e.preventDefault(); navigate('beneficiary');}} className="hover:underline">Associazione</a>
+          {/* Link Associazione/Beneficiario */}
+          <a href="#/beneficiary" onClick={(e)=>{e.preventDefault(); navigate('beneficiary');}} className="hover:underline">
+            Beneficiario
+          </a>
           <a href="#/bike" onClick={(e)=>{e.preventDefault(); navigate('bike');}} className="hover:underline">Bici</a>
           <a href="#/soccer" onClick={(e)=>{e.preventDefault(); navigate('soccer');}} className="hover:underline">Calcio</a>
           <a href="#/run" onClick={(e)=>{e.preventDefault(); navigate('run');}} className="hover:underline">Corsa</a>
@@ -160,6 +183,7 @@ function Nav({ navigate }) {
           <a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="inline-flex items-center rounded-lg px-3 py-1.5 text-white" style={{ backgroundColor: THEME.primary }}>Dona</a>
         </div>
       </div>
+      {/* Tricolore */}
       <div className="h-1 w-full grid grid-cols-12">
         <div className="col-span-3" style={{ backgroundColor: '#000' }} />
         <div className="col-span-3" style={{ backgroundColor: '#fff' }} />
@@ -170,11 +194,37 @@ function Nav({ navigate }) {
   );
 }
 
+/** ---------- Shared gradient header ---------- **/
+function GradientHeader({ title, subtitle, chips = [] }) {
+  return (
+    <section className="relative isolate overflow-hidden">
+      <div className="absolute inset-0 -z-10" style={{ background: `linear-gradient(135deg, ${THEME.gradientFrom}, ${THEME.gradientVia}, ${THEME.gradientTo})` }} />
+      <div className="absolute inset-0 -z-10 opacity-60" style={{ backgroundImage: `radial-gradient(closest-side, rgba(255,255,255,.25), rgba(255,255,255,0))` }} />
+      <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16">
+        <h1 className="text-3xl sm:text-4xl font-extrabold" style={{ color: THEME.ink }}>{title}</h1>
+        {subtitle && <p className="mt-2 text-slate-900/90">{subtitle}</p>}
+        {!!chips.length && (
+          <div className="mt-3 flex flex-wrap gap-2 text-sm">
+            {chips.map((c,i)=>(<span key={i} className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">{c}</span>))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/** ---------- Beneficiary Page ---------- **/
 function PageBeneficiary() {
   const B = EVENT_CONFIG.beneficiary || {};
   const L = B.links || {};
-  return (
-    <section className="py-12 bg-white">
+
+  return (<>
+    <GradientHeader
+      title={`Beneficiario — ${B.name}`}
+      subtitle="Dove vanno i fondi e come lavorano"
+      chips={[`Sito: ${new URL(B.url).hostname}`]}
+    />
+    <section className="py-10 bg-white">
       <div className="max-w-5xl mx-auto px-4">
         {/* HERO con logo */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
@@ -183,7 +233,7 @@ function PageBeneficiary() {
                  className="w-20 h-20 rounded-xl ring-1 ring-black/10 object-contain bg-white" />
           )}
           <div>
-            <h1 className="text-3xl font-extrabold">{B.name}</h1>
+            <h2 className="text-2xl font-extrabold">{B.name}</h2>
             <p className="text-slate-700 mt-1">{B.blurb}</p>
             <div className="mt-2 text-sm">
               {B.url && <a href={B.url} target="_blank" rel="noreferrer" className="underline mr-3">Sito ufficiale</a>}
@@ -197,21 +247,21 @@ function PageBeneficiary() {
           <div className="rounded-2xl border border-slate-200 p-5">
             <h3 className="font-semibold">Chi sono</h3>
             <p className="text-sm text-slate-700 mt-1">
-              Team di paraciclismo fondato a Gaza; dal 2020 costruiscono percorsi per amputatə e atleti con disabilità,
-              e oggi coordinano mutual aid sul territorio. <a className="underline" target="_blank" rel="noreferrer" href={L.aboutUrl || B.url}>Scopri di più</a>.
+              Team di paraciclismo fondato a Gaza; dal 2020 percorsi per amputatə e atleti con disabilità,
+              e oggi mutual aid sul territorio. <a className="underline" target="_blank" rel="noreferrer" href={L.aboutUrl || B.url}>Scopri di più</a>.
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 p-5">
             <h3 className="font-semibold">Missione</h3>
             <p className="text-sm text-slate-700 mt-1">
-              Missione riallineata alla protezione dei civili tramite aiuti comunitari e programmi sportivi accessibili.
+              Aiuti comunitari, protezione dei civili e sport accessibile.
               <a className="underline ml-1" target="_blank" rel="noreferrer" href={L.missionUrl}>Mission</a>.
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 p-5">
             <h3 className="font-semibold">Dove vanno i fondi</h3>
             <p className="text-sm text-slate-700 mt-1">
-              Acquisto locale di beni essenziali, distribuzioni, progetti di inclusione e sport. Report, campagne e shop ufficiale sul loro sito.
+              Beni essenziali, distribuzioni locali, inclusione e sport. Report, campagne e shop sul loro sito.
             </p>
           </div>
         </div>
@@ -219,13 +269,13 @@ function PageBeneficiary() {
         {/* CARD LINK – iniziative */}
         <div className="grid md:grid-cols-3 gap-4">
           <BeneficiaryCard title="Aid & Programmi" href={L.aidUrl}
-            desc="Distribuzioni locali, reti di volontari, aggiornamenti dal campo." />
+            desc="Distribuzioni locali, reti di volontari, aggiornamenti." />
           <BeneficiaryCard title="Athletes for Palestine" href={L.a4pUrl}
             desc="Campagna che coinvolge la comunità sportiva globale." />
           <BeneficiaryCard title="Great Ride of Return" href={L.greatRideUrl}
             desc="Pedalate solidali e raccolte fondi nel mondo." />
           <BeneficiaryCard title="Pizza Party" href={L.pizzaPartyUrl}
-            desc="Pasti caldi come momenti di sollievo per le famiglie." />
+            desc="Pasti caldi per le famiglie, momenti di sollievo." />
           <BeneficiaryCard title="Shop" href={L.shopUrl}
             desc="Merch ufficiale per sostenere i Sunbirds." />
           <BeneficiaryCard title="Contatti" href={L.contactUrl}
@@ -237,12 +287,12 @@ function PageBeneficiary() {
           <p className="text-sm text-slate-700">
             {B.cf && (<><strong>CF/P.IVA:</strong> {B.cf} · </>)}
             {B.address && (<><strong>Sede/contatti:</strong> {B.address} · </>)}
-            Fonte: sito ufficiale e pagine mission/programmi dei Gaza Sunbirds.
+            Fonte: sito ufficiale dei Gaza Sunbirds.
           </p>
         </div>
       </div>
     </section>
-  );
+  </>);
 }
 
 function BeneficiaryCard({ title, desc, href }) {
@@ -256,6 +306,7 @@ function BeneficiaryCard({ title, desc, href }) {
   );
 }
 
+/** ---------- HERO HOME ---------- **/
 function Hero({ navigate }) {
   return (
     <header className="relative isolate overflow-hidden">
@@ -272,7 +323,7 @@ function Hero({ navigate }) {
           </div>
           <div className="flex flex-wrap gap-3 pt-2">
             <a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold text-white shadow focus:outline-none focus:ring-2" style={{ backgroundColor: THEME.primary }}>Dona ora</a>
-            <a href="#/beneficiary" onClick={(e)=>{e.preventDefault(); navigate('beneficiary');}} className="hover:underline">Associazione</a>
+            <a href="#/beneficiary" onClick={(e)=>{e.preventDefault(); navigate('beneficiary');}} className="hover:underline">Beneficiario</a>
             <a href="#/bike" onClick={(e)=>{e.preventDefault(); navigate('bike');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Bici</a>
             <a href="#/soccer" onClick={(e)=>{e.preventDefault(); navigate('soccer');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Calcio</a>
             <a href="#/run" onClick={(e)=>{e.preventDefault(); navigate('run');}} className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">Iscriviti: Corsa</a>
@@ -283,6 +334,7 @@ function Hero({ navigate }) {
   );
 }
 
+/** ---------- FOOTER ---------- **/
 function Footer() {
   return (
     <footer className="border-t border-slate-200 py-10">
@@ -298,6 +350,7 @@ function Footer() {
   );
 }
 
+/** ---------- Small pieces ---------- **/
 function BeneficiaryBadge({ className = "" }) {
   const B = EVENT_CONFIG.beneficiary || {};
   if (!B?.name) return null;
@@ -312,14 +365,7 @@ function BeneficiaryBadge({ className = "" }) {
       )}
       <p className="text-slate-700">
         Donazioni destinate a{" "}
-        <a
-          className="underline"
-          href={B.url}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {B.name}
-        </a>
+        <a className="underline" href={B.url} target="_blank" rel="noreferrer">{B.name}</a>
         {B.cf ? <> — {B.cf}</> : null}
       </p>
     </div>
@@ -334,7 +380,12 @@ function PreCheckout({ addPledge, navigate, markPledgePaid }) {
   const [amount, setAmount] = useState(20);
   const [method, setMethod] = useState("paypal");
   const [justCreated, setJustCreated] = useState(null);
-  const submit = (e) => { e.preventDefault(); const pledge = addPledge({ name, email, teamName, purpose, amount: Number(amount||0), method }); setJustCreated(pledge); postSheet('pledge', pledge); };
+  const submit = (e) => {
+    e.preventDefault();
+    const pledge = addPledge({ name, email, teamName, purpose, amount: Number(amount||0), method });
+    setJustCreated(pledge);
+    postSheet('pledge', pledge);
+  };
   return (
     <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
       <h3 className="text-lg font-semibold">Registra l'impegno e scegli il metodo</h3>
@@ -347,26 +398,45 @@ function PreCheckout({ addPledge, navigate, markPledgePaid }) {
         <div><label className="block text-sm font-medium">Metodo</label><select value={method} onChange={(e)=>setMethod(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"><option value="paypal">PayPal</option><option value="iban">Bonifico (IBAN)</option><option value="stripe" disabled={EVENT_CONFIG.payments.stripeComingSoon}>Stripe (in arrivo)</option></select></div>
         <div className="sm:col-span-2 flex gap-3"><button className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Salva e mostra pagamento</button><button type="button" onClick={()=>navigate(purpose === 'donation' ? 'donate' : (purpose))} className="rounded-xl px-4 py-2 font-semibold bg-white ring-1 ring-black/10 hover:bg-slate-50">Vai alla pagina attività</button></div>
       </form>
-      {justCreated && (<div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm">
-        <p><strong>Pledge registrato.</strong> ID: <code>{justCreated.id}</code></p>
-        {method === 'paypal' && justCreated && (
-          <PayPalPayBox
-            pledge={justCreated}
-            onPaid={(amt, orderID) => {
-              // 1) aggiorna subito il DB locale con importo reale
-              markPledgePaid(justCreated.id, orderID, Number(amt || 0));
-              // 2) chiedi verifica al server (Apps Script), che scriverà sullo Sheet
-              postSheet('paypal_verify', { pledgeId: justCreated.id, orderID });
-            }}
-          />
-        )}
-        {method === 'iban' && (<div className="mt-3"><p className="mb-1">Esegui un bonifico a:</p><ul className="list-disc pl-5"><li><strong>Intestatario:</strong> {EVENT_CONFIG.payments.ibanOwner}</li><li><strong>IBAN:</strong> {EVENT_CONFIG.payments.iban}</li><li><strong>Banca:</strong> {EVENT_CONFIG.payments.ibanBank}</li><li><strong>Causale:</strong> {`Donazione ${EVENT_CONFIG.title} — ${justCreated.id}`}</li></ul><div className="mt-3 flex flex-wrap gap-2"><button onClick={()=>navigator.clipboard?.writeText(EVENT_CONFIG.payments.iban)} className="rounded-lg px-3 py-2 ring-1 ring-black/10 bg-white">Copia IBAN</button><button onClick={()=>navigate(`confirm?${justCreated.id}`)} className="rounded-lg px-3 py-2 text-white" style={{ backgroundColor: THEME.primary }}>Ho effettuato il bonifico</button></div></div>)}
-      </div>)}
+
+      {justCreated && (
+        <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm">
+          <p><strong>Pledge registrato.</strong> ID: <code>{justCreated.id}</code></p>
+
+          {method === 'paypal' && (
+            <PayPalPayBox
+              pledge={justCreated}
+              onPaid={(amt, orderID) => {
+                // 1) aggiorna subito il DB locale con importo reale
+                markPledgePaid(justCreated.id, orderID, Number(amt || 0));
+                // 2) verifica server (Apps Script) e scrive su Sheet
+                postSheet('paypal_verify', { pledgeId: justCreated.id, orderID });
+              }}
+            />
+          )}
+
+          {method === 'iban' && (
+            <div className="mt-3">
+              <p className="mb-1">Esegui un bonifico a:</p>
+              <ul className="list-disc pl-5">
+                <li><strong>Intestatario:</strong> {EVENT_CONFIG.payments.ibanOwner}</li>
+                <li><strong>IBAN:</strong> {EVENT_CONFIG.payments.iban}</li>
+                <li><strong>Banca:</strong> {EVENT_CONFIG.payments.ibanBank}</li>
+                <li><strong>Causale:</strong> {`Donazione ${EVENT_CONFIG.title} — ${justCreated.id}`}</li>
+              </ul>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button onClick={()=>navigator.clipboard?.writeText(EVENT_CONFIG.payments.iban)} className="rounded-lg px-3 py-2 ring-1 ring-black/10 bg-white">Copia IBAN</button>
+                <button onClick={()=>navigate(`confirm?${justCreated.id}`)} className="rounded-lg px-3 py-2 text-white" style={{ backgroundColor: THEME.primary }}>Ho effettuato il bonifico</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-// === JSONP loader stats dallo Sheet ===
+/** ---------- JSONP stats ---------- **/
 function fetchSheetStatsJSONP() {
   return new Promise((resolve, reject) => {
     if (!SHEETS_CONFIG.url) return resolve(null);
@@ -380,26 +450,40 @@ function fetchSheetStatsJSONP() {
     s.src = u.toString();
     s.onerror = reject;
     document.body.appendChild(s);
-    // timeout di sicurezza
     setTimeout(() => resolve(null), 8000);
   });
 }
 
+/** ---------- Confirm Page ---------- **/
 function ConfirmPayment({ markPledgePaid, route }) {
   const id = typeof window !== 'undefined' ? (window.location.hash.split('?')[1] || '').replace('#','') : '';
   const [reference, setReference] = useState(""); const [done, setDone] = useState(false);
-  const confirm = () => { if (!id) return alert("Nessun ID pledge trovato"); markPledgePaid(id, reference); postSheet('pledge_paid', { id, reference, paidAt: new Date().toISOString(), status: 'paid' }); setDone(true); };
+  const confirm = () => {
+    if (!id) return alert("Nessun ID pledge trovato");
+    markPledgePaid(id, reference);
+    postSheet('pledge_paid', { id, reference, paidAt: new Date().toISOString(), status: 'paid' });
+    setDone(true);
+  };
   return (
     <section className="py-12 bg-white">
       <div className="max-w-2xl mx-auto px-4">
         <h2 className="text-2xl font-bold">Conferma pagamento</h2>
         <p className="mt-2 text-sm text-slate-700">ID pledge: <code>{id || '—'}</code></p>
-        {!done ? (<div className="mt-4 rounded-xl border border-slate-200 p-4"><label className="block text-sm font-medium">Riferimento/ID transazione (opz.)</label><input value={reference} onChange={(e)=>setReference(e.target.value)} placeholder="es. numero ricevuta / causale" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /><button onClick={confirm} className="mt-3 rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Conferma come pagato</button></div>) : (<div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4">Grazie! Abbiamo registrato il pagamento.</div>)}
+        {!done ? (
+          <div className="mt-4 rounded-xl border border-slate-200 p-4">
+            <label className="block text-sm font-medium">Riferimento/ID transazione (opz.)</label>
+            <input value={reference} onChange={(e)=>setReference(e.target.value)} placeholder="es. numero ricevuta / causale" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+            <button onClick={confirm} className="mt-3 rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Conferma come pagato</button>
+          </div>
+        ) : (
+          <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4">Grazie! Abbiamo registrato il pagamento.</div>
+        )}
       </div>
     </section>
   );
 }
 
+/** ---------- Donate Page ---------- **/
 function DonatePage({ addPledge, navigate, markPledgePaid }) {
   return (
     <section className="py-12 bg-white">
@@ -429,18 +513,25 @@ function DonatePage({ addPledge, navigate, markPledgePaid }) {
   );
 }
 
+/** ---------- PayPal Buttons ---------- **/
 function PayPalPayBox({ pledge, onPaid }) {
   const ready = usePayPalSdk();
   const boxRef = React.useRef(null);
 
   React.useEffect(() => {
     if (!ready || !window.paypal || !boxRef.current) return;
-    boxRef.current.innerHTML = ""; // reset sul rerender
+    boxRef.current.innerHTML = "";
 
     window.paypal.Buttons({
       style: { layout: "vertical", shape: "rect" },
       createOrder: (_, actions) => actions.order.create({
-        purchase_units: [{ amount: { value: String(pledge.amount || 20) } }]
+        intent: "CAPTURE",
+        purchase_units: [{
+          amount: { currency_code: PAYPAL.currency, value: String(pledge.amount || 20) },
+          description: pledge.purpose === "donation" ? "Donation — Move for Gaza" : `Registration — ${pledge.purpose}`,
+          custom_id: pledge.id,
+          invoice_id: pledge.id
+        }]
       }),
       onApprove: async (_, actions) => {
         const details = await actions.order.capture();
@@ -462,6 +553,7 @@ function PayPalPayBox({ pledge, onPaid }) {
   );
 }
 
+/** ---------- Misc UI ---------- **/
 function MapPlaceholder({ label }) {
   return (
     <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm text-slate-600 bg-white">
@@ -470,6 +562,7 @@ function MapPlaceholder({ label }) {
   );
 }
 
+/** ---------- Pages ---------- **/
 function PageHome({ navigate, derived, remoteStats }) {
   return (<>
     <Hero navigate={navigate} />
@@ -509,17 +602,17 @@ function PageHome({ navigate, derived, remoteStats }) {
           <a href="#/soccer" onClick={(e)=>{e.preventDefault(); navigate('soccer');}} className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"><h3 className="text-xl font-semibold">Torneo di calcio</h3><p className="mt-2 text-sm text-slate-700">5 vs 5 per l'inclusione. 4 partite da 15'. Aperto a tuttə.</p><div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold" style={{ color: THEME.primary }}>Dettagli & iscrizione →</div></a>
           <a href="#/run" onClick={(e)=>{e.preventDefault(); navigate('run');}} className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"><h3 className="text-xl font-semibold">Corsa a squadre</h3><p className="mt-2 text-sm text-slate-700">Manifestazione silenziosa e pacifica, partenza dal Duomo.</p><div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold" style={{ color: THEME.primary }}>Dettagli & iscrizione →</div></a>
         </div>
-          {EVENT_CONFIG.beneficiary && (
-            <div className="mt-8 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
-              <h3 className="text-lg font-semibold">Beneficiario</h3>
-              <p className="mt-1 text-sm text-slate-700">{EVENT_CONFIG.beneficiary.blurb}</p>
-              <p className="mt-2 text-sm">
-                <a className="underline" href={EVENT_CONFIG.beneficiary.url} target="_blank" rel="noreferrer">
-                  {EVENT_CONFIG.beneficiary.name}
-                </a> {EVENT_CONFIG.beneficiary.cf ? <>— {EVENT_CONFIG.beneficiary.cf}</> : null}
-              </p>
-            </div>
-          )}
+        {EVENT_CONFIG.beneficiary && (
+          <div className="mt-8 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+            <h3 className="text-lg font-semibold">Beneficiario</h3>
+            <p className="mt-1 text-sm text-slate-700">{EVENT_CONFIG.beneficiary.blurb}</p>
+            <p className="mt-2 text-sm">
+              <a className="underline" href={EVENT_CONFIG.beneficiary.url} target="_blank" rel="noreferrer">
+                {EVENT_CONFIG.beneficiary.name}
+              </a> {EVENT_CONFIG.beneficiary.cf ? <>— {EVENT_CONFIG.beneficiary.cf}</> : null}
+            </p>
+          </div>
+        )}
       </div>
     </section>
   </>);
@@ -529,14 +622,11 @@ function PageBike({ addRegistration, navigate }) {
   const [level, setLevel] = useState("Principiante");
   const submit = (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); const plain = Object.fromEntries(fd.entries()); const saved = addRegistration('bike', plain); postSheet('reg_bike', saved); e.currentTarget.reset(); alert('Iscrizione bici registrata. Puoi donare quando vuoi dalla pagina Donazioni.'); navigate(''); };
   return (<>
-    <section className="relative isolate overflow-hidden">
-      <div className="absolute inset-0 -z-10" style={{ background: `linear-gradient(135deg, ${THEME.gradientFrom}, ${THEME.gradientVia}, ${THEME.gradientTo})` }} />
-      <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16">
-        <h1 className="text-3xl sm:text-4xl font-extrabold" style={{ color: THEME.ink }}>Giro in bici</h1>
-        <p className="mt-2 text-slate-900/90">Percorso sociale, non competitivo. Il tracciato ricalca in <strong>scala reale</strong> la <strong>forma e larghezza della Striscia di Gaza</strong>.</p>
-        <div className="mt-3 flex flex-wrap gap-2 text-sm"><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Data: {EVENT_CONFIG.date}</span><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Luogo: {EVENT_CONFIG.location}</span><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Manifestazione silenziosa e pacifica</span></div>
-      </div>
-    </section>
+    <GradientHeader
+      title="Giro in bici"
+      subtitle="Tracciato in scala reale che ricalca forma e larghezza della Striscia di Gaza"
+      chips={[`Data: ${EVENT_CONFIG.date}`, `Luogo: ${EVENT_CONFIG.location}`, "Manifestazione silenziosa e pacifica"]}
+    />
     <section className="py-6">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <div className="lg:col-span-2"><h2 className="text-xl font-semibold mb-2">Mappa</h2><MapPlaceholder label="bici" /></div>
@@ -556,7 +646,7 @@ function PageBike({ addRegistration, navigate }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label className="block text-sm font-medium">Email</label><input type="email" name="email" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div><div><label className="block text-sm font-medium">Telefono</label><input type="tel" name="phone" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label className="block text sm font-medium">Livello</label><select name="level" value={level} onChange={(e)=>setLevel(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"><option>Principiante</option><option>Intermedio</option><option>Esperto</option></select></div><div><label className="block text-sm font-medium">Squadra (opz.)</label><input name="teamName" placeholder="nome squadra (se vuoi)" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label className="block text-sm font-medium">Instagram squadra (opz.)</label><input name="instagram" placeholder="https://instagram.com/tuasquadra" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div><div><label className="block text-sm font-medium">Rif. donazione (opz.)</label><input name="donationRef" placeholder="email/ID ricevuta" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div></div>
-            <div className="flex gap-3"><button className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Invia iscrizione</button></div>
+            <div className="flex gap-3"><button className="rounded-xl px-4 py-2 font-semibold text:white text-white" style={{ backgroundColor: THEME.primary }}>Invia iscrizione</button></div>
           </form>
         </div>
         <div className="mt-6"><a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}} className="text-sm font-semibold" style={{ color: THEME.primary }}>← Torna alla home</a></div>
@@ -569,14 +659,11 @@ function PageSoccer({ addRegistration, navigate }) {
   const [members, setMembers] = useState(6);
   const submit = (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); const count = Number(fd.get('count')||members||5); const players = Array.from({ length: count }, (_,i) => fd.get(`player_${i+1}`)).filter(Boolean); const rec = Object.fromEntries(fd.entries()); delete rec.count; const saved = addRegistration('soccer', { ...rec, players, count }); postSheet('reg_soccer', saved); alert('Squadra calcio registrata. Potete donare quando volete.'); navigate(''); };
   return (<>
-    <section className="relative isolate overflow-hidden">
-      <div className="absolute inset-0 -z-10" style={{ background: `linear-gradient(135deg, ${THEME.gradientFrom}, ${THEME.gradientVia}, ${THEME.gradientTo})` }} />
-      <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16">
-        <h1 className="text-3xl sm:text-4xl font-extrabold" style={{ color: THEME.ink }}>Torneo di calcio — 5 vs 5</h1>
-        <p className="mt-2 text-slate-900/90">Torneo per l'<strong>inclusione</strong>, aperto a tuttə. <strong>Non competitivo</strong>.</p>
-        <div className="mt-3 flex flex-wrap gap-2 text-sm"><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Data: {EVENT_CONFIG.date}</span><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Luogo: {EVENT_CONFIG.location}</span><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Donazione consigliata: 20 € a testa</span></div>
-      </div>
-    </section>
+    <GradientHeader
+      title="Torneo di calcio — 5 vs 5"
+      subtitle="Inclusivo, aperto a tuttə, non competitivo"
+      chips={[`Data: ${EVENT_CONFIG.date}`, `Luogo: ${EVENT_CONFIG.location}`, "Donazione consigliata: 20 €/persona"]}
+    />
     <section className="py-8">
       <div className="max-w-3xl mx-auto px-4">
         <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
@@ -601,14 +688,11 @@ function PageRun({ addRegistration, navigate }) {
   const [members, setMembers] = useState(4);
   const submit = (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); const count = Number(fd.get('count')||members||3); const runners = Array.from({ length: count }, (_,i) => fd.get(`runner_${i+1}`)).filter(Boolean); const rec = Object.fromEntries(fd.entries()); delete rec.count; const saved = addRegistration('run', { ...rec, runners, count }); postSheet('reg_run', saved); alert('Squadra corsa registrata. Potete donare quando volete.'); navigate(''); };
   return (<>
-    <section className="relative isolate overflow-hidden">
-      <div className="absolute inset-0 -z-10" style={{ background: `linear-gradient(135deg, ${THEME.gradientFrom}, ${THEME.gradientVia}, ${THEME.gradientTo})` }} />
-      <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16">
-        <h1 className="text-3xl sm:text-4xl font-extrabold" style={{ color: THEME.ink }}>Corsa a squadre — Manifestazione</h1>
-        <p className="mt-2 text-slate-900/90">Manifestazione <strong>silenziosa e pacifica</strong>, non competitiva, con <strong>partenza dal Duomo</strong>.</p>
-        <div className="mt-3 flex flex-wrap gap-2 text-sm"><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Data: {EVENT_CONFIG.date}</span><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Partenza: Duomo di Milano</span><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Arrivo: Centro sportivo</span><span className="px-3 py-1 rounded-full bg-white/80 ring-1 ring-black/10">Donazione consigliata: 20 €</span></div>
-      </div>
-    </section>
+    <GradientHeader
+      title="Corsa a squadre — Manifestazione"
+      subtitle="Silenziosa e pacifica, partenza dal Duomo"
+      chips={[`Data: ${EVENT_CONFIG.date}`, "Partenza: Duomo di Milano", "Arrivo: Centro sportivo", "Donazione consigliata: 20 €"]}
+    />
     <section className="py-6">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <div className="lg:col-span-2"><h2 className="text-xl font-semibold mb-2">Mappa</h2><MapPlaceholder label="corsa" /></div>
@@ -637,6 +721,7 @@ function PageRun({ addRegistration, navigate }) {
   </>);
 }
 
+/** ---------- DB Page ---------- **/
 function DBPage({ db, markPledgePaid }) {
   return (
     <section className="py-12 bg-white">
@@ -676,6 +761,7 @@ function DBPage({ db, markPledgePaid }) {
   );
 }
 
+/** ---------- APP ---------- **/
 export default function App() {
   const { db, addPledge, markPledgePaid, addRegistration, derived } = useDB();
   const [route, navigate] = useRoute();
@@ -685,7 +771,12 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen text-slate-900" style={{ background: `linear-gradient(180deg, ${THEME.gradientFrom}, ${THEME.gradientVia}, ${THEME.gradientTo})` }}>
+    <div className="min-h-screen text-slate-900 relative">
+      {/* pattern di sfondo */}
+      <div className="fixed inset-0 -z-20" style={{ backgroundImage: PALESTINE_PATTERN, backgroundSize: "60px 60px" }} />
+      {/* velo bianco leggero per non disturbare */}
+      <div className="fixed inset-0 -z-10 bg-white/90" />
+
       <Nav navigate={navigate} />
       {route.startsWith('donate') ? (<DonatePage addPledge={addPledge} navigate={navigate} markPledgePaid={markPledgePaid} />)
       : route.startsWith('confirm') ? (<ConfirmPayment markPledgePaid={markPledgePaid} route={route} />)
