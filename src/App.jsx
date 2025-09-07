@@ -19,10 +19,22 @@ const EVENT_CONFIG = {
     text: "Evento solidale non competitivo: pedaliamo, giochiamo e corriamo per raccogliere fondi a sostegno degli aiuti umanitari a Gaza. Trasparenza totale su fondi e destinazione.",
   },
   beneficiary: {
-  name: "Gaza Sunbirds",
-  url: "https://gazasunbirds.org/",
-  cf: "-",
-  blurb: "In light of the ongoing genocide, our para-cycling team has reverted all its resources to providing community-led aid to Gaza. To date, our athletes and staff have distributed over $400,000 USD worth of aid. Regardless of how bad the situation gets, we are determined to continue supporting our communities through these tough times. Our grass roots network prepares and distributes parcels of essentials to the communities around us."
+    name: "Gaza Sunbirds",
+    url: "https://gazasunbirds.org/",
+    logoUrl: "https://gazasunbirds.org/wp-content/uploads/2024/04/cropped-Gaza-Sunbirds-Logo-Blue-1-192x192.png",
+    cf: "", // se non disponibile, lascia vuoto
+    address: "Gaza / London (team & fiscal hosts)",
+    blurb: "Team di paraciclismo nato a Gaza, oggi focalizzato su mutual aid e programmi sportivi per amputati; attiv* dal 2020.",
+    links: {
+      missionUrl: "https://gazasunbirds.org/about-us/mission/",
+      aboutUrl: "https://gazasunbirds.org/about-us/",
+      aidUrl: "https://gazasunbirds.org/",
+      a4pUrl: "https://gazasunbirds.org/campaigns/a4p/",
+      greatRideUrl: "https://gazasunbirds.org/campaigns/great-ride/",
+      pizzaPartyUrl: "https://gazasunbirds.org/aid/pizza-party/",
+      shopUrl: "https://gazasunbirds.org/shop/",
+      contactUrl: "https://gazasunbirds.org/campaigns/contact-us/"
+    }
   },
 };
 
@@ -49,7 +61,7 @@ const THEME = {
   primary: "#007A3D",
   primaryHover: "#005c2d",
   accentRed: "#CE1126",
-  ink: "#082a23",
+  ink: "#ece829ff",
 };
 
 const DB_KEY = "rfg_db_v1";
@@ -152,24 +164,90 @@ function Nav({ navigate }) {
 }
 function PageBeneficiary() {
   const B = EVENT_CONFIG.beneficiary || {};
+  const L = B.links || {};
   return (
     <section className="py-12 bg-white">
-      <div className="max-w-3xl mx-auto px-4 space-y-4">
-        <h1 className="text-3xl font-extrabold">Beneficiario</h1>
-        <p className="text-slate-800">{B.blurb || 'Informazioni sul beneficiario dei fondi.'}</p>
-        <div className="rounded-2xl border border-slate-200 p-6">
-          <p><strong>Nome:</strong> {B.name || '—'}</p>
-          <p><strong>Sito:</strong> {B.url ? <a className="underline" href={B.url} target="_blank">{B.url}</a> : '—'}</p>
-          <p><strong>CF/P.IVA:</strong> {B.cf || '—'}</p>
-          <p><strong>Indirizzo:</strong> {B.address || '—'}</p>
+      <div className="max-w-5xl mx-auto px-4">
+        {/* HERO con logo */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
+          {B.logoUrl && (
+            <img src={B.logoUrl} alt={`${B.name} logo`}
+                 className="w-20 h-20 rounded-xl ring-1 ring-black/10 object-contain bg-white" />
+          )}
+          <div>
+            <h1 className="text-3xl font-extrabold">{B.name}</h1>
+            <p className="text-slate-700 mt-1">{B.blurb}</p>
+            <div className="mt-2 text-sm">
+              {B.url && <a href={B.url} target="_blank" className="underline mr-3">Sito ufficiale</a>}
+              {L.contactUrl && <a href={L.contactUrl} target="_blank" className="underline">Contatti</a>}
+            </div>
+          </div>
         </div>
-        <p className="text-sm text-slate-600">
-          Pubblicheremo un rendiconto post-evento con fondi raccolti e destinazione.
-        </p>
+
+        {/* INFO BOX */}
+        <div className="grid md:grid-cols-3 gap-4 mb-10">
+          <div className="rounded-2xl border border-slate-200 p-5">
+            <h3 className="font-semibold">Chi sono</h3>
+            <p className="text-sm text-slate-700 mt-1">
+              Team di paraciclismo fondato a Gaza; dal 2020 costruiscono percorsi per amputatə e atleti con disabilità,
+              e oggi coordinano mutual aid sul territorio. <a className="underline" target="_blank" href={L.aboutUrl || B.url}>Scopri di più</a>.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 p-5">
+            <h3 className="font-semibold">Missione</h3>
+            <p className="text-sm text-slate-700 mt-1">
+              Missione riallineata alla protezione dei civili tramite aiuti comunitari e programmi sportivi accessibili.
+              <a className="underline ml-1" target="_blank" href={L.missionUrl}>Mission</a>.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 p-5">
+            <h3 className="font-semibold">Dove vanno i fondi</h3>
+            <p className="text-sm text-slate-700 mt-1">
+              Acquisto locale di beni essenziali, distribuzioni, progetti di inclusione e sport. Report, campagne e shop ufficiale sul loro sito.
+            </p>
+          </div>
+        </div>
+
+        {/* CARD LINK – iniziative */}
+        <div className="grid md:grid-cols-3 gap-4">
+          <BeneficiaryCard title="Aid & Programmi" href={L.aidUrl}
+            desc="Distribuzioni locali, reti di volontari, aggiornamenti dal campo." />
+          <BeneficiaryCard title="Athletes for Palestine" href={L.a4pUrl}
+            desc="Campagna che coinvolge la comunità sportiva globale." />
+          <BeneficiaryCard title="Great Ride of Return" href={L.greatRideUrl}
+            desc="Pedalate solidali e raccolte fondi nel mondo." />
+          <BeneficiaryCard title="Pizza Party" href={L.pizzaPartyUrl}
+            desc="Pasti caldi come momenti di sollievo per le famiglie." />
+          <BeneficiaryCard title="Shop" href={L.shopUrl}
+            desc="Merch ufficiale per sostenere i Sunbirds." />
+          <BeneficiaryCard title="Contatti" href={L.contactUrl}
+            desc="Scrivi al team per partnership e iniziative." />
+        </div>
+
+        {/* DATI LEGALI/NOTE */}
+        <div className="mt-10 rounded-2xl bg-slate-50 p-5 ring-1 ring-black/5">
+          <p className="text-sm text-slate-700">
+            {B.cf && (<><strong>CF/P.IVA:</strong> {B.cf} · </>)}
+            {B.address && (<><strong>Sede/contatti:</strong> {B.address} · </>)}
+            Fonte: sito ufficiale e pagine mission/programmi dei Gaza Sunbirds.
+          </p>
+        </div>
       </div>
     </section>
   );
 }
+
+function BeneficiaryCard({ title, desc, href }) {
+  return (
+    <a href={href} target="_blank"
+       className="block rounded-2xl p-5 bg-white shadow-sm ring-1 ring-black/10 hover:shadow-md transition">
+      <h3 className="font-semibold">{title}</h3>
+      <p className="text-sm text-slate-700 mt-1">{desc}</p>
+      <span className="inline-block mt-3 text-sm underline">Apri</span>
+    </a>
+  );
+}
+
 
 
 function Hero({ navigate }) {
