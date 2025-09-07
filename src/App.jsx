@@ -337,7 +337,7 @@ function PayPalPayBox({ pledge, onPaid }) {
 
 function MapPlaceholder({ label }) { return (<div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm text-slate-600 bg-white">Mappa {label} in arrivo.</div>); }
 
-function PageHome({ navigate, derived }) {
+function PageHome({ navigate, derived, remoteStats }) {
   return (<>
     <Hero navigate={navigate} />
     <section className="-mt-10 relative z-10">
