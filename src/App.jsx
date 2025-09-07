@@ -25,8 +25,8 @@ const EVENT_CONFIG = {
   beneficiary: {
     name: "Gaza Sunbirds",
     url: "https://gazasunbirds.org/",
-    // Metti il file in /public/sunbirds-logo.png (consigliato) oppure usa import da src/assets
-    logoUrl: import.meta.env.BASE_URL + "/public/sunbirds-logo.png",
+    
+    logoUrl: import.meta.env.BASE_URL + "/sunbirds-logo.png",
     cf: "",
     address: "Gaza / London (team & fiscal hosts)",
     blurb: "The Gaza Sunbirds are Palestine’s para-cycling team, gaining global recognition over the last 22 months for their courageous aid missions and global sporting achievements.",
