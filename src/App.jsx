@@ -26,7 +26,7 @@ const EVENT_CONFIG = {
     name: "Gaza Sunbirds",
     url: "https://gazasunbirds.org/",
     // Metti il file in /public/sunbirds-logo.png (consigliato) oppure usa import da src/assets
-    logoUrl: import.meta.env.BASE_URL + "/public/assets/sunbirds-logo.png",
+    logoUrl: import.meta.env.BASE_URL + "/dist/assets/sunbirds-logo.png",
     cf: "",
     address: "Gaza / London (team & fiscal hosts)",
     blurb: "The Gaza Sunbirds are Palestine’s para-cycling team, gaining global recognition over the last 22 months for their courageous aid missions and global sporting achievements.",
@@ -376,7 +376,7 @@ function Footer() {
       <div className="mt-8 h-1 w-full grid grid-cols-12 opacity-90">
         <div className="col-span-3" style={{ backgroundColor: '#000' }} />
         <div className="col-span-3" style={{ backgroundColor: '#fff' }} />
-        <div className="col-span-3" style={{ backgroundColor: THEME.primary }} />
+        <div className="col-span-3" style={{ backgroundColor: THEME.gradientVia }} />
         <div className="col-span-3" style={{ backgroundColor: THEME.accentRed }} />
       </div>
 
