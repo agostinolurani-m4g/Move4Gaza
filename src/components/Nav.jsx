@@ -5,7 +5,7 @@ const Nav = ({ navigate }) => {
   const title = EVENT_CONFIG.logoUrl ? (
     <img src={EVENT_CONFIG.logoUrl} alt={EVENT_CONFIG.title} className="h-8 w-auto rounded-md" />
   ) : (
-    <span className="font-extrabold tracking-tight" style={{ color: THEME.primary }}>
+    <span className="font-extrabold tracking-tight" style={{ color: THEME.gradientFrom }}>
       {EVENT_CONFIG.title}
     </span>
   );

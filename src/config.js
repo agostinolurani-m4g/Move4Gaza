@@ -51,7 +51,7 @@ export const EVENT_CONFIG = {
   },
   payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
   forms: { bike: "", soccer: "", run: "" },
-  logoUrl: "",
+  logoUrl: import.meta.env.BASE_URL + "/locandina_2.jpeg",
   contactEmail: "",
   whatsapp: "",
   cause: {
