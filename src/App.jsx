@@ -13,6 +13,12 @@ const EVENT_CONFIG = {
   date: "25 ottobre 2025",
   location: "Campo sportivo Olmi, Milano",
   currency: "EUR",
+  bike: {
+    distances: [
+      { key: "112", label: "112 km — Gaza in scala reale" },
+      { key: "20",  label: "20 km — percorso cittadino" }
+    ]
+  },
   payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
   forms: { bike: "", soccer: "", run: "" },
   logoUrl: "", // logo evento (se ne hai uno)
@@ -63,31 +69,42 @@ async function postSheet(type, payload) {
 
 /** ---------- THEME & BG ---------- **/
 const THEME = {
-  gradientFrom: "#34d399",
-  gradientVia: "#10b981",
-  gradientTo: "#059669",
-  primary: "#007A3D",       // verde Palestina
-  primaryHover: "#005c2d",
+  gradientFrom: "#1fb67a",  // verde brillante, caldo
+  gradientVia:   "#12a66a", // transizione morbida
+  gradientTo:    "#0a7f4b", // profondità
+  primary:       "#0b8f4d", // bottone/brand
+  primaryHover:  "#087542", // hover coerente
   accentRed: "#CE1126",
-  ink: "#319052ff",
+  ink: "#175735ff",
 };
 
 // Motivo palestinese leggero (triangoli/chevron) – inline SVG
-const PALESTINE_PATTERN = (() => {
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'>
-    <rect width='60' height='60' fill='white'/>
-    <g opacity='0.06'>
-      <path d='M0 30 L30 0 L60 30 L30 60 Z' fill='${THEME.primary}'/>
-      <path d='M-30 30 L0 0 L30 30 L0 60 Z' fill='#000000'/>
-      <path d='M30 30 L60 0 L90 30 L60 60 Z' fill='${THEME.accentRed}'/>
-    </g>
-    <g opacity='0.05'>
-      <path d='M0 0 L60 60' stroke='#000' stroke-width='1'/>
-      <path d='M60 0 L0 60' stroke='${THEME.primary}' stroke-width='1'/>
-    </g>
-  </svg>`;
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-})();
+ const PALESTINE_PATTERN = (() => {
+   const svg = `
+   <svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'>
+     <defs>
+       <!-- griglia lieve ruotata -->
+       <pattern id='grid' width='60' height='60' patternUnits='userSpaceOnUse' patternTransform='rotate(45 30 30)'>
+         <path d='M0 0H60V60H0Z' fill='white'/>
+         <path d='M30 0V60M0 30H60' stroke='#000' stroke-width='0.6' opacity='0.05'/>
+       </pattern>
+       <!-- stella a 10 punte “girih” con tratto sottile -->
+       <g id='star'>
+         <polygon points='60,6 74,46 116,46 82,70 94,112 60,86 26,112 38,70 4,46 46,46'
+                  fill='none' stroke='${THEME.primary}' stroke-width='1' opacity='0.08'/>
+       </g>
+     </defs>
+     <rect width='120' height='120' fill='url(#grid)'/>
+     <use href='#star' x='0'   y='0'/>
+     <use href='#star' x='60'  y='0'/>
+     <use href='#star' x='0'   y='60'/>
+     <use href='#star' x='60'  y='60'/>
+     <!-- chevron molto soft nei colori nazionali -->
+     <path d='M-20 120 L60 40 L140 120' fill='none' stroke='#CE1126' stroke-width='2' opacity='0.05'/>
+     <path d='M-20 0   L60 80 L140 0'   fill='none' stroke='${THEME.primary}' stroke-width='2' opacity='0.05'/>
+   </svg>`;
+   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+ })();
 
 /** ---------- STATE (Local DB) ---------- **/
 const DB_KEY = "rfg_db_v1";
@@ -146,6 +163,29 @@ function useDB() {
   }, [db]);
 
   return { db, addPledge, markPledgePaid, addRegistration, derived };
+}
+function QuickAmounts({ value, onPick }) {
+  const items = [
+    { amount: 20,  label: "20 €"},
+    { amount: 50,  label: "50 €"},
+    { amount: 100, label: "100 €"},
+    { amount: 500, label: "500 €"},
+  ];
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {items.map(({ amount, label, note }) => (
+        <button
+          type="button"
+          key={amount}
+          onClick={() => onPick(amount)}
+          className={`rounded-2xl px-4 py-3 text-left ring-1 ring-black/10 shadow-sm bg-white hover:shadow
+            ${Number(value) === amount ? "outline outline-2 outline-emerald-400" : ""}`}
+        >
+          <div className="text-lg font-semibold">{label}</div>
+        </button>
+      ))}
+    </div>
+  );
 }
 
 /** ---------- Utils ---------- **/
@@ -429,6 +469,12 @@ function PreCheckout({ addPledge, navigate, markPledgePaid }) {
         <div><label className="block text-sm font-medium">Email</label><input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
         <div><label className="block text-sm font-medium">Squadra (opz.)</label><input value={teamName} onChange={(e)=>setTeamName(e.target.value)} placeholder="nome squadra (se vuoi)" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
         <div><label className="block text-sm font-medium">Scopo</label><select value={purpose} onChange={(e)=>setPurpose(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"><option value="donation">Solo donazione</option><option value="bike">Iscrizione Bici</option><option value="soccer">Iscrizione Calcio (squadra)</option><option value="run">Iscrizione Corsa (squadra)</option></select></div>
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium">Importo consigliato</label>
+          <div className="mt-2">
+            <QuickAmounts value={amount} onPick={(v) => setAmount(v)} />
+          </div>
+        </div>
         <div><label className="block text-sm font-medium">Importo</label><input type="number" min={1} step={1} value={amount} onChange={(e)=>setAmount(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
         <div><label className="block text-sm font-medium">Metodo</label><select value={method} onChange={(e)=>setMethod(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"><option value="paypal">PayPal</option><option value="iban">Bonifico (IBAN)</option><option value="stripe" disabled={EVENT_CONFIG.payments.stripeComingSoon}>Stripe (in arrivo)</option></select></div>
         <div className="sm:col-span-2 flex gap-3"><button className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Salva e mostra pagamento</button><button type="button" onClick={()=>navigate(purpose === 'donation' ? 'donate' : (purpose))} className="rounded-xl px-4 py-2 font-semibold bg-white ring-1 ring-black/10 hover:bg-slate-50">Vai alla pagina attività</button></div>
@@ -650,12 +696,14 @@ function PageHome({ navigate, derived, remoteStats }) {
           </div>
         )}
       </div>
+      <FAQSection navigate={navigate} />
     </section>
   </>);
 }
 
 function PageBike({ addRegistration, navigate }) {
   const [level, setLevel] = useState("Principiante");
+  const [distance, setDistance] = useState("112");
   const submit = (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); const plain = Object.fromEntries(fd.entries()); const saved = addRegistration('bike', plain); postSheet('reg_bike', saved); e.currentTarget.reset(); alert('Iscrizione bici registrata. Puoi donare quando vuoi dalla pagina Donazioni.'); navigate(''); };
   return (<>
     <GradientHeader
@@ -665,8 +713,26 @@ function PageBike({ addRegistration, navigate }) {
     />
     <section className="py-6">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div className="lg:col-span-2"><h2 className="text-xl font-semibold mb-2">Mappa</h2><MapPlaceholder label="bici" /></div>
-        <aside className="lg:col-span-1 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10"><h3 className="font-semibold">Iscrizione</h3><ul className="mt-2 text-sm list-disc pl-5 space-y-1"><li>Iscrizione <strong>indipendente dalla donazione</strong> (puoi donare dopo).</li><li>Donazione consigliata: <strong>≥ 20 €</strong>.</li></ul><div className="mt-3 flex gap-2"><a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Vai a donazioni</a></div>
+        <h2 className="text-xl font-semibold mb-2">Percorso</h2>
+          <div className="mb-3 inline-flex rounded-2xl ring-1 ring-black/10 bg-white overflow-hidden">
+            {EVENT_CONFIG.bike.distances.map((d) => (
+              <button
+                key={d.key}
+                type="button"
+                onClick={() => setDistance(d.key)}
+                className={`px-4 py-2 text-sm font-medium ${distance === d.key ? 'bg-emerald-50' : ''}`}
+                style={distance === d.key ? { color: THEME.primary } : {}}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+          <MapPlaceholder label={`bici — ${distance} km`} />
+          <p className="mt-2 text-xs text-slate-600">
+            112 km: ricalca forma e larghezza della Striscia di Gaza. 20 km: cittadino, ritmo sociale.
+          </p>
+
+        <aside className="lg:col-span-1 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10"><h3 className="font-semibold">Iscrizione</h3><ul className="mt-2 text-sm list-disc pl-5 space-y-1"><li><strong>Per iscriversi è necessaria una donazione</strong> (min. 20 €).</li><li className="text-red-600"><strong>Il pranzo NON è incluso</strong>.</li><li>Donazione consigliata: <strong>≥ 20 €</strong>.</li></ul><div className="mt-3 flex gap-2"><a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Vai a donazioni</a></div>
           <p className="mt-3 text-xs text-slate-600">
             Donazioni destinate a <a className="underline" href={EVENT_CONFIG.beneficiary.url} target="_blank" rel="noreferrer">{EVENT_CONFIG.beneficiary.name}</a>.
           </p>
@@ -683,6 +749,7 @@ function PageBike({ addRegistration, navigate }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label className="block text sm font-medium">Livello</label><select name="level" value={level} onChange={(e)=>setLevel(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"><option>Principiante</option><option>Intermedio</option><option>Esperto</option></select></div><div><label className="block text-sm font-medium">Squadra (opz.)</label><input name="teamName" placeholder="nome squadra (se vuoi)" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label className="block text-sm font-medium">Instagram squadra (opz.)</label><input name="instagram" placeholder="https://instagram.com/tuasquadra" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div><div><label className="block text-sm font-medium">Rif. donazione (opz.)</label><input name="donationRef" placeholder="email/ID ricevuta" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div></div>
             <div className="flex gap-3"><button className="rounded-xl px-4 py-2 font-semibold text:white text-white" style={{ backgroundColor: THEME.primary }}>Invia iscrizione</button></div>
+            <input type="hidden" name="distance" value={distance} />
           </form>
         </div>
         <div className="mt-6"><a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}} className="text-sm font-semibold" style={{ color: THEME.primary }}>← Torna alla home</a></div>
@@ -704,6 +771,10 @@ function PageSoccer({ addRegistration, navigate }) {
       <div className="max-w-3xl mx-auto px-4">
         <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
           <h2 className="text-lg font-semibold">Iscrizione — Calcio (squadra)</h2>
+          <p className="mt-2 text-sm">
+            <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 €/persona).{" "}
+            <span className="text-red-600">Il pranzo non è incluso.</span>
+          </p>
           <form onSubmit={submit} className="mt-4 space-y-3">
             <div><label className="block text-sm font-medium">Nome squadra</label><input name="teamName" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label className="block text-sm font-medium">Instagram (opz.)</label><input name="instagram" placeholder="https://instagram.com/tuasquadra" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div><div><label className="block text-sm font-medium">Email/ID donazione (opz.)</label><input name="donationRef" placeholder="email o ID ricevuta" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div></div>
@@ -739,6 +810,10 @@ function PageRun({ addRegistration, navigate }) {
       <div className="max-w-3xl mx-auto px-4">
         <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
           <h2 className="text-lg font-semibold">Iscrizione — Corsa (squadra)</h2>
+          <p className="mt-2 text-sm">
+            <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 €/persona).{" "}
+            <span className="text-red-600">Il pranzo non è incluso.</span>
+          </p>
           <form onSubmit={submit} className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-1"><label className="block text-sm font-medium">Nome squadra</label><input name="teamName" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
             <div className="md:col-span-1"><label className="block text-sm font-medium">Instagram squadra (opz.)</label><input name="instagram" placeholder="https://instagram.com/tuasquadra" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
@@ -755,6 +830,44 @@ function PageRun({ addRegistration, navigate }) {
       </div>
     </section>
   </>);
+}
+function FAQSection({ navigate }) {
+  const B = EVENT_CONFIG.beneficiary;
+  return (
+    <section className="py-14 bg-white">
+      <div className="max-w-6xl mx-auto px-4">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">Domande frequenti</h2>
+
+        <div className="grid gap-4">
+          <div className="rounded-2xl border border-slate-200 p-5">
+            <h3 className="font-semibold">A chi vanno i soldi?</h3>
+            <p className="text-sm text-slate-700 mt-1">
+              Le donazioni sono destinate a <a className="underline" href={B.url} target="_blank" rel="noreferrer">{B.name}</a>.
+              Pubblicheremo un report finale. Dettagli nella pagina{" "}
+              <a href="#/beneficiary" onClick={(e)=>{e.preventDefault(); navigate('beneficiary');}} className="underline">Beneficiario</a>.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 p-5">
+            <h3 className="font-semibold">Come funzionano i vari eventi?</h3>
+            <ul className="text-sm text-slate-700 mt-1 list-disc pl-5 space-y-1">
+              <li><strong>Bici</strong>: 112 km (Gaza in scala) e 20 km (cittadino). Ritmo sociale, non competitivo.</li>
+              <li><strong>Calcio</strong>: 5 vs 5 per l’inclusione. 4 partite da 15’ garantite.</li>
+              <li><strong>Corsa</strong>: manifestazione silenziosa e pacifica, partenza dal Duomo.</li>
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 p-5">
+            <h3 className="font-semibold">La donazione è obbligatoria? Cosa include?</h3>
+            <p className="text-sm text-slate-700 mt-1">
+              Sì: la donazione (<strong>min. 20 €</strong>) è <strong>propedeutica all’iscrizione</strong>.{" "}
+              <strong>Non include</strong> beni/servizi (es. <strong>pranzo non incluso</strong>).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 /** ---------- APP ---------- **/
@@ -774,7 +887,7 @@ export default function App() {
   return (
     <div className="min-h-screen text-slate-900 relative">
       {/* pattern di sfondo */}
-      <div className="fixed inset-0 -z-20" style={{ backgroundImage: PALESTINE_PATTERN, backgroundSize: "60px 60px" }} />
+      <div className="fixed inset-0 -z-20" style={{ backgroundImage: PALESTINE_PATTERN, backgroundSize: "80px 80px" }} />
       {/* velo bianco leggero per non disturbare */}
       <div className="fixed inset-0 -z-10 bg-white/90" />
 
