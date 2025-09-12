@@ -2,4 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face{
+  font-family:"AkzidGrtsk";
+  src:url("/fonts/akzidgrtsk/akzidgrtsk.woff2") format("woff2"),
+      url("/fonts/akzidgrtsk/akzidgrtsk.woff") format("woff");
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
+
 html, body, #root { height: 100%; }
