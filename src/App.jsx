@@ -19,6 +19,33 @@ const EVENT_CONFIG = {
       { key: "20",  label: "20 km — percorso cittadino" }
     ]
   },
+  // Limiti iscrizioni
+  limits: {
+    soccerTeamsMax: 24,   // cambia numeri a piacere
+    runTeamsMax: 100
+  },
+
+  // Percorsi & file pubblici (metti i 3 .gpx in public/routes/)
+  routes: {
+    bike: {
+      "112": {
+        gpx: import.meta.env.BASE_URL + "routes/rideforgaza112.gpx",
+        stravaRouteId: "",                // es. "321654987"
+        stravaSegmentUrl: ""              // es. "https://www.strava.com/segments/12345"
+      },
+      "20":  {
+        gpx: import.meta.env.BASE_URL + "routes/rideforgaza112.gpx",
+        stravaRouteId: "",
+        stravaSegmentUrl: ""
+      }
+    },
+    run: {
+      gpx: import.meta.env.BASE_URL + "routes/rideforgaza112.gpx",
+      stravaRouteId: "",
+      stravaSegmentUrl: ""
+    }
+  },
+
   payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
   forms: { bike: "", soccer: "", run: "" },
   logoUrl: "", // logo evento (se ne hai uno)
@@ -75,7 +102,7 @@ const THEME = {
   primary:       "#0b8f4d", // bottone/brand
   primaryHover:  "#087542", // hover coerente
   accentRed: "#CE1126",
-  ink: "#175735ff",
+  ink: "rgba(254, 254, 254, 1)",
 };
 
 // Motivo palestinese leggero (triangoli/chevron) – inline SVG
@@ -164,6 +191,7 @@ function useDB() {
 
   return { db, addPledge, markPledgePaid, addRegistration, derived };
 }
+
 function QuickAmounts({ value, onPick }) {
   const items = [
     { amount: 20,  label: "20 €"},
@@ -186,6 +214,42 @@ function QuickAmounts({ value, onPick }) {
       ))}
     </div>
   );
+}
+function fetchRecentDonationsJSONP(limit = 6) {
+  return new Promise((resolve) => {
+    if (!SHEETS_CONFIG.url) return resolve([]);
+    const cb = 'cb_recent_' + Math.random().toString(36).slice(2);
+    window[cb] = (data) => { resolve(data?.items || []); try { delete window[cb]; } catch {} };
+    const s = document.createElement('script');
+    const u = new URL(SHEETS_CONFIG.url);
+    u.searchParams.set('secret', SHEETS_CONFIG.secret);
+    u.searchParams.set('type', 'recent');
+    u.searchParams.set('limit', String(limit));
+    u.searchParams.set('callback', cb);
+    u.searchParams.set('t', Date.now());
+    s.src = u.toString();
+    document.body.appendChild(s);
+    setTimeout(()=>resolve([]), 8000);
+  });
+}
+
+function fetchTopTeamsJSONP(kind = 'soccer', limit = 5) {
+  return new Promise((resolve) => {
+    if (!SHEETS_CONFIG.url) return resolve([]);
+    const cb = 'cb_top_' + Math.random().toString(36).slice(2);
+    window[cb] = (data) => { resolve(data?.items || []); try { delete window[cb]; } catch {} };
+    const s = document.createElement('script');
+    const u = new URL(SHEETS_CONFIG.url);
+    u.searchParams.set('secret', SHEETS_CONFIG.secret);
+    u.searchParams.set('type', 'top_teams');
+    u.searchParams.set('kind', kind);        // 'soccer' | 'run' | 'bike'
+    u.searchParams.set('limit', String(limit));
+    u.searchParams.set('callback', cb);
+    u.searchParams.set('t', Date.now());
+    s.src = u.toString();
+    document.body.appendChild(s);
+    setTimeout(()=>resolve([]), 8000);
+  });
 }
 
 /** ---------- Utils ---------- **/
@@ -644,8 +708,91 @@ function MapPlaceholder({ label }) {
   );
 }
 
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLon = (lon2-lon1) * Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+
+async function loadGPX(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  const text = await res.text();
+  const xml = new window.DOMParser().parseFromString(text, "application/xml");
+  const pts = Array.from(xml.getElementsByTagName("trkpt")).map(n => ({
+    lat: parseFloat(n.getAttribute("lat")),
+    lon: parseFloat(n.getAttribute("lon")),
+    ele: parseFloat(n.getElementsByTagName("ele")[0]?.textContent || "0")
+  }));
+  // distanza
+  let dist = 0, gain = 0;
+  for (let i=1;i<pts.length;i++) {
+    dist += haversineKm(pts[i-1].lat, pts[i-1].lon, pts[i].lat, pts[i].lon);
+    const dEle = (pts[i].ele - pts[i-1].ele);
+    if (!isNaN(dEle) && dEle > 0) gain += dEle;
+  }
+  return { points: pts, distanceKm: dist, gainM: Math.round(gain) };
+}
+
+function GPXMap({ src, label, downloadName = "route.gpx" }) {
+  const [data, setData] = React.useState(null);
+  React.useEffect(() => {
+    let on = true;
+    if (src) loadGPX(src).then(d => { if(on) setData(d); }).catch(()=>setData(null));
+    return () => { on = false; };
+  }, [src]);
+  if (!src) return <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm bg-white">GPX non impostato.</div>;
+  if (!data) return <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm bg-white">Caricamento GPX…</div>;
+
+  // bounding box → fit in SVG
+  const lats = data.points.map(p=>p.lat), lons = data.points.map(p=>p.lon);
+  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  const minLon = Math.min(...lons), maxLon = Math.max(...lons);
+  const w = 640, h = 360;
+  const pad = 20;
+  const sx = (w - 2*pad) / (maxLon - minLon || 1);
+  const sy = (h - 2*pad) / (maxLat - minLat || 1);
+  const s = Math.min(sx, sy);
+  const path = data.points.map(p => {
+    const x = pad + (p.lon - minLon) * s;
+    const y = h - (pad + (p.lat - minLat) * s); // invert Y
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+
+  return (
+    <div className="rounded-2xl bg-white p-4 shadow ring-1 ring-black/10">
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto">
+        <rect x="0" y="0" width={w} height={h} fill="#fff" />
+        <polyline points={path} fill="none" stroke="#0b8f4d" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round"/>
+      </svg>
+      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+        <span className="rounded-lg bg-emerald-50 px-2 py-1 ring-1 ring-emerald-200">
+          Distanza stimata: <strong>{data.distanceKm.toFixed(1)} km</strong>
+        </span>
+        <span className="rounded-lg bg-slate-50 px-2 py-1 ring-1 ring-slate-200">
+          Dislivello+: <strong>{data.gainM} m</strong> (dati GPX)
+        </span>
+        <a href={src} download={downloadName} className="ml-auto rounded-lg px-3 py-1.5 ring-1 ring-black/10 bg-white hover:bg-slate-50">
+          Scarica GPX
+        </a>
+      </div>
+      {label && <p className="mt-2 text-xs text-slate-600">{label}</p>}
+    </div>
+  );
+}
+
+
 /** ---------- Pages ---------- **/
 function PageHome({ navigate, derived, remoteStats }) {
+  const [recentPaid, setRecentPaid] = React.useState([]);
+    React.useEffect(() => {
+      const load = () => fetchRecentDonationsJSONP(6).then(setRecentPaid).catch(()=>{});
+      load();
+      const id = setInterval(load, 30000);
+      return () => clearInterval(id);
+    }, []);
+
   return (<>
     <Hero navigate={navigate} />
     <section className="-mt-10 relative z-10">
@@ -696,6 +843,23 @@ function PageHome({ navigate, derived, remoteStats }) {
           </div>
         )}
       </div>
+      <section className="py-10 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Donazioni LIVE</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {recentPaid.map((p) => (
+              <div key={p.id} className="rounded-2xl border border-slate-200 p-4 bg-white shadow-sm">
+                <p className="text-sm text-slate-600">{new Date(p.paidAt || p.createdAt).toLocaleString('it-IT')}</p>
+                <p className="font-semibold mt-1">{p.name || "Anonimo"}</p>
+                <p className="text-sm">{p.teamName ? `Squadra: ${p.teamName}` : "—"}</p>
+                <p className="mt-2 text-emerald-700 font-bold">{formatCurrency(p.amount, EVENT_CONFIG.currency)}</p>
+              </div>
+            ))}
+            {recentPaid.length === 0 && <p className="text-sm text-slate-600">Nessuna donazione recente.</p>}
+          </div>
+        </div>
+      </section>
+
       <FAQSection navigate={navigate} />
     </section>
   </>);
@@ -727,7 +891,35 @@ function PageBike({ addRegistration, navigate }) {
               </button>
             ))}
           </div>
-          <MapPlaceholder label={`bici — ${distance} km`} />
+          <GPXMap
+            src={EVENT_CONFIG.routes.bike[distance]?.gpx}
+            label={distance === "112"
+              ? "Il tracciato 112 km ricalca forma e larghezza della Striscia di Gaza."
+              : "Percorso 20 km cittadino, ritmo sociale."}
+            downloadName={distance === "112" ? "bike-112.gpx" : "bike-20.gpx"}
+          />
+          <div className="mt-3 text-sm">
+            {EVENT_CONFIG.routes.bike[distance]?.stravaRouteId && (
+              <iframe
+                title="Strava route"
+                height="405"
+                width="100%"
+                frameBorder="0"
+                allowTransparency
+                scrolling="no"
+                src={`https://www.strava.com/routes/${EVENT_CONFIG.routes.bike[distance].stravaRouteId}/embed`}
+              />
+            )}
+            {EVENT_CONFIG.routes.bike[distance]?.stravaSegmentUrl && (
+              <p className="mt-2">
+                Segmento Strava:{" "}
+                <a className="underline" href={EVENT_CONFIG.routes.bike[distance].stravaSegmentUrl} target="_blank" rel="noreferrer">
+                  apri su Strava
+                </a>
+              </p>
+            )}
+          </div>
+
           <p className="mt-2 text-xs text-slate-600">
             112 km: ricalca forma e larghezza della Striscia di Gaza. 20 km: cittadino, ritmo sociale.
           </p>
@@ -761,6 +953,14 @@ function PageBike({ addRegistration, navigate }) {
 function PageSoccer({ addRegistration, navigate }) {
   const [members, setMembers] = useState(6);
   const submit = (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); const count = Number(fd.get('count')||members||5); const players = Array.from({ length: count }, (_,i) => fd.get(`player_${i+1}`)).filter(Boolean); const rec = Object.fromEntries(fd.entries()); delete rec.count; const saved = addRegistration('soccer', { ...rec, players, count }); postSheet('reg_soccer', saved); alert('Squadra calcio registrata. Potete donare quando volete.'); navigate(''); };
+  const [topTeams, setTopTeams] = React.useState([]);
+    React.useEffect(() => {
+      const load = () => fetchTopTeamsJSONP('soccer', 5).then(setTopTeams).catch(()=>{});
+      load(); const id = setInterval(load, 60000); return () => clearInterval(id);
+    }, []);
+  const teamsNow = (remoteStats?.totals?.teamsSoccer) ?? 0; // se hai remoteStats via props, altrimenti calcola da Sheet/DB
+  const soccerFull = teamsNow >= (EVENT_CONFIG.limits?.soccerTeamsMax || Infinity);
+
   return (<>
     <GradientHeader
       title="Torneo di calcio — 5 vs 5"
@@ -771,6 +971,7 @@ function PageSoccer({ addRegistration, navigate }) {
       <div className="max-w-3xl mx-auto px-4">
         <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
           <h2 className="text-lg font-semibold">Iscrizione — Calcio (squadra)</h2>
+          {soccerFull && <p className="mt-2 text-sm text-red-600"><strong>Limite squadre raggiunto</strong>. Tieni d’occhio questa pagina per eventuali riaperture.</p>}
           <p className="mt-2 text-sm">
             <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 €/persona).{" "}
             <span className="text-red-600">Il pranzo non è incluso.</span>
@@ -783,7 +984,18 @@ function PageSoccer({ addRegistration, navigate }) {
             <div className="space-y-2">{[...Array(Math.min(12, Math.max(5, members)))].map((_, i) => (<div key={i}><label className="block text-xs font-medium">Giocatore {i + 1}</label><input name={`player_${i + 1}`} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>))}</div>
             <label className="inline-flex items-center gap-2 text-sm"><input type="checkbox" name="fairplay" required /><span>Accetto regolamento fair play.</span></label>
             <div className="flex gap-3"><button className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Invia iscrizione squadra</button><a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="rounded-xl px-4 py-2 font-semibold bg-white ring-1 ring-black/10 hover:bg-slate-50">Fai una donazione</a></div>
+            <button disabled={soccerFull} className="rounded-xl px-4 py-2 font-semibold text-white disabled:opacity-50" style={{ backgroundColor: THEME.primary }}>
+              {soccerFull ? "Iscrizioni chiuse (pieno)" : "Invia iscrizione squadra"}
+            </button>
           </form>
+          <div className="mt-6 rounded-2xl border border-slate-200 p-5 bg-white shadow-sm">
+            <h3 className="font-semibold">Top squadre per donazioni</h3>
+            <ol className="mt-2 text-sm list-decimal pl-5 space-y-1">
+              {topTeams.map((t, i) => (
+                <li key={i}><span className="font-medium">{t.teamName || "—"}</span> — {formatCurrency(t.total, EVENT_CONFIG.currency)}</li>
+              ))}
+            </ol>
+          </div>
         </div>
         <div className="mt-6"><a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}} className="text-sm font-semibold" style={{ color: THEME.primary }}>← Torna alla home</a></div>
       </div>
@@ -791,46 +1003,214 @@ function PageSoccer({ addRegistration, navigate }) {
   </>);
 }
 
-function PageRun({ addRegistration, navigate }) {
+function PageRun({ addRegistration, navigate, remoteStats }) {
   const [members, setMembers] = useState(4);
-  const submit = (e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); const count = Number(fd.get('count')||members||3); const runners = Array.from({ length: count }, (_,i) => fd.get(`runner_${i+1}`)).filter(Boolean); const rec = Object.fromEntries(fd.entries()); delete rec.count; const saved = addRegistration('run', { ...rec, runners, count }); postSheet('reg_run', saved); alert('Squadra corsa registrata. Potete donare quando volete.'); navigate(''); };
-  return (<>
-    <GradientHeader
-      title="Corsa a squadre — Manifestazione"
-      subtitle="Silenziosa e pacifica, partenza dal Duomo"
-      chips={[`Data: ${EVENT_CONFIG.date}`, "Partenza: Duomo di Milano", "Arrivo: Centro sportivo", "Donazione consigliata: 20 €"]}
-    />
-    <section className="py-6">
-      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div className="lg:col-span-2"><h2 className="text-xl font-semibold mb-2">Mappa</h2><MapPlaceholder label="corsa" /></div>
-        <aside className="lg:col-span-1 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10"><h3 className="font-semibold">Iscrizione</h3><ul className="mt-2 text-sm list-disc pl-5 space-y-1"><li>Iscrizione <strong>indipendente dalla donazione</strong>.</li><li>Donazione consigliata: <strong>≥ 20 €</strong> a persona.</li></ul><div className="mt-3 flex gap-2"><a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Vai a donazioni</a></div></aside>
-      </div>
-    </section>
-    <section className="py-8">
-      <div className="max-w-3xl mx-auto px-4">
-        <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
-          <h2 className="text-lg font-semibold">Iscrizione — Corsa (squadra)</h2>
-          <p className="mt-2 text-sm">
-            <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 €/persona).{" "}
-            <span className="text-red-600">Il pranzo non è incluso.</span>
-          </p>
-          <form onSubmit={submit} className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-1"><label className="block text-sm font-medium">Nome squadra</label><input name="teamName" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-            <div className="md:col-span-1"><label className="block text-sm font-medium">Instagram squadra (opz.)</label><input name="instagram" placeholder="https://instagram.com/tuasquadra" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-            <div><label className="block text-sm font-medium">Referente</label><input name="captain" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-            <div><label className="block text-sm font-medium">Email referente</label><input type="email" name="email" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-            <div><label className="block text-sm font-medium">Telefono</label><input type="tel" name="phone" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-            <div><label className="block text-sm font-medium">N. componenti</label><input type="number" name="count" min={3} max={10} value={members} onChange={(e) => setMembers(Number(e.target.value))} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>
-            <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">{[...Array(Math.min(10, Math.max(3, members)))].map((_, i) => (<div key={i}><label className="block text-xs font-medium">Runner {i + 1}</label><input name={`runner_${i + 1}`} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div>))}</div>
-            <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label className="block text-sm font-medium">Rif. donazione (opz.)</label><input name="donationRef" placeholder="email o ID ricevuta" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" /></div><div className="self-end text-sm"><label className="inline-flex items-center gap-2"><input type="checkbox" name="waiver" required /><span>Dichiaro idoneità fisica dei partecipanti.</span></label></div></div>
-            <div className="md:col-span-2 flex flex-col sm:flex-row gap-3"><button className="flex-1 rounded-xl px-4 py-2 font-semibold text-white" style={{ backgroundColor: THEME.primary }}>Invia iscrizione squadra</button><a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="flex-1 text-center rounded-xl bg-white px-4 py-2 font-semibold ring-1 ring-black/10 hover:bg-slate-50">Fai una donazione</a></div>
-          </form>
+
+  // Limite squadre (da Google Sheet)
+  const teamsNow = remoteStats?.totals?.teamsRun ?? 0;
+  const runFull = teamsNow >= (EVENT_CONFIG.limits?.runTeamsMax || Infinity);
+
+  // Top squadre per donazioni (richiede fetchTopTeamsJSONP già definita)
+  const [topTeams, setTopTeams] = React.useState([]);
+  React.useEffect(() => {
+    const load = () => fetchTopTeamsJSONP?.('run', 5).then(setTopTeams).catch(()=>{});
+    load(); const id = setInterval(load, 60000); return () => clearInterval(id);
+  }, []);
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (runFull) return;
+    const fd = new FormData(e.currentTarget);
+    const count = Number(fd.get('count') || members || 3);
+    const runners = Array.from({ length: count }, (_, i) => fd.get(`runner_${i + 1}`)).filter(Boolean);
+    const rec = Object.fromEntries(fd.entries());
+    delete rec.count;
+    const saved = addRegistration('run', { ...rec, runners, count });
+    postSheet('reg_run', saved);
+    alert('Squadra corsa registrata. Grazie! (Ricorda: donazione propedeutica all’iscrizione)');
+    navigate('');
+  };
+
+  return (
+    <>
+      <GradientHeader
+        title="Corsa a squadre — Manifestazione"
+        subtitle="Silenziosa e pacifica, partenza dal Duomo"
+        chips={[`Data: ${EVENT_CONFIG.date}`, "Partenza: Duomo di Milano", "Arrivo: Centro sportivo", "Donazione consigliata: 20 €"]}
+      />
+
+      <section className="py-6">
+        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div className="lg:col-span-2">
+            <h2 className="text-xl font-semibold mb-2">Mappa</h2>
+
+            <GPXMap
+              src={EVENT_CONFIG.routes.run.gpx}
+              label="Manifestazione silenziosa e pacifica, partenza dal Duomo."
+              downloadName="run.gpx"
+            />
+
+            <div className="mt-3 text-sm">
+              {EVENT_CONFIG.routes.run.stravaRouteId && (
+                <iframe
+                  title="Strava route"
+                  height="405"
+                  width="100%"
+                  frameBorder="0"
+                  allowTransparency
+                  scrolling="no"
+                  src={`https://www.strava.com/routes/${EVENT_CONFIG.routes.run.stravaRouteId}/embed`}
+                />
+              )}
+              {EVENT_CONFIG.routes.run.stravaSegmentUrl && (
+                <p className="mt-2">
+                  Segmento Strava:{" "}
+                  <a className="underline" href={EVENT_CONFIG.routes.run.stravaSegmentUrl} target="_blank" rel="noreferrer">
+                    apri su Strava
+                  </a>
+                </p>
+              )}
+            </div>
+          </div>
+
+          <aside className="lg:col-span-1 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+            <h3 className="font-semibold">Iscrizione</h3>
+            <ul className="mt-2 text-sm list-disc pl-5 space-y-1">
+              <li><strong>Donazione propedeutica all’iscrizione</strong> (min. 20 € a persona).</li>
+              <li className="text-red-600"><strong>Il pranzo NON è incluso</strong>.</li>
+            </ul>
+            <div className="mt-3 flex gap-2">
+              <a
+                href="#/donate"
+                onClick={(e) => { e.preventDefault(); navigate('donate'); }}
+                className="rounded-xl px-4 py-2 font-semibold text-white"
+                style={{ backgroundColor: THEME.primary }}
+              >
+                Vai a donazioni
+              </a>
+            </div>
+          </aside>
         </div>
-        <div className="mt-6"><a href="#/" onClick={(e)=>{e.preventDefault(); navigate('');}} className="text-sm font-semibold" style={{ color: THEME.primary }}>← Torna alla home</a></div>
-      </div>
-    </section>
-  </>);
+      </section>
+
+      <section className="py-8">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+            <h2 className="text-lg font-semibold">Iscrizione — Corsa (squadra)</h2>
+            {runFull && (
+              <p className="mt-2 text-sm text-red-600">
+                <strong>Limite squadre raggiunto</strong>. Tieni d’occhio questa pagina per eventuali riaperture.
+              </p>
+            )}
+            <p className="mt-2 text-sm">
+              <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 €/persona).{" "}
+              <span className="text-red-600">Il pranzo non è incluso.</span>
+            </p>
+
+            <form onSubmit={submit} className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-1">
+                <label className="block text-sm font-medium">Nome squadra</label>
+                <input name="teamName" required disabled={runFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+              </div>
+              <div className="md:col-span-1">
+                <label className="block text-sm font-medium">Instagram squadra (opz.)</label>
+                <input name="instagram" placeholder="https://instagram.com/tuasquadra" disabled={runFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Referente</label>
+                <input name="captain" required disabled={runFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Email referente</label>
+                <input type="email" name="email" required disabled={runFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Telefono</label>
+                <input type="tel" name="phone" disabled={runFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">N. componenti</label>
+                <input
+                  type="number"
+                  name="count"
+                  min={3}
+                  max={10}
+                  value={members}
+                  onChange={(e) => setMembers(Number(e.target.value))}
+                  disabled={runFull}
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
+                />
+              </div>
+
+              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[...Array(Math.min(10, Math.max(3, members)))].map((_, i) => (
+                  <div key={i}>
+                    <label className="block text-xs font-medium">Runner {i + 1}</label>
+                    <input name={`runner_${i + 1}`} disabled={runFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+                  </div>
+                ))}
+              </div>
+
+              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium">Rif. donazione (opz.)</label>
+                  <input name="donationRef" placeholder="email o ID ricevuta" disabled={runFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+                </div>
+                <div className="self-end text-sm">
+                  <label className="inline-flex items-center gap-2">
+                    <input type="checkbox" name="waiver" required disabled={runFull} />
+                    <span>Dichiaro idoneità fisica dei partecipanti.</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
+                <button
+                  disabled={runFull}
+                  className="flex-1 rounded-xl px-4 py-2 font-semibold text-white disabled:opacity-50"
+                  style={{ backgroundColor: THEME.primary }}
+                >
+                  {runFull ? "Iscrizioni chiuse (pieno)" : "Invia iscrizione squadra"}
+                </button>
+                <a
+                  href="#/donate"
+                  onClick={(e) => { e.preventDefault(); navigate('donate'); }}
+                  className="flex-1 text-center rounded-xl bg-white px-4 py-2 font-semibold ring-1 ring-black/10 hover:bg-slate-50"
+                >
+                  Fai una donazione
+                </a>
+              </div>
+            </form>
+          </div>
+
+          {/* Top squadre per donazioni */}
+          <div className="mt-6 rounded-2xl border border-slate-200 p-5 bg-white shadow-sm">
+            <h3 className="font-semibold">Top squadre per donazioni</h3>
+            {topTeams.length === 0 ? (
+              <p className="mt-2 text-sm text-slate-600">Ancora nessuna squadra in classifica.</p>
+            ) : (
+              <ol className="mt-2 text-sm list-decimal pl-5 space-y-1">
+                {topTeams.map((t, i) => (
+                  <li key={i}>
+                    <span className="font-medium">{t.teamName || "—"}</span> — {formatCurrency(t.total, EVENT_CONFIG.currency)}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <a href="#/" onClick={(e) => { e.preventDefault(); navigate(''); }} className="text-sm font-semibold" style={{ color: THEME.primary }}>
+            ← Torna alla home
+          </a>
+        </div>
+      </section>
+    </>
+  );
 }
+
+
 function FAQSection({ navigate }) {
   const B = EVENT_CONFIG.beneficiary;
   return (
