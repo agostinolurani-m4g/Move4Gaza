@@ -1,49 +1,58 @@
 import React from 'react';
 import { EVENT_CONFIG, THEME } from '../config.js';
 
+// Home "hero": immagine centrale M4G-mix e CTA rossi
 const Hero = ({ navigate }) => {
-  const poster = EVENT_CONFIG.logoUrl_mix || (import.meta.env.BASE_URL + 'M4G-rosso.jpg');
+  const mix = EVENT_CONFIG.logoUrl_mix || (import.meta.env.BASE_URL + 'M4G-mix.svg');
+
   return (
-    <header className="relative isolate overflow-hidden">
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          backgroundImage: `url(${poster})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-      <div className="absolute inset-0 -z-10 bg-black/35" />
-      <div className="max-w-6xl mx-auto px-4 py-16 sm:py-24 text-white">
-        <div className="flex flex-col gap-4 sm:gap-6">
-          <div className="inline-flex items-center gap-2 self-start rounded-full bg-white/80 px-3 py-1 text-sm shadow-sm ring-1 ring-black/5 text-slate-900">
-            <span>Evento solidale</span>
-          </div>
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight">
-            {EVENT_CONFIG.title}
-          </h1>
-          <p className="text-lg sm:text-xl max-w-3xl text-white">
-            {EVENT_CONFIG.tagline}
+    <header className="relative isolate">
+      <div className="max-w-6xl mx-auto px-4 pt-20 pb-14 text-center">
+        {/* LOGO CENTRALE M4G-mix */}
+        <img
+          src={mix}
+          alt={`${EVENT_CONFIG.title} mix`}
+          className="mx-auto w-full max-w-4xl h-auto"
+        />
+
+        {/* Luogo + data */}
+        <div className="mt-10">
+          <p className="text-lg sm:text-xl font-semibold tracking-wide text-black">
+            {EVENT_CONFIG.location}
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center text-sm">
-            <div className="px-3 py-2 rounded-xl bg-white/90 text-slate-900 shadow ring-1 ring-black/10">
-              <strong>Quando:</strong> {EVENT_CONFIG.date}
-            </div>
-            <div className="px-3 py-2 rounded-xl bg-white/90 text-slate-900 shadow ring-1 ring-black/10">
-              <strong>Dove:</strong> {EVENT_CONFIG.location}
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-3 pt-2">
-            <a href="#/donate" onClick={(e)=>{e.preventDefault();navigate('donate');}}
-               className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold text-white shadow focus:outline-none focus:ring-2"
-               style={{ backgroundColor: THEME.primary }}>
-              Dona ora
-            </a>
-            <a href="#/beneficiary" onClick={(e)=>{e.preventDefault();navigate('beneficiary');}}
-               className="inline-flex items-center justify-center rounded-2xl px-5 py-3 text-base font-semibold bg-white text-slate-900 shadow ring-1 ring-black/5 hover:bg-slate-50">
-              Beneficiario
-            </a>
-          </div>
+          <p className="text-base sm:text-lg font-bold tracking-wide text-black/90">
+            {EVENT_CONFIG.date}
+          </p>
+        </div>
+
+        {/* CTA rossi a pillola */}
+        <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-20">
+          <a
+            href="#/bike"
+            onClick={(e) => { e.preventDefault(); navigate('bike'); }}
+            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-white shadow"
+            style={{ backgroundColor: THEME.accentRed }}
+          >
+            Iscriviti bici
+          </a>
+
+          <a
+            href="#/soccer"
+            onClick={(e) => { e.preventDefault(); navigate('soccer'); }}
+            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-white shadow"
+            style={{ backgroundColor: THEME.accentRed }}
+          >
+            Iscriviti calcio
+          </a>
+
+          <a
+            href="#/run"
+            onClick={(e) => { e.preventDefault(); navigate('run'); }}
+            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-white shadow"
+            style={{ backgroundColor: THEME.accentRed }}
+          >
+            Iscriviti corsa
+          </a>
         </div>
       </div>
     </header>

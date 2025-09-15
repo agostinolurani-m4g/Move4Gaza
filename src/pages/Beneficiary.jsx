@@ -54,7 +54,7 @@ const Beneficiary = () => {
           </div>
 
           {/* Info boxes */}
-          <div className="grid md:grid-cols-3 gap-4 mb-10">
+          <div className="grid md:grid-cols-2 gap-4 mb-10">
             <div className="rounded-2xl border border-slate-200 p-5">
               <h3 className="font-semibold">Chi sono</h3>
               <p className="text-sm text-slate-700 mt-1">
@@ -92,39 +92,10 @@ const Beneficiary = () => {
                 Beni essenziali, distribuzioni locali, inclusione e sport. Report, campagne e shop sul loro sito.
               </p>
             </div>
-          </div>
-
-          {/* Initiative cards */}
-          <div className="grid md:grid-cols-3 gap-4">
             <BeneficiaryCard
               title="Aid & Programmi"
               href={L.aidUrl}
               desc="Distribuzioni locali, reti di volontari, aggiornamenti."
-            />
-            <BeneficiaryCard
-              title="Athletes for Palestine"
-              href={L.a4pUrl}
-              desc="Campagna che coinvolge la comunità sportiva globale."
-            />
-            <BeneficiaryCard
-              title="Great Ride of Return"
-              href={L.greatRideUrl}
-              desc="Pedalate solidali e raccolte fondi nel mondo."
-            />
-            <BeneficiaryCard
-              title="Pizza Party"
-              href={L.pizzaPartyUrl}
-              desc="Pasti caldi per le famiglie, momenti di sollievo."
-            />
-            <BeneficiaryCard
-              title="Shop"
-              href={L.shopUrl}
-              desc="Merch ufficiale per sostenere i Sunbirds."
-            />
-            <BeneficiaryCard
-              title="Contatti"
-              href={L.contactUrl}
-              desc="Scrivi al team per partnership e iniziative."
             />
           </div>
 

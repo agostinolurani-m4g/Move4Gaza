@@ -24,8 +24,8 @@ const Home = ({ navigate, derived, remoteStats }) => {
     <>
       <Hero navigate={navigate} />
       {/* Stats section overlapping the hero */}
-      <section className="-mt-10 relative z-10">
-        <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <section className="-mt+10 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             {
               label: 'Soldi raccolti',
@@ -64,7 +64,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
       </section>
 
       {/* Cause and participation instructions */}
-      <section className="py-12 bg-white">
+      <section className="mt-10 py-10 bg-green-700 text-white">
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">
@@ -74,7 +74,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
               {EVENT_CONFIG.cause.text}
             </p>
           </div>
-          <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+          <div className="rounded-2xl bg-red-500 p-6 shadow ring-1 ring-black/10 text-black">
             <h3 className="text-lg font-semibold">Come partecipare</h3>
             <ol className="mt-2 text-sm list-decimal pl-5 space-y-1">
               <li>
@@ -141,23 +141,23 @@ const Home = ({ navigate, derived, remoteStats }) => {
       <section className="py-12 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold mb-6">Attività</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
             <a
               href="#/bike"
               onClick={(e) => {
                 e.preventDefault();
                 navigate('bike');
               }}
-              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"
+              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
             >
-              <h3 className="text-xl font-semibold">Giro in bici</h3>
+              <h3 className="text-xl font-semibold text-white">Giro in bici</h3>
               <p className="mt-2 text-sm text-slate-700">
                 Tracciato che ricalca forma e larghezza della Striscia di Gaza. Ritmo
                 sociale, non competitivo.
               </p>
               <div
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold"
-                style={{ color: THEME.primary }}
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold "
+                style={{ color: THEME.ink }}
               >
                 Dettagli & iscrizione →
               </div>
@@ -168,7 +168,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
                 e.preventDefault();
                 navigate('soccer');
               }}
-              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"
+              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
             >
               <h3 className="text-xl font-semibold">Torneo di calcio</h3>
               <p className="mt-2 text-sm text-slate-700">
@@ -176,7 +176,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
               </p>
               <div
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold"
-                style={{ color: THEME.primary }}
+                style={{ color: THEME.ink }}
               >
                 Dettagli & iscrizione →
               </div>
@@ -187,15 +187,15 @@ const Home = ({ navigate, derived, remoteStats }) => {
                 e.preventDefault();
                 navigate('run');
               }}
-              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"
+              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
             >
-              <h3 className="text-xl font-semibold">Corsa a squadre</h3>
+              <h3 className="text-xl font-semibold text-white">Corsa a squadre</h3>
               <p className="mt-2 text-sm text-slate-700">
                 Manifestazione silenziosa e pacifica, partenza dal Duomo.
               </p>
               <div
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold"
-                style={{ color: THEME.primary }}
+                style={{ color: THEME.ink }}
               >
                 Dettagli & iscrizione →
               </div>
@@ -226,7 +226,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
         </div>
 
         {/* Live donations */}
-        <section className="py-10 bg-white">
+        <section className="mt-10 py-10 bg-red-700">
           <div className="max-w-6xl mx-auto px-4">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">Donazioni LIVE</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

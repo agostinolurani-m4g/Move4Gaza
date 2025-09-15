@@ -15,8 +15,9 @@ export const PAYPAL = {
 export const EVENT_CONFIG = {
   title: "Move for Gaza",
   tagline: "Pedala, gioca, corri — insieme per Gaza",
-  date: "25 ottobre 2025",
-  location: "Campo sportivo Olmi, Milano",
+  date: "18 ottobre 2025",
+  // Updated location reflecting the actual venue and address
+  location: "Arci Olmi, via degli Ulivi 2, Milano",
   currency: "EUR",
   bike: {
     distances: [
@@ -38,22 +39,24 @@ export const EVENT_CONFIG = {
         stravaSegmentUrl: "",
       },
       "20":  {
-        gpx: import.meta.env.BASE_URL + "routes/rideforgaza112.gpx",
+        gpx: import.meta.env.BASE_URL + "routes/amgaz_bici_short.gpx",
         stravaRouteId: "",
         stravaSegmentUrl: "",
       },
     },
     run: {
-      gpx: import.meta.env.BASE_URL + "routes/rideforgaza112.gpx",
+      gpx: import.meta.env.BASE_URL + "routes/amgaz_corsa.gpx",
       stravaRouteId: "",
       stravaSegmentUrl: "",
     },
   },
   payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
   forms: { bike: "", soccer: "", run: "" },
-  logoUrl: import.meta.env.BASE_URL + "/locandina.jpeg",
+  // Use the updated locandina PNG as default poster
+  logoUrl: import.meta.env.BASE_URL + "/locandina.png",
   logoUrl_rosso: import.meta.env.BASE_URL + "/M4G-rosso.svg",
   logoUrl_verde: import.meta.env.BASE_URL + "/M4G-verde.svg",
+  // Default poster fallback uses the same locandina PNG
   logoUrl_mix: import.meta.env.BASE_URL + "/M4G-mix.svg",
   contactEmail: "",
   whatsapp: "",
@@ -90,13 +93,14 @@ export const SHEETS_CONFIG = {
 // Theme tokens used throughout the app. Colours mirror the existing palette
 // defined in the original monolithic file for continuity.
 export const THEME = {
-  gradientFrom: "#1fb67a",
-  gradientVia:   "#12a66a",
-  gradientTo:    "#0a7f4b",
-  primary:       "#0b8f4d",
-  primaryHover:  "#087542",
-  accentRed: "#CE1126",
-  ink: "rgba(0, 0, 0, 1)",
+  // Updated palette reflecting the Palestinian flag: red, white, green and black
+  gradientFrom: "#CE1126",
+  gradientVia:   "#FFFFFF",
+  gradientTo:    "#007A3D",
+  primary:       "#007A3D",
+  primaryHover:  "#006A35",
+  accentRed:     "#CE1126",
+  ink:           "#000000",
 };
 
 // Compute a subtle background pattern inspired by Palestinian motifs. This is
@@ -119,7 +123,7 @@ export const PALESTINE_PATTERN = (() => {
       <use href='#star' x='60'  y='0'/>
       <use href='#star' x='0'   y='60'/>
       <use href='#star' x='60'  y='60'/>
-      <path d='M-20 120 L60 40 L140 120' fill='none' stroke='#CE1126' stroke-width='2' opacity='0.05'/>
+      <path d='M-20 120 L60 40 L140 120' fill='none' stroke='${THEME.accentRed}' stroke-width='2' opacity='0.05'/>
       <path d='M-20 0   L60 80 L140 0'   fill='none' stroke='${THEME.primary}' stroke-width='2' opacity='0.05'/>
     </svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;

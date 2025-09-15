@@ -25,8 +25,10 @@ const Bike = ({ addRegistration, navigate }) => {
   return (
     <>
       <GradientHeader
-        title="Giro in bici"
-        subtitle="Tracciato in scala reale che ricalca forma e larghezza della Striscia di Gaza"
+        title="Ride 4 Gaza"
+        subtitle="Tracciato in scala reale che ricalca forma e lunghezza della Striscia di Gaza, con lo scopo 
+        di sensibilizzare le persone sulla situazione umanitaria e politica della regione, rendendo 
+        tangibile le reali dimensioni di Gaza."
         chips={[
           `Data: ${EVENT_CONFIG.date}`,
           `Luogo: ${EVENT_CONFIG.location}`,
