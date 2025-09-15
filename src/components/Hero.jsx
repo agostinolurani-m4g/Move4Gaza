@@ -2,7 +2,7 @@ import React from 'react';
 import { EVENT_CONFIG, THEME } from '../config.js';
 
 const Hero = ({ navigate }) => {
-  const poster = EVENT_CONFIG.logoUrl || (import.meta.env.BASE_URL + 'locandina.jpg');
+  const poster = EVENT_CONFIG.logoUrl_mix || (import.meta.env.BASE_URL + 'M4G-rosso.jpg');
   return (
     <header className="relative isolate overflow-hidden">
       <div

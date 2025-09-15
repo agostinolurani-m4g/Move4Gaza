@@ -51,7 +51,10 @@ export const EVENT_CONFIG = {
   },
   payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
   forms: { bike: "", soccer: "", run: "" },
-  logoUrl: import.meta.env.BASE_URL + "/locandina_2.jpeg",
+  logoUrl: import.meta.env.BASE_URL + "/locandina.jpeg",
+  logoUrl_rosso: import.meta.env.BASE_URL + "/M4G-rosso.svg",
+  logoUrl_verde: import.meta.env.BASE_URL + "/M4G-verde.svg",
+  logoUrl_mix: import.meta.env.BASE_URL + "/M4G-mix.svg",
   contactEmail: "",
   whatsapp: "",
   cause: {
@@ -93,7 +96,7 @@ export const THEME = {
   primary:       "#0b8f4d",
   primaryHover:  "#087542",
   accentRed: "#CE1126",
-  ink: "rgba(254, 254, 254, 1)",
+  ink: "rgba(0, 0, 0, 1)",
 };
 
 // Compute a subtle background pattern inspired by Palestinian motifs. This is

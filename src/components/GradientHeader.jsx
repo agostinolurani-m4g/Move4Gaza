@@ -2,7 +2,7 @@ import React from 'react';
 import { THEME, EVENT_CONFIG } from '../config.js';
 
 const GradientHeader = ({ title, subtitle, chips = [] }) => {
-  const poster = EVENT_CONFIG.logoUrl || (import.meta.env.BASE_URL + 'locandina.jpg');
+  const poster = EVENT_CONFIG.logoUrl_mix || (import.meta.env.BASE_URL + 'M4G_rosso.jpg');
   return (
     <section className="relative isolate overflow-hidden">
       <div className="absolute inset-0 -z-10" style={{
