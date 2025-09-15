@@ -48,8 +48,8 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
   return (
     <>
       <GradientHeader
-        title="Corsa a squadre — Manifestazione"
-        subtitle="Silenziosa e pacifica, partenza dal Duomo"
+        title="Run 4 Gaza"
+        subtitle="Silenziosa e pacifica"
         chips={[
           `Data: ${EVENT_CONFIG.date}`,
           'Partenza: Duomo di Milano',

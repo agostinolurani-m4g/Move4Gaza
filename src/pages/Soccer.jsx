@@ -49,7 +49,7 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
   return (
     <>
       <GradientHeader
-        title="Torneo di calcio — 5 vs 5"
+        title="Play 4 Gaza"
         subtitle="Inclusivo, aperto a tuttə, non competitivo"
         chips={[
           `Data: ${EVENT_CONFIG.date}`,
