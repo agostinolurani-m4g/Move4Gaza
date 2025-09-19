@@ -67,14 +67,14 @@ const Home = ({ navigate, derived, remoteStats }) => {
       <section className="mt-10 py-10 bg-green-700 text-white">
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-black">
               {EVENT_CONFIG.cause.heading}
             </h2>
-            <p className="text-base sm:text-lg leading-relaxed">
+            <p className="text-base sm:text-lg leading-relaxed text-black">
               {EVENT_CONFIG.cause.text}
             </p>
           </div>
-          <div className="rounded-2xl bg-red-500 p-6 shadow ring-1 ring-black/10 text-black">
+          <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10 text-black">
             <h3 className="text-lg font-semibold">Come partecipare</h3>
             <ol className="mt-2 text-sm list-decimal pl-5 space-y-1">
               <li>
@@ -150,8 +150,8 @@ const Home = ({ navigate, derived, remoteStats }) => {
               }}
               className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
             >
-              <h3 className="text-xl font-semibold text-white">Giro in bici</h3>
-              <p className="mt-2 text-sm text-slate-700">
+              <h3 className="text-xl font-semibold text-black">Giro in bici</h3>
+              <p className="mt-2 text-sm text-black">
                 Tracciato che ricalca forma e larghezza della Striscia di Gaza. Ritmo
                 sociale, non competitivo.
               </p>
@@ -170,8 +170,8 @@ const Home = ({ navigate, derived, remoteStats }) => {
               }}
               className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
             >
-              <h3 className="text-xl font-semibold">Torneo di calcio</h3>
-              <p className="mt-2 text-sm text-slate-700">
+              <h3 className="text-xl font-semibold text-black">Torneo di calcio</h3>
+              <p className="mt-2 text-sm text-black">
                 5 vs 5 per l'inclusione. 4 partite da 15'. Aperto a tuttə.
               </p>
               <div
@@ -189,8 +189,8 @@ const Home = ({ navigate, derived, remoteStats }) => {
               }}
               className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
             >
-              <h3 className="text-xl font-semibold text-white">Corsa a squadre</h3>
-              <p className="mt-2 text-sm text-slate-700">
+              <h3 className="text-xl font-semibold text-black">Corsa a squadre</h3>
+              <p className="mt-2 text-sm text-black">
                 Manifestazione silenziosa e pacifica, partenza dal Duomo.
               </p>
               <div
@@ -203,9 +203,9 @@ const Home = ({ navigate, derived, remoteStats }) => {
           </div>
 
           {EVENT_CONFIG.beneficiary && (
-            <div className="mt-8 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+            <div className="mt-8 rounded-2xl bg-green-700 p-6 shadow ring-1 ring-black/10">
               <h3 className="text-lg font-semibold">Beneficiario</h3>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="mt-1 text-sm text-black">
                 {EVENT_CONFIG.beneficiary.blurb}
               </p>
               <p className="mt-2 text-sm">
@@ -248,7 +248,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
                 </div>
               ))}
               {recentPaid.length === 0 && (
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-black">
                   Nessuna donazione recente.
                 </p>
               )}
