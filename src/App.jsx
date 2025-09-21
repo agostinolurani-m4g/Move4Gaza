@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDB } from './hooks/useDB.js';
 import { useRoute } from './hooks/useRoute.js';
 import { PALESTINE_PATTERN } from './config.js';
-
+import { fetchSheetStatsJSONP } from './services.js';
+import 'leaflet/dist/leaflet.css';
 import Nav from './components/Nav.jsx';
 import Footer from './components/Footer.jsx';
 
@@ -18,6 +19,13 @@ import Registration from './pages/Registration.jsx';
 export default function App() {
   const { addPledge, markPledgePaid, addRegistration, derived } = useDB();
   const [route, navigate] = useRoute();
+  const [remoteStats, setRemoteStats] = useState(null);
+
+  useEffect(() => {
+    fetchSheetStatsJSONP().then((stats) => {
+      setRemoteStats(stats);
+    });
+  }, []);
 
   const page = route || 'home';
 
@@ -43,7 +51,7 @@ export default function App() {
       ) : page === 'run' ? (
         <Run addRegistration={addRegistration} navigate={navigate} />
       ) : (
-        <Home navigate={navigate} derived={derived} />
+        <Home navigate={navigate} derived={derived} remoteStats={remoteStats} />
       )}
 
       <Footer />

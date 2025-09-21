@@ -20,7 +20,27 @@ export async function postSheet(type, payload) {
     /* noop */
   }
 }
-
+export function fetchRegistrationsJSONP(kind = 'bike', limit = 50) {
+  return new Promise((resolve) => {
+    if (!SHEETS_CONFIG.url) return resolve([]);
+    const cb = 'cb_regs_' + Math.random().toString(36).slice(2);
+    window[cb] = (data) => {
+      resolve(data?.items || []);
+      try { delete window[cb]; } catch {}
+    };
+    const s = document.createElement('script');
+    const u = new URL(SHEETS_CONFIG.url);
+    u.searchParams.set('secret', SHEETS_CONFIG.secret);
+    u.searchParams.set('type', 'registrations');
+    u.searchParams.set('kind', kind);
+    u.searchParams.set('limit', String(limit));
+    u.searchParams.set('callback', cb);
+    u.searchParams.set('t', Date.now());
+    s.src = u.toString();
+    document.body.appendChild(s);
+    setTimeout(() => resolve([]), 8000);
+  });
+}
 // Fetch the most recent paid pledges using JSONP. The sheet script will
 // return an object with an items array that contains donations.
 export function fetchRecentDonationsJSONP(limit = 6) {

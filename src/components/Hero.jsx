@@ -4,6 +4,12 @@ import { EVENT_CONFIG, THEME } from '../config.js';
 // Home "hero": immagine centrale M4G-mix e CTA rossi
 const Hero = ({ navigate }) => {
   const mix = EVENT_CONFIG.logoUrl_mix || (import.meta.env.BASE_URL + 'M4G-mix.svg');
+  // Logo da mostrare sotto il location: scegli in modo resiliente tra più chiavi possibili
+  const locationLogo =
+    EVENT_CONFIG.arciOlmi ||
+    EVENT_CONFIG.logoUrl_brand ||
+    EVENT_CONFIG.logoUrl_secondary ||
+    EVENT_CONFIG.logoUrl; // fallback finale
 
   return (
     <header className="relative isolate">
@@ -13,14 +19,28 @@ const Hero = ({ navigate }) => {
           src={mix}
           alt={`${EVENT_CONFIG.title} mix`}
           className="mx-auto w-full max-w-4xl h-auto"
+          loading="lazy"
         />
 
-        {/* Luogo + data */}
+        {/* Luogo + (logo) + data */}
         <div className="mt-10">
           <p className="text-lg sm:text-xl font-semibold tracking-wide text-black">
             {EVENT_CONFIG.location}
           </p>
-          <p className="text-base sm:text-lg font-bold tracking-wide text-black/90">
+
+          {/* LOGO sotto il location (opzionale) */}
+          {locationLogo && (
+            <img
+              src={locationLogo}
+              alt={`${EVENT_CONFIG.title} logo`}
+              className="mx-auto mt-2 w-20 h-20 rounded-xl ring-1 ring-black/10 object-contain bg-white"
+              loading="lazy"
+              width={80}
+              height={80}
+            />
+          )}
+
+          <p className="text-base sm:text-lg font-bold tracking-wide text-black/90 mt-2">
             {EVENT_CONFIG.date}
           </p>
         </div>

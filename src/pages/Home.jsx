@@ -4,6 +4,17 @@ import { formatCurrency } from '../utils/formatCurrency.js';
 import { fetchRecentDonationsJSONP } from '../services.js';
 import Hero from '../components/Hero.jsx';
 import FAQSection from '../components/FAQSection.jsx';
+import { fetchRegistrationsJSONP } from '../services.js';
+
+fetchRegistrationsJSONP('reg_bike', 500).then((data) => {
+  console.log('Fetched bike registrations:', data);
+});
+fetchRegistrationsJSONP('reg_run', 500).then((data) => {
+  console.log('Fetched bike registrations:', data);
+});
+fetchRegistrationsJSONP('reg_soccer', 500).then((data) => {
+  console.log('Fetched bike registrations:', data);
+});
 
 // Home page showing the event overview, live stats, activities and FAQs.
 const Home = ({ navigate, derived, remoteStats }) => {
@@ -35,16 +46,16 @@ const Home = ({ navigate, derived, remoteStats }) => {
               ),
             },
             {
+              label: 'Iscritti bici',
+              value: remoteStats?.totals?.riders ?? derived.riders,
+            },
+            {
               label: 'Squadre calcio',
               value: remoteStats?.totals?.teamsSoccer ?? derived.teamsSoccer,
             },
             {
               label: 'Squadre corsa',
               value: remoteStats?.totals?.teamsRun ?? derived.teamsRun,
-            },
-            {
-              label: 'Iscritti bici',
-              value: remoteStats?.totals?.riders ?? derived.riders,
             },
           ].map((s, i) => (
             <div

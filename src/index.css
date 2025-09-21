@@ -11,4 +11,16 @@
   font-display:swap;
 }
 
+/* DEBUG Leaflet critical — rimuovi dopo aver verificato */
+.leaflet-container { position: relative; }
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-layer {
+  position: absolute;
+  left: 0; top: 0;
+}
+.leaflet-tile { user-select: none; -webkit-user-select: none; }
+
 html, body, #root { height: 100%; }

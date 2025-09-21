@@ -17,7 +17,7 @@ const GradientHeader = ({ title, subtitle, chips = [] }) => {
         <img
           src={mix}
           alt={`${EVENT_CONFIG.title} mix`}
-          className="mx-auto w-full max-w-4xl h-auto"
+          className="mx-auto w-full max-w-3xl h-auto"
         />
 
         {(title || subtitle) && (

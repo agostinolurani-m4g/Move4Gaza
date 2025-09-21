@@ -55,6 +55,13 @@ const FAQSection = ({ navigate }) => {
               <strong>Non include</strong> beni/servizi (es. <strong>pranzo non incluso</strong>).
             </p>
           </div>
+          <div className="rounded-2xl border bg-green-700 border-slate-200 p-5">
+            <h3 className="font-semibold text-black">Posso partecipare anche senza prendere parte agli eventi sportivi?</h3>
+            <p className="text-sm text-black mt-1">
+              Certo! L'evento è aperto a tuttə, si può venire sia la mattina e assistere agli eventi sportivi, sia il pomeriggio
+               per seguire gli incontri.
+            </p>
+          </div>
         </div>
       </div>
     </section>

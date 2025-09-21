@@ -3,6 +3,11 @@ import { EVENT_CONFIG, THEME } from '../config.js';
 import GradientHeader from '../components/GradientHeader.jsx';
 import GPXMap from '../components/GPXMap.jsx';
 import { postSheet } from '../services.js';
+import { fetchRegistrationsJSONP } from '../services.js';
+
+fetchRegistrationsJSONP('bike', 500).then((data) => {
+  console.log('Fetched bike registrations:', data);
+});
 
 // Registration form and route details for the bike event.
 const Bike = ({ addRegistration, navigate }) => {
@@ -187,19 +192,6 @@ const Bike = ({ addRegistration, navigate }) => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text sm font-medium">Livello</label>
-                  <select
-                    name="level"
-                    value={level}
-                    onChange={(e) => setLevel(e.target.value)}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
-                  >
-                    <option>Principiante</option>
-                    <option>Intermedio</option>
-                    <option>Esperto</option>
-                  </select>
-                </div>
-                <div>
                   <label className="block text-sm font-medium">Squadra (opz.)</label>
                   <input
                     name="teamName"
@@ -208,24 +200,7 @@ const Bike = ({ addRegistration, navigate }) => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium">Instagram squadra (opz.)</label>
-                  <input
-                    name="instagram"
-                    placeholder="https://instagram.com/tuasquadra"
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium">Rif. donazione (opz.)</label>
-                  <input
-                    name="donationRef"
-                    placeholder="email/ID ricevuta"
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
-                  />
-                </div>
-              </div>
+              
               <div className="flex gap-3">
                 <button
                   className="rounded-xl px-4 py-2 font-semibold text-white"

@@ -5,7 +5,7 @@
 
 // PayPal configuration: replace clientId with your own (live or sandbox).
 export const PAYPAL = {
-  clientId: "AQJGJ8rTlz29WFa-X433va3K41KM85VYRGr6NhOjkexoJNMfqcQROL5ycfTuZ87-v7zMmGlqOBLvre9f",
+  clientId: "AQI4LKSbF2Gn6BdWoU3UxeZdvxVfXbwNWmttvKAMr9tsCnDd4xQSL0Kkr0Ck2b086jtFzc392JXBsI4x",
   currency: "EUR",
 };
 
@@ -21,15 +21,42 @@ export const EVENT_CONFIG = {
   currency: "EUR",
   bike: {
     distances: [
-      { key: "112", label: "112 km — Gaza in scala reale" },
-      { key: "20",  label: "20 km — percorso cittadino" },
+      { key: "112", label: "112 km — Perimetro di Gaza in scala reale" },
+      { key: "20",  label: "25 km — percorso cittadino" },
     ],
   },
+  arciOlmi: "arci_olmi.jpeg",
   // Limiti iscrizioni
   limits: {
-    soccerTeamsMax: 24,
+    soccerTeamsMax: 12,
     runTeamsMax: 100,
   },
+  descrizione_evento_concreto: "L'evento si divide in due momenti principali, la mattina viene dedicata a manifestazioni sportive non competitive: " +
+  "torneo di calcio a 5 (squadre miste), corsa non competitiva (7 km) con possibilità di fare staffetta (7 + 7) aperta a tuttə e giro ciclistico" +
+  "a suddi Milano (115 km) presso il campo sportivo dell'Arci Olmi. \n Dopo un pranzo sociale (verso le 14:00) aperto anche a chi non partecipa agli" +
+  " eventi sportivi, il pomeriggio è dedicato a momenti di approfondimento e confronto con ospiti e testimonianze dirette dalla Palestina.",
+
+  descrizione_evento_perche: "La Move4Gaza è un evento sportivo non competitivo per raccogliere fondi a sostegno degli aiuti umanitari, " + 
+  "nasce dall'esigenza di fare qualcosa di concreto per la popolazione di Gaza, in questo momento drammatico, con l'obiettivo e la sperzanza" + 
+  "non solo di contribuire in maniera concreta, ma di dare la possibilità a tuttə le persone che in questo momento come noi vogliono cambiare le cose" + 
+  " di poterlo fare, ma soprattutto di poter costruire in futuro qualcosa di molto più grande ed importante. \n" +
+  "La sensazione di impotenza che proviamo non deve fermarci, possiamo fare molte cose, speriamo che oggi nasca una nuova consapevolezza di ciò che possiamo fare.",
+  
+  descrizione_calcio: "Il torneo di calcio non competitivo a 5 si svolge presso il campo sportivo dell'Arci Olmi a Milano. " +
+  "Le squadre sono miste e aperte a tuttə, ogni squadra gioca 3 partite da 20 minuti, tra una partita ci saranno momenti per mangiare o bere" +
+  " qualcosa. La donazione minima consigliata è di 100 € a squadra (20 € a persona), chi vuole può donare di più. \n" +
+  "Il torneo inizia alle 9:30 e finisce verso le 13:00, dopo il torneo c'è la possibilità di partecipare al pranzo sociale (non incluso nella donazione)." +
+  "Il quadro delle squadre verrà comunicato qualche giorno prima dell'evento, se avete necessità particolari (orari, composizione squadra ecc) scriveteci pure.",
+
+  descrizione_bici: "Il percorso lungo circa 115 km ricalca la lunghezza del perimetro della striscia di Gaza con partenza ed arrivo " +
+  "all'Arci Olmi di Milano dove si svolgerà l'evento. Il percorso si snoda su strade secondarie e piste ciclabili, con alcuni tratti " +
+  "sterrati. Il dislivello è di circa 300 m. Non è una gara, ma un evento sociale e solidale, si raccomanda di pedalare in sicurezza. " +
+  "Dopo Pavia segnaliamo scarsita di punti di ristoro da tenere in considerazione.", 
+
+  descrizione_corsa: "La corsa non competitiva di circa 7 km si svolge su un percorso cittadino che parte e arriva all'Arci Olmi di Milano. " +
+  "Il percorso è adatto a tuttə, con la possibilità di fare una staffetta in due persone. La donazione minima consigliata è di 20 € a persona, " +
+  "chi vuole può donare di più. \n La corsa inizia tra le 10:00 e le 11:00 (partenza alla francese) e finisce verso le 14:00, seguita dal pranzo sociale " +
+  "(non incluso nella donazione). Durante la corsa non sono previsti punti di ristoro e assistenza medica, il tracciato gps è scaricabile e il tracciato sarà segnato.",
   // Percorsi & file pubblici (metti i 3 .gpx in public/routes/)
   routes: {
     bike: {
@@ -94,12 +121,12 @@ export const SHEETS_CONFIG = {
 // defined in the original monolithic file for continuity.
 export const THEME = {
   // Updated palette reflecting the Palestinian flag: red, white, green and black
-  gradientFrom: "#CE1126",
+  gradientFrom: "#e62f37",
   gradientVia:   "#FFFFFF",
   gradientTo:    "#007A3D",
-  primary:       "#007A3D",
+  primary:       "#009739",
   primaryHover:  "#006A35",
-  accentRed:     "#CE1126",
+  accentRed:     "#e62f37",
   ink:           "#000000",
 };
 
