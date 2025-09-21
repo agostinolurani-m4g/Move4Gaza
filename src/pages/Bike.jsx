@@ -106,7 +106,7 @@ const Bike = ({ addRegistration, navigate }) => {
           </div>
 
           {/* Registration info and donation notice */}
-          <aside className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+          <aside className="mt-20 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
             <h3 className="font-semibold">Iscrizione</h3>
             <ul className="mt-2 text-sm list-disc pl-5 space-y-1">
               <li>

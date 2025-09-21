@@ -15,7 +15,7 @@ const Nav = ({ navigate }) => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-black/10">
+    <nav className="sticky top-0 z-50 bg-white/90 isolate backdrop-blur border-b border-black/10">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <a
           href="#/"
