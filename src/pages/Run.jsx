@@ -4,16 +4,14 @@ import GradientHeader from '../components/GradientHeader.jsx';
 import GPXMap from '../components/GPXMap.jsx';
 import { postSheet, fetchTopTeamsJSONP } from '../services.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
+import PayPalPayBox from '../components/PayPalPayBox.jsx';
 
-// Registration and map for the group run. Shows the GPX route,
-// handles team sign‑up and displays top teams by donations. Accepts
-// optional remoteStats to determine if the run is full. Navigates back
-// home or to the donate page as appropriate.
 const Run = ({ addRegistration, navigate, remoteStats }) => {
-  // Team size for the run: minimum 3, maximum 10. Defaults to 4.
   const [members, setMembers] = useState(4);
-  // Leaderboard data for top teams. Refreshed every minute.
   const [topTeams, setTopTeams] = useState([]);
+  const [paidAmount, setPaidAmount] = useState(0);
+  const [orderId, setOrderId] = useState(null);
+
   useEffect(() => {
     const load = () => {
       fetchTopTeamsJSONP('run', 5)
@@ -25,102 +23,166 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
     return () => clearInterval(id);
   }, []);
 
-  // Determine if the run has reached its team limit.
   const teamsNow = remoteStats?.totals?.teamsRun ?? 0;
   const runFull = teamsNow >= (EVENT_CONFIG.limits?.runTeamsMax || Infinity);
 
-  // Handle submission of the registration form. Extract runner names,
-  // persist via addRegistration and notify the user.
+  // Donazione: 20 €/persona
+  const MIN_PER_PERSON = 20;
+  const normalizedMembers = Math.min(10, Math.max(3, Number(members) || 3));
+  const requiredAmount = MIN_PER_PERSON * normalizedMembers;
+  const donationOk = paidAmount >= requiredAmount;
+
+  // Dati percorso (per banner a sinistra)
+  const route = EVENT_CONFIG?.routes?.run || {};
+  const meta = route.meta || {};
+  const lengthVal =
+    meta.length || meta.distance || meta.distanceKm || meta.distance_km;
+  const elevVal = meta.elevation || meta.elevationM || meta.elevation_m;
+  const startVal = meta.start || EVENT_CONFIG?.run?.start || EVENT_CONFIG?.locationStart;
+  const finishVal = meta.finish || EVENT_CONFIG?.run?.finish || EVENT_CONFIG?.locationFinish;
+  const timeVal =
+    meta.time ||
+    (meta.startTime && meta.endTime ? `${meta.startTime} – ${meta.endTime}` : EVENT_CONFIG?.run?.time);
+
+  const fmtLen = typeof lengthVal === 'number' ? `${lengthVal} km` : (lengthVal || '—');
+  const fmtElev = typeof elevVal === 'number' ? `${elevVal} m D+` : (elevVal || '—');
+
   const submit = (e) => {
     e.preventDefault();
     if (runFull) return;
+    if (!donationOk) {
+      alert('Completa prima la donazione per procedere con l’iscrizione.');
+      return;
+    }
     const fd = new FormData(e.currentTarget);
     const count = Number(fd.get('count') || members || 3);
     const runners = Array.from({ length: count }, (_, i) => fd.get(`runner_${i + 1}`)).filter(Boolean);
     const rec = Object.fromEntries(fd.entries());
     delete rec.count;
-    const saved = addRegistration('run', { ...rec, runners, count });
+
+    const saved = addRegistration('run', {
+      ...rec,
+      runners,
+      count,
+      donation: { amount: paidAmount, orderId },
+    });
+
     postSheet('reg_run', saved);
-    alert('Squadra corsa registrata. Grazie! (Ricorda: donazione propedeutica all’iscrizione)');
+    alert('Squadra corsa registrata. Grazie per la donazione!');
     navigate('');
+  };
+
+  const pledge = {
+    id: `run_${Date.now()}`,
+    purpose: 'donation',
+    amount: requiredAmount,
   };
 
   return (
     <>
       <GradientHeader
-        title="Run 4 Gaza"
-        subtitle="Silenziosa e pacifica"
+        title="Run4Gaza"
+        subtitle="Corsa singola o staffetta di 14 km che corrisponde alla percentuale di territorio Palestinese non occupato da Israele"
         chips={[
           `Data: ${EVENT_CONFIG.date}`,
-          'Partenza: Duomo di Milano',
-          'Arrivo: Centro sportivo',
+          'Partenza e Arrivo: Arci Olmi',
           'Donazione consigliata: 20 €',
         ]}
       />
 
-      {/* Map and description */}
-      <section className="py-6">
-        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          <div className="lg:col-span-2">
-            <h2 className="text-xl font-semibold mb-2">Mappa</h2>
-            <GPXMap
-              src={EVENT_CONFIG.routes.run.gpx}
-              label="Manifestazione silenziosa e pacifica, partenza dal Duomo."
-              downloadName="run.gpx"
-            />
-            <div className="mt-3 text-sm">
-              {EVENT_CONFIG.routes.run.stravaRouteId && (
-                <iframe
-                  title="Strava route"
-                  height="405"
-                  width="100%"
-                  frameBorder="0"
-                  allowTransparency
-                  scrolling="no"
-                  src={`https://www.strava.com/routes/${EVENT_CONFIG.routes.run.stravaRouteId}/embed`}
-                />
-              )}
-              {EVENT_CONFIG.routes.run.stravaSegmentUrl && (
-                <p className="mt-2">
-                  Segmento Strava:{' '}
-                  <a
-                    className="underline"
-                    href={EVENT_CONFIG.routes.run.stravaSegmentUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    apri su Strava
-                  </a>
-                </p>
-              )}
-            </div>
+      {/* DESCRIZIONE EVENTO (prima della mappa) */}
+      <section className="py-4">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="rounded-2xl bg-white p-5 shadow ring-1 ring-black/10">
+            <h2 className="text-lg font-semibold">Descrizione evento</h2>
+            <p className="mt-2 text-sm sm:text-base text-black/80 leading-relaxed">
+              {EVENT_CONFIG?.descrizione_corsa ||
+                EVENT_CONFIG?.run?.description ||
+                'Manifestazione silenziosa e pacifica aperta a tuttə. Percorso adatto a gruppi e staffette.'}
+            </p>
           </div>
-
-          <aside className="lg:col-span-1 rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
-            <h3 className="font-semibold">Iscrizione</h3>
-            <ul className="mt-2 text-sm list-disc pl-5 space-y-1">
-              <li>
-                <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 € a persona).
-              </li>
-              <li className="text-red-600">
-                <strong>Il pranzo NON è incluso</strong>.
-              </li>
-            </ul>
-            <div className="mt-3 flex gap-2">
-              <button
-                type="button"
-                onClick={() => navigate('donate')}
-                className="rounded-xl px-4 py-2 font-semibold text-white"
-                style={{ backgroundColor: THEME.primary }}
-              >
-                Vai a donazioni
-              </button>
-            </div>
-          </aside>
         </div>
       </section>
 
-      {/* Registration form */}
+      {/* MAPPA FULL-WIDTH con banner a sinistra */}
+      <section className="py-6">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+            {/* Banner info percorso (sinistra) */}
+            <aside className="order-2 lg:order-1 lg:col-span-1 rounded-2xl bg-white p-5 shadow ring-1 ring-black/10">
+              <h3 className="font-semibold">Info percorso</h3>
+              <ul className="mt-2 text-sm space-y-1">
+                <li><span className="font-medium">Lunghezza:</span> {fmtLen}</li>
+                <li><span className="font-medium">Dislivello:</span> {fmtElev}</li>
+                <li><span className="font-medium">Partenza:</span> {startVal || '—'}</li>
+                <li><span className="font-medium">Arrivo:</span> {finishVal || '—'}</li>
+                <li><span className="font-medium">Orari:</span> {timeVal || '—'}</li>
+              </ul>
+              <div className="mt-3 flex gap-2">
+                {route.gpx && (
+                  <a
+                    href={route.gpx}
+                    download="run.gpx"
+                    className="rounded-xl px-4 py-2 font-semibold text-white"
+                    style={{ backgroundColor: THEME.primary }}
+                  >
+                    Scarica GPX
+                  </a>
+                )}
+                {route.stravaRouteId && (
+                  <a
+                    className="rounded-xl px-4 py-2 font-semibold ring-1 ring-black/10"
+                    href={`https://www.strava.com/routes/${route.stravaRouteId}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Apri su Strava
+                  </a>
+                )}
+              </div>
+            </aside>
+
+            {/* Mappa grande (destra) */}
+            <div className="order-1 lg:order-2 lg:col-span-3 rounded-2xl bg-white p-3 shadow ring-1 ring-black/10">
+              <h2 className="text-xl font-semibold mb-2">Mappa</h2>
+              <GPXMap
+                src={route.gpx}
+                label="Manifestazione silenziosa e pacifica."
+                downloadName="run.gpx"
+              />
+              {/* Embed Strava opzionale */}
+              <div className="mt-3 text-sm">
+                {route.stravaRouteId && (
+                  <iframe
+                    title="Strava route"
+                    height="405"
+                    width="100%"
+                    frameBorder="0"
+                    allowTransparency
+                    scrolling="no"
+                    src={`https://www.strava.com/routes/${route.stravaRouteId}/embed`}
+                  />
+                )}
+                {route.stravaSegmentUrl && (
+                  <p className="mt-2">
+                    Segmento Strava:{' '}
+                    <a
+                      className="underline"
+                      href={route.stravaSegmentUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      apri su Strava
+                    </a>
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FORM ISCRIZIONE + DONAZIONE (solo qui sotto) */}
       <section className="py-8">
         <div className="max-w-3xl mx-auto px-4">
           <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
@@ -134,6 +196,7 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
               <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 €/persona).{' '}
               <span className="text-red-600">Il pranzo non è incluso.</span>
             </p>
+
             <form onSubmit={submit} className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-1">
                 <label className="block text-sm font-medium">Nome squadra</label>
@@ -210,10 +273,12 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
 
               <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium">Rif. donazione (opz.)</label>
+                  <label className="block text-sm font-medium">Rif. donazione</label>
                   <input
                     name="donationRef"
                     placeholder="email o ID ricevuta"
+                    value={orderId || ''}
+                    readOnly
                     disabled={runFull}
                     className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
                   />
@@ -226,14 +291,43 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
                 </div>
               </div>
 
+              {!runFull && (
+                <div className="md:col-span-2 mt-2 rounded-xl bg-amber-50 p-3 ring-1 ring-amber-200">
+                  <h3 className="text-sm sm:text-base font-semibold">Donazione obbligatoria per iscriversi</h3>
+                  <p className="mt-1 text-xs sm:text-sm">
+                    Minimo <strong>{MIN_PER_PERSON} €</strong> a persona. Con <strong>{normalizedMembers}</strong>{' '}
+                    componenti l'importo richiesto è <strong>{requiredAmount} €</strong>.
+                  </p>
+                  <div className="mt-1 max-w-xs mx-auto">
+                    <PayPalPayBox
+                      compact
+                      pledge={pledge}
+                      onPaid={(amt, id) => {
+                        setPaidAmount(Number(amt || 0));
+                        setOrderId(id);
+                      }}
+                    />
+                  </div>
+                  <p className={`mt-1 text-xs ${donationOk ? 'text-green-700' : 'text-red-700'}`}>
+                    {donationOk
+                      ? `Donazione registrata: ${paidAmount} € (ID ordine: ${orderId || '—'})`
+                      : `Donazione non ancora sufficiente: ${paidAmount} € su ${requiredAmount} €`}
+                  </p>
+                </div>
+              )}
+
               <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
                 <button
                   type="submit"
-                  disabled={runFull}
+                  disabled={runFull || !donationOk}
                   className="flex-1 rounded-xl px-4 py-2 font-semibold text-white disabled:opacity-50"
                   style={{ backgroundColor: THEME.primary }}
                 >
-                  {runFull ? 'Iscrizioni chiuse (pieno)' : 'Invia iscrizione squadra'}
+                  {runFull
+                    ? 'Iscrizioni chiuse (pieno)'
+                    : donationOk
+                    ? 'Invia iscrizione squadra'
+                    : 'Completa la donazione per proseguire'}
                 </button>
                 <button
                   type="button"
@@ -262,16 +356,17 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
               </ol>
             )}
           </div>
-        </div>
-        <div className="mt-6">
-          <button
-            type="button"
-            onClick={() => navigate('')}
-            className="text-sm font-semibold"
-            style={{ color: THEME.primary }}
-          >
-            ← Torna alla home
-          </button>
+
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => navigate('')}
+              className="text-sm font-semibold"
+              style={{ color: THEME.primary }}
+            >
+              ← Torna alla home
+            </button>
+          </div>
         </div>
       </section>
     </>

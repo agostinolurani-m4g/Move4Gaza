@@ -35,10 +35,10 @@ const GPXMap = ({ src }) => {
   return (
     <div
       className="relative z-0"
-      style={{ height: 400, width: '86%', borderRadius: 16, overflow: 'hidden' }}
+      style={{ height: 400, width: '100%', borderRadius: 16, overflow: 'hidden' }}
     >
       <MapContainer
-        style={{ height: '100%', width: '80%' }}
+        style={{ height: '100%', width: '100%' }}
         center={[45.4642, 9.19]}
         zoom={13}
         scrollWheelZoom={true}

@@ -159,12 +159,33 @@ const Home = ({ navigate, derived, remoteStats }) => {
                 e.preventDefault();
                 navigate('bike');
               }}
-              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
+              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"
+              style={{ backgroundColor: THEME.primary, color: 'white' }}
             >
               <h3 className="text-xl font-semibold text-black">Giro in bici</h3>
               <p className="mt-2 text-sm text-black">
                 Tracciato che ricalca forma e larghezza della Striscia di Gaza. Ritmo
-                sociale, non competitivo.
+                sociale, non competitivo. 
+              </p>
+              <div
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold "
+                style={{ color: THEME.ink }}
+              >
+                Dettagli & iscrizione →
+              </div>
+            </a>
+            <a
+              href="#/bike"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('bike');
+              }}
+              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"
+              style={{ backgroundColor: THEME.primary, color: 'white' }}
+            >
+              <h3 className="text-xl font-semibold text-black">Giro cittadino in bici</h3>
+              <p className="mt-2 text-sm text-black">
+                Tracciato di 20 km sul naviglio grande e per campi per raggiungere l'evento all'Arci Olmi. 
               </p>
               <div
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold "
@@ -179,7 +200,8 @@ const Home = ({ navigate, derived, remoteStats }) => {
                 e.preventDefault();
                 navigate('soccer');
               }}
-              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
+              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"
+              style={{ backgroundColor: THEME.primary, color: 'white' }}
             >
               <h3 className="text-xl font-semibold text-black">Torneo di calcio</h3>
               <p className="mt-2 text-sm text-black">
@@ -198,11 +220,12 @@ const Home = ({ navigate, derived, remoteStats }) => {
                 e.preventDefault();
                 navigate('run');
               }}
-              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition bg-green-700 text-white"
+              className="rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition"
+              style={{ backgroundColor: THEME.primary, color: 'white' }}
             >
               <h3 className="text-xl font-semibold text-black">Corsa a squadre</h3>
               <p className="mt-2 text-sm text-black">
-                Manifestazione silenziosa e pacifica, partenza dal Duomo.
+                Corsa non competitiva di 14 km da fare singolarmente o in squadra (staffetta), partenza e arrivo all'Arci Olmi.
               </p>
               <div
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold"
@@ -214,7 +237,8 @@ const Home = ({ navigate, derived, remoteStats }) => {
           </div>
 
           {EVENT_CONFIG.beneficiary && (
-            <div className="mt-8 rounded-2xl bg-green-700 p-6 shadow ring-1 ring-black/10">
+            <div className="mt-8 rounded-2xl p-6 shadow ring-1 ring-black/10"
+                 style={{ backgroundColor: THEME.primary }}>
               <h3 className="text-lg font-semibold">Beneficiario</h3>
               <p className="mt-1 text-sm text-black">
                 {EVENT_CONFIG.beneficiary.blurb}
@@ -237,7 +261,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
         </div>
 
         {/* Live donations */}
-        <section className="mt-10 py-10 bg-red-700">
+        <section className="mt-10 py-10">
           <div className="max-w-6xl mx-auto px-4">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">Donazioni LIVE</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

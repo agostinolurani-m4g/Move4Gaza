@@ -42,7 +42,7 @@ const FAQSection = ({ navigate }) => {
                 <strong>Calcio</strong>: 5 vs 5 per l’inclusione. 4 partite da 15’ garantite.
               </li>
               <li>
-                <strong>Corsa</strong>: manifestazione silenziosa e pacifica, partenza dal Duomo.
+                <strong>Corsa</strong>: manifestazione silenziosa e pacifica, partenza dall'Arci Olmi.
               </li>
             </ul>
           </div>

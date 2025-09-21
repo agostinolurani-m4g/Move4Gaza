@@ -89,7 +89,8 @@ export const EVENT_CONFIG = {
   whatsapp: "",
   cause: {
     heading: "Perché lo facciamo",
-    text: "Evento solidale non competitivo: pedaliamo, giochiamo e corriamo per raccogliere fondi a sostegno degli aiuti umanitari a Gaza. Trasparenza totale su fondi e destinazione.",
+    text: "Evento solidale non competitivo: pedaliamo, giochiamo e corriamo per raccogliere fondi destinati ad aiuti umanitari a Gaza tramite l'associazione Gaza Sunbirds.\n" + 
+    "Il ricavato verrà utilizzato per finanziare missioni di aiuti umanitari, acquisto di medicinali e attrezzature mediche, supporto alle famiglie colpite dai bombardamenti e altre iniziative di mutual aid sul territorio.",
   },
   beneficiary: {
     name: "Gaza Sunbirds",
