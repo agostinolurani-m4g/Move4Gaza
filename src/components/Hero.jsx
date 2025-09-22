@@ -50,7 +50,7 @@ const Hero = ({ navigate }) => {
           <a
             href="#/bike"
             onClick={(e) => { e.preventDefault(); navigate('bike'); }}
-            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-white shadow"
+            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-black shadow"
             style={{ backgroundColor: THEME.primary }}
           >
             Iscriviti bici
@@ -59,7 +59,7 @@ const Hero = ({ navigate }) => {
           <a
             href="#/soccer"
             onClick={(e) => { e.preventDefault(); navigate('soccer'); }}
-            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-white shadow"
+            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-black shadow"
             style={{ backgroundColor: THEME.primary }}
           >
             Iscriviti calcio
@@ -68,7 +68,7 @@ const Hero = ({ navigate }) => {
           <a
             href="#/run"
             onClick={(e) => { e.preventDefault(); navigate('run'); }}
-            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-white shadow"
+            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-black shadow"
             style={{ backgroundColor: THEME.primary }}
           >
             Iscriviti corsa
