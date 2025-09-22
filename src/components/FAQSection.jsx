@@ -1,5 +1,5 @@
 import React from 'react';
-import { EVENT_CONFIG } from '../config.js';
+import { EVENT_CONFIG, THEME } from '../config.js';
 
 // Frequently asked questions component. Accepts navigate to enable internal links.
 const FAQSection = ({ navigate }) => {
@@ -10,7 +10,10 @@ const FAQSection = ({ navigate }) => {
         <h2 className="text-2xl sm:text-3xl font-bold mb-6">Domande frequenti</h2>
 
         <div className="grid gap-4">
-          <div className="rounded-2xl bg-green-700 border border-slate-200 p-5">
+          <div
+            className="rounded-2xl border border-slate-200 p-5"
+            style={{ backgroundColor: THEME.primary }}
+          >
             <h3 className="font-semibold text-black">A chi vanno i soldi?</h3>
             <p className="text-sm text-black mt-1">
               Le donazioni sono destinate a{' '}
@@ -32,7 +35,10 @@ const FAQSection = ({ navigate }) => {
             </p>
           </div>
 
-          <div className="rounded-2xl border bg-green-700 border-slate-200 p-5">
+          <div
+            className="rounded-2xl border border-slate-200 p-5"
+            style={{ backgroundColor: THEME.primary }}
+          >
             <h3 className="font-semibold text-black">Come funzionano i vari eventi?</h3>
             <ul className="text-sm text-black mt-1 list-disc pl-5 space-y-1">
               <li>
@@ -47,7 +53,10 @@ const FAQSection = ({ navigate }) => {
             </ul>
           </div>
 
-          <div className="rounded-2xl border bg-green-700 border-slate-200 p-5">
+          <div
+            className="rounded-2xl border border-slate-200 p-5"
+            style={{ backgroundColor: THEME.primary }}
+          >
             <h3 className="font-semibold text-black">La donazione è obbligatoria? Cosa include?</h3>
             <p className="text-sm text-black mt-1">
               Sì: la donazione (<strong>min. 20 €</strong>) è{' '}
@@ -55,7 +64,10 @@ const FAQSection = ({ navigate }) => {
               <strong>Non include</strong> beni/servizi (es. <strong>pranzo non incluso</strong>).
             </p>
           </div>
-          <div className="rounded-2xl border bg-green-700 border-slate-200 p-5">
+          <div
+            className="rounded-2xl border border-slate-200 p-5"
+            style={{ backgroundColor: THEME.primary }}
+          >
             <h3 className="font-semibold text-black">Posso partecipare anche senza prendere parte agli eventi sportivi?</h3>
             <p className="text-sm text-black mt-1">
               Certo! L'evento è aperto a tuttə, si può venire sia la mattina e assistere agli eventi sportivi, sia il pomeriggio

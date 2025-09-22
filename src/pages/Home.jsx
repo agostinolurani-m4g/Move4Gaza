@@ -75,7 +75,10 @@ const Home = ({ navigate, derived, remoteStats }) => {
       </section>
 
       {/* Cause and participation instructions */}
-      <section className="mt-10 py-10 bg-green-700 text-white">
+      <section
+        className="mt-10 py-10 text-white"
+        style={{ backgroundColor: THEME.primary }}
+      >
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-black">
