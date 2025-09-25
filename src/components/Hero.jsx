@@ -3,7 +3,7 @@ import { EVENT_CONFIG, THEME } from '../config.js';
 
 // Home "hero": immagine centrale M4G-mix e CTA rossi
 const Hero = ({ navigate }) => {
-  const mix = EVENT_CONFIG.logoUrl_mix || (import.meta.env.BASE_URL + 'M4G-mix.svg');
+  const mix = EVENT_CONFIG.logoUrl_mix || (import.meta.env.BASE_URL + '/M4G-mix.svg');
   // Logo da mostrare sotto il location: scegli in modo resiliente tra più chiavi possibili
   const locationLogo =
     EVENT_CONFIG.arciOlmi ||
