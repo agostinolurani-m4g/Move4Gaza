@@ -84,7 +84,7 @@ export const EVENT_CONFIG = {
   logoUrl_rosso: import.meta.env.BASE_URL + "M4G-rosso.svg",
   logoUrl_verde: import.meta.env.BASE_URL + "M4G-verde.svg",
   // Default poster fallback uses the same locandina PNG
-  logoUrl_mix: import.meta.env.BASE_URL + "M4G-mix.svg",
+  logoUrl_mix: "M4G-mix.svg",
   contactEmail: "",
   whatsapp: "",
   cause: {
@@ -95,7 +95,7 @@ export const EVENT_CONFIG = {
   beneficiary: {
     name: "Gaza Sunbirds",
     url: "https://gazasunbirds.org/",
-    logoUrl: import.meta.env.BASE_URL + "/sunbirds-logo.png",
+    logoUrl: "sunbirds-logo.png",
     cf: "",
     address: "Gaza / London (team & fiscal hosts)",
     blurb: "The Gaza Sunbirds are Palestine’s para-cycling team, gaining global recognition over the last 22 months for their courageous aid missions and global sporting achievements.",
