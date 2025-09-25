@@ -81,10 +81,10 @@ export const EVENT_CONFIG = {
   forms: { bike: "", soccer: "", run: "" },
   // Use the updated locandina PNG as default poster
   logoUrl: import.meta.env.BASE_URL + "/locandina.png",
-  logoUrl_rosso: import.meta.env.BASE_URL + "/M4G-rosso.svg",
-  logoUrl_verde: import.meta.env.BASE_URL + "/M4G-verde.svg",
+  logoUrl_rosso: import.meta.env.BASE_URL + "M4G-rosso.svg",
+  logoUrl_verde: import.meta.env.BASE_URL + "M4G-verde.svg",
   // Default poster fallback uses the same locandina PNG
-  logoUrl_mix: import.meta.env.BASE_URL + "/M4G-mix.svg",
+  logoUrl_mix: import.meta.env.BASE_URL + "M4G-mix.svg",
   contactEmail: "",
   whatsapp: "",
   cause: {
