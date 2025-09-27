@@ -4,6 +4,13 @@ import { EVENT_CONFIG, THEME } from '../config.js';
 // Home "hero": immagine centrale M4G-mix e CTA rossi
 const Hero = ({ navigate }) => {
   const mix = EVENT_CONFIG.logoUrl_mix || (import.meta.env.BASE_URL + '/M4G-mix.svg');
+
+  // Sottotitolo resiliente
+  const subtitle =
+    EVENT_CONFIG.subtitle ||
+    "Non si può stare fermi! sabato 18 ottobre ti aspettiamo per una giornata di mobilitazione sportiva e collettiva per raccogliere fondi a favore dell'associazione Gazasunbirds" ||
+    EVENT_CONFIG.tagline ||
+    EVENT_CONFIG.slogan;
   // Logo da mostrare sotto il location: scegli in modo resiliente tra più chiavi possibili
   const locationLogo =
     EVENT_CONFIG.arciOlmi ||
@@ -21,6 +28,13 @@ const Hero = ({ navigate }) => {
           className="mx-auto w-full max-w-4xl h-auto"
           loading="lazy"
         />
+
+        {/* Sottotitolo */}
+        {subtitle && (
+          <p className="mt-6 text-xl sm:text-2xl font-medium tracking-tight text-black/80">
+            {subtitle}
+          </p>
+        )}
 
         {/* Luogo + data */}
         <div className="mt-10">

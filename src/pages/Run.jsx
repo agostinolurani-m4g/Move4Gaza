@@ -61,7 +61,7 @@ return (
     <>
       <GradientHeader
         title="Run4Gaza"
-        subtitle="Corsa singola o staffetta di 14 km che corrisponde alla percentuale di territorio Palestinese non occupato da Israele"
+        subtitle="Corsa singola o staffetta di 7 o 14 km"
         chips={[
           `Data: ${EVENT_CONFIG.date}`,
           'Partenza e Arrivo: Arci Olmi'

@@ -104,7 +104,6 @@ export const EVENT_CONFIG = {
     cf: "",
     address: "Gaza / London (team & fiscal hosts)",
     blurb: "I Gaza Sunbirds sono la squadra paraciclistica della Palestina e, negli ultimi 22 mesi, hanno ottenuto riconoscimento a livello globale per le loro coraggiose missioni di soccorso e per i risultati sportivi internazionali.",
-    blurb: "I Gaza Sunbirds sono la squadra paraciclistica della Palestina e, negli ultimi 22 mesi, hanno ottenuto riconoscimento a livello globale per le loro coraggiose missioni di soccorso e per i risultati sportivi internazionali.",
     links: {
       missionUrl: "https://gazasunbirds.org/about-us/mission/",
       aboutUrl: "https://gazasunbirds.org/about-us/",
