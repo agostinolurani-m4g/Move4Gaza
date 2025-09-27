@@ -16,7 +16,7 @@ const Donate = ({
     Number(EVENT_CONFIG?.minDonation ?? EVENT_CONFIG?.suggestedDonation ?? 15);
 
   const minDonationLabel = isNaN(minDonation)
-    ? '20 €'
+    ? '15 €'
     : minDonation.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' });
 
   return (
@@ -47,7 +47,6 @@ const Donate = ({
             navigate={navigate}
             markPledgePaid={markPledgePaid}
           />
-          <BeneficiaryBadge className="mt-4" />
         </div>
       </div>
     </section>
