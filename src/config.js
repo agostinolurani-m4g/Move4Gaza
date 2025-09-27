@@ -81,9 +81,11 @@ export const EVENT_CONFIG = {
   forms: { bike: "", soccer: "", run: "" },
   // Use the updated locandina PNG as default poster
   logoUrl: import.meta.env.BASE_URL + "locandina.png",
+  logoUrl: import.meta.env.BASE_URL + "locandina.png",
   logoUrl_rosso: import.meta.env.BASE_URL + "M4G-rosso.svg",
   logoUrl_verde: import.meta.env.BASE_URL + "M4G-verde.svg",
   // Default poster fallback uses the same locandina PNG
+  logoUrl_mix: import.meta.env.BASE_URL + "M4G-mix.svg",
   logoUrl_mix: import.meta.env.BASE_URL + "M4G-mix.svg",
   contactEmail: "",
   whatsapp: "",
@@ -96,8 +98,10 @@ export const EVENT_CONFIG = {
     name: "Gaza Sunbirds",
     url: "https://gazasunbirds.org/",
     logoUrl: import.meta.env.BASE_URL + "sunbirds-logo.png",
+    logoUrl: import.meta.env.BASE_URL + "sunbirds-logo.png",
     cf: "",
     address: "Gaza / London (team & fiscal hosts)",
+    blurb: "I Gaza Sunbirds sono la squadra paraciclistica della Palestina e, negli ultimi 22 mesi, hanno ottenuto riconoscimento a livello globale per le loro coraggiose missioni di soccorso e per i risultati sportivi internazionali.",
     blurb: "I Gaza Sunbirds sono la squadra paraciclistica della Palestina e, negli ultimi 22 mesi, hanno ottenuto riconoscimento a livello globale per le loro coraggiose missioni di soccorso e per i risultati sportivi internazionali.",
     links: {
       missionUrl: "https://gazasunbirds.org/about-us/mission/",

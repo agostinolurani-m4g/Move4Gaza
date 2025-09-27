@@ -3,9 +3,19 @@ import { EVENT_CONFIG } from '../config.js';
 import GradientHeader from '../components/GradientHeader.jsx';
 import BeneficiaryCard from '../components/BeneficiaryCard.jsx';
 // ...existing code...
+// ...existing code...
 const Beneficiary = () => {
   const B = EVENT_CONFIG.beneficiary || {};
   const L = B.links || {};
+
+  // Array di immagini (sostituisci i percorsi con quelli reali)
+  const boxImages = [
+    import.meta.env.BASE_URL + 'bene_chi.JPG',
+    import.meta.env.BASE_URL + 'bene_mission.jpg',
+    import.meta.env.BASE_URL + 'bene_dist.png',
+    import.meta.env.BASE_URL + 'bene_aid.jpg',
+  ];
+
 
   // Array di immagini (sostituisci i percorsi con quelli reali)
   const boxImages = [
