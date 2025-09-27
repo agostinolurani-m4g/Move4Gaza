@@ -19,7 +19,7 @@ const realtaAderenti = [
     "Maledette Biciclette Milanesi",
     "Maradonne",
     "Patatrack.cc",
-    "Wave Cycling Team",
+    "Pink Wave Cycling Team",
     "Popolare Ciclistica",
     "Rimaflow",
     "Saichepuoi",

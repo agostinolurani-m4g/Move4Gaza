@@ -13,6 +13,7 @@ import Bike from './pages/Bike.jsx';
 import Soccer from './pages/Soccer.jsx';
 import Run from './pages/Run.jsx';
 import Donate from './pages/Donate.jsx';
+import Entrance from './pages/Entrance.jsx';
 import Registration from './pages/Registration.jsx';
 
 export default function App() {
@@ -47,7 +48,9 @@ export default function App() {
         <Soccer addRegistration={addRegistration} navigate={navigate} />
       ) : page === 'run' ? (
         <Run addRegistration={addRegistration} navigate={navigate} />
-      ) : (
+      ) : page === 'entrance' ? (
+        <Entrance addRegistration={addRegistration} navigate={navigate} />
+      ): (
         <Home navigate={navigate} derived={derived} remoteStats={remoteStats} />
       )}
 

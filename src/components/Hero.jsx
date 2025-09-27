@@ -11,7 +11,6 @@ const Hero = ({ navigate }) => {
     EVENT_CONFIG.logoUrl_secondary ||
     EVENT_CONFIG.logoUrl; // fallback finale
 
-  
   return (
     <header className="relative isolate">
       <div className="max-w-6xl mx-auto px-4 pt-20 pb-14 text-center">
@@ -47,7 +46,8 @@ const Hero = ({ navigate }) => {
         </div>
 
         {/* CTA rossi a pillola */}
-        <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-20">
+        {/* aggiornato layout: 1 col su mobile, 2 su small, 4 su medium+ */}
+        <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-20">
           <a
             href="#/bike"
             onClick={(e) => { e.preventDefault(); navigate('bike'); }}
@@ -73,6 +73,17 @@ const Hero = ({ navigate }) => {
             style={{ backgroundColor: THEME.primary }}
           >
             Iscriviti corsa
+          </a>
+
+          {/* Nuovo bottone: Sostieni senza faticare */}
+          <a
+            href="#/entrance"
+            onClick={(e) => { e.preventDefault(); navigate('entrance'); }}
+            className="inline-flex items-center justify-center rounded-full px-8 py-2 text-base sm:text-lg font-semibold text-black shadow"
+            style={{ backgroundColor: THEME.primary }}
+            aria-label="Vai alla pagina di ingresso/donazione"
+          >
+            Sostieni senza faticare
           </a>
         </div>
       </div>
