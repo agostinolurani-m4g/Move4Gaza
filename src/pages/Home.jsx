@@ -7,7 +7,7 @@ import FAQSection from '../components/FAQSection.jsx';
 import { fetchRegistrationsJSONP } from '../services.js';
 const realtaAderenti = [
     "Amaro",
-    "Casello San Cristoforo",
+    //"Casello San Cristoforo",
     "Ciclochard",
     "Ciclofficina Bincio",
     "Circonvalley",
