@@ -16,15 +16,6 @@ const Beneficiary = () => {
     import.meta.env.BASE_URL + 'bene_aid.jpg',
   ];
 
-
-  // Array di immagini (sostituisci i percorsi con quelli reali)
-  const boxImages = [
-    import.meta.env.BASE_URL + 'bene_chi.JPG',
-    import.meta.env.BASE_URL + 'bene_mission.jpg',
-    import.meta.env.BASE_URL + 'bene_dist.png',
-    import.meta.env.BASE_URL + 'bene_aid.jpg',
-  ];
-
   return (
     <>
       <GradientHeader
