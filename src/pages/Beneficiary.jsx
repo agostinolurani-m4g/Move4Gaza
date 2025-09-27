@@ -64,7 +64,7 @@ const Beneficiary = () => {
           {/* Info boxes */}
           <div className="grid md:grid-cols-2 gap-4 mb-10">
             <div className="rounded-2xl border border-slate-200 p-5 flex flex-col items-center">
-              <img src={boxImages[0]} alt="Chi sono" className="w-24 h-24 object-cover rounded-xl mb-3" />
+              <img src={boxImages[0]} alt="Chi sono" className="w-60 h-60 object-cover rounded-xl mb-3" />
               <h3 className="font-semibold">Chi sono</h3>
               <p className="text-sm text-slate-700 mt-1">
                 Team di paraciclismo fondato a Gaza; dal 2020 percorsi per amputatə e
@@ -81,7 +81,7 @@ const Beneficiary = () => {
               </p>
             </div>
             <div className="rounded-2xl border border-slate-200 p-5 flex flex-col items-center">
-              <img src={boxImages[1]} alt="Missione" className="w-24 h-24 object-cover rounded-xl mb-3" />
+              <img src={boxImages[1]} alt="Missione" className="w-60 h-60 object-cover rounded-xl mb-3" />
               <h3 className="font-semibold">Missione</h3>
               <p className="text-sm text-slate-700 mt-1">
                 Aiuti comunitari, protezione dei civili e sport accessibile.
@@ -97,14 +97,14 @@ const Beneficiary = () => {
               </p>
             </div>
             <div className="rounded-2xl border border-slate-200 p-5 flex flex-col items-center">
-              <img src={boxImages[2]} alt="Dove vanno i fondi" className="w-24 h-24 object-cover rounded-xl mb-3" />
+              <img src={boxImages[2]} alt="Dove vanno i fondi" className="w-60 h-60 object-cover rounded-xl mb-3" />
               <h3 className="font-semibold">Dove vanno i fondi</h3>
               <p className="text-sm text-slate-700 mt-1">
                 Beni essenziali, distribuzioni locali, inclusione e sport. Report, campagne e shop sul loro sito.
               </p>
             </div>
             <div className="flex flex-col items-center">
-              <img src={boxImages[3]} alt="Aid & Programmi" className="w-24 h-24 object-cover rounded-xl mb-3" />
+              <img src={boxImages[3]} alt="Aid & Programmi" className="w-60 h-60 object-cover rounded-xl mb-3" />
               <BeneficiaryCard
                 title="Aid & Programmi"
                 href={L.aidUrl}

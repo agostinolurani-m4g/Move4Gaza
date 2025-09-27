@@ -77,7 +77,7 @@ export const EVENT_CONFIG = {
       stravaSegmentUrl: "",
     },
   },
-  payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
+  payments: { paypalLink: "", iban: "IT36X0623001621000040418795", ibanOwner: "Amaro ASD", ibanBank: "", stripeComingSoon: true },
   forms: { bike: "", soccer: "", run: "" },
   // Use the updated locandina PNG as default poster
   logoUrl: import.meta.env.BASE_URL + "locandina.png",
