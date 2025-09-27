@@ -4,11 +4,6 @@
 // across the codebase.
 
 // PayPal configuration: replace clientId with your own (live or sandbox).
-export const PAYPAL = {
-  clientId: "AQI4LKSbF2Gn6BdWoU3UxeZdvxVfXbwNWmttvKAMr9tsCnDd4xQSL0Kkr0Ck2b086jtFzc392JXBsI4x",
-  currency: "EUR",
-};
-
 // Main event configuration describing the high‑level details of the fundraiser
 // and the available disciplines. The import.meta.env.BASE_URL prefix is
 // preserved to ensure relative assets are resolved correctly by the bundler.
@@ -44,19 +39,21 @@ export const EVENT_CONFIG = {
   
   descrizione_calcio: "Il torneo di calcio non competitivo a 5 si svolge presso il campo sportivo dell'Arci Olmi a Milano. " +
   "Le squadre sono miste e aperte a tuttə, ogni squadra gioca 3 partite da 20 minuti, tra una partita ci saranno momenti per mangiare o bere" +
-  " qualcosa. La donazione minima consigliata è di 100 € a squadra (20 € a persona), chi vuole può donare di più. \n" +
+  " qualcosa. La donazione minima consigliata è di 100 € a squadra (15 € a persona), chi vuole può donare di più. \n" +
   "Il torneo inizia alle 9:30 e finisce verso le 13:00, dopo il torneo c'è la possibilità di partecipare al pranzo sociale (non incluso nella donazione)." +
   "Il quadro delle squadre verrà comunicato qualche giorno prima dell'evento, se avete necessità particolari (orari, composizione squadra ecc) scriveteci pure.",
 
   descrizione_bici: "Il percorso lungo circa 115 km ricalca la lunghezza del perimetro della striscia di Gaza con partenza ed arrivo " +
   "all'Arci Olmi di Milano dove si svolgerà l'evento. Il percorso si snoda su strade secondarie e piste ciclabili, con alcuni tratti " +
   "sterrati. Il dislivello è di circa 300 m. Non è una gara, ma un evento sociale e solidale, si raccomanda di pedalare in sicurezza. " +
-  "Dopo Pavia segnaliamo scarsita di punti di ristoro da tenere in considerazione.", 
+  "Dopo Pavia segnaliamo scarsita di punti di ristoro da tenere in considerazione. ", 
 
   descrizione_corsa: "La corsa non competitiva di circa 7 km si svolge su un percorso cittadino che parte e arriva all'Arci Olmi di Milano. " +
-  "Il percorso è adatto a tuttə, con la possibilità di fare una staffetta in due persone. La donazione minima consigliata è di 20 € a persona, " +
+  "Il percorso è adatto a tuttə, con la possibilità di fare una staffetta in due persone. La donazione minima consigliata è di 15 € a persona, " +
   "chi vuole può donare di più. \n La corsa inizia tra le 10:00 e le 11:00 (partenza alla francese) e finisce verso le 14:00, seguita dal pranzo sociale " +
   "(non incluso nella donazione). Durante la corsa non sono previsti punti di ristoro e assistenza medica, il tracciato gps è scaricabile e il tracciato sarà segnato.",
+  descrizione_ingresso: "L'ingresso all'evento è aperto a tuttə, la donazione minima consigliata è di 15 €, chi vuole può donare di più. \n" +
+  "L'ingresso dà accesso a tutte le attività della giornata, compreso il pranzo sociale (non incluso nella donazione). Durante la giornata sono previsti momenti di approfondimento e confronto con ospiti e testimonianze dirette dalla Palestina.",
   // Percorsi & file pubblici (metti i 3 .gpx in public/routes/)
   routes: {
     bike: {
@@ -75,16 +72,19 @@ export const EVENT_CONFIG = {
       gpx: import.meta.env.BASE_URL + "routes/amgaz_corsa.gpx",
       stravaRouteId: "",
       stravaSegmentUrl: "",
+      distance:"7 km",
+      start: "Arci Olmi, via degli Ulivi 2, Milano.",
+      time: "11:00",
     },
   },
-  payments: { paypalLink: "", iban: "", ibanOwner: "", ibanBank: "", stripeComingSoon: true },
+  payments: { paypalLink: "https://www.paypal.com/pool/9iq3YyxOcH?sr=wccr", iban: "IT36X0623001621000040418795", ibanOwner: "Amaro ASD", ibanBank: "NOME BANCA", stripeComingSoon: false },
   forms: { bike: "", soccer: "", run: "" },
   // Use the updated locandina PNG as default poster
-  logoUrl: import.meta.env.BASE_URL + "/locandina.png",
+  logoUrl: import.meta.env.BASE_URL + "locandina.png",
   logoUrl_rosso: import.meta.env.BASE_URL + "M4G-rosso.svg",
   logoUrl_verde: import.meta.env.BASE_URL + "M4G-verde.svg",
   // Default poster fallback uses the same locandina PNG
-  logoUrl_mix: "M4G-mix.svg",
+  logoUrl_mix: import.meta.env.BASE_URL + "M4G-mix.svg",
   contactEmail: "",
   whatsapp: "",
   cause: {
@@ -95,10 +95,10 @@ export const EVENT_CONFIG = {
   beneficiary: {
     name: "Gaza Sunbirds",
     url: "https://gazasunbirds.org/",
-    logoUrl: "sunbirds-logo.png",
+    logoUrl: import.meta.env.BASE_URL + "sunbirds-logo.png",
     cf: "",
     address: "Gaza / London (team & fiscal hosts)",
-    blurb: "The Gaza Sunbirds are Palestine’s para-cycling team, gaining global recognition over the last 22 months for their courageous aid missions and global sporting achievements.",
+    blurb: "I Gaza Sunbirds sono la squadra paraciclistica della Palestina e, negli ultimi 22 mesi, hanno ottenuto riconoscimento a livello globale per le loro coraggiose missioni di soccorso e per i risultati sportivi internazionali.",
     links: {
       missionUrl: "https://gazasunbirds.org/about-us/mission/",
       aboutUrl: "https://gazasunbirds.org/about-us/",

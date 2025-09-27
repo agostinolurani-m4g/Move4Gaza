@@ -3,15 +3,16 @@ import { EVENT_CONFIG, THEME } from '../config.js';
 import GradientHeader from '../components/GradientHeader.jsx';
 import { postSheet, fetchTopTeamsJSONP } from '../services.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
-import PayPalPayBox from '../components/PayPalPayBox.jsx';
+import PaymentOptions from '../components/PaymentOptions.jsx';
+
+const MIN_PER_PERSON = 15;
+const requiredAmount = 15;
+const MIN_PER_PERSON_ = 15;
+const MIN_PER_TEAM = 75;
 
 const Soccer = ({ addRegistration, navigate, remoteStats }) => {
   const [members, setMembers] = useState(6);
-  const [topTeams, setTopTeams] = useState([]);
-  const [paidAmount, setPaidAmount] = useState(0);
-  const [orderId, setOrderId] = useState(null);
-
-  useEffect(() => {
+  const [topTeams, setTopTeams] = useState([]);useEffect(() => {
     const load = () => {
       fetchTopTeamsJSONP('soccer', 5).then(setTopTeams).catch(() => {});
     };
@@ -22,40 +23,22 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
 
   const teamsNow = remoteStats?.totals?.teamsSoccer ?? EVENT_CONFIG.soccer?.teamsCount ?? 0;
   const soccerMax = EVENT_CONFIG.limits?.soccerTeamsMax || Infinity;
-  const soccerFull = teamsNow >= soccerMax;
-
-  const MIN_PER_PERSON = 20;
-  const MIN_PER_TEAM = 100;
-  const normalizedMembers = Math.min(12, Math.max(5, Number(members) || 5));
-  const requiredAmount = Math.max(MIN_PER_TEAM, MIN_PER_PERSON * normalizedMembers);
-  const donationOk = paidAmount >= requiredAmount;
-
-  const submit = (e) => {
+  const soccerFull = teamsNow >= soccerMax;const normalizedMembers = Math.min(12, Math.max(5, Number(members) || 5));const submit = (e) => {
     e.preventDefault();
-    if (!donationOk) {
-      alert("Completa prima la donazione per procedere con l'iscrizione.");
-      return;
-    }
+    
     const fd = new FormData(e.currentTarget);
     const count = Number(fd.get('count') || members || 5);
     const players = Array.from({ length: count }, (_, i) => fd.get(`player_${i + 1}`)).filter(Boolean);
     const rec = Object.fromEntries(fd.entries());
     delete rec.count;
-    const saved = addRegistration('soccer', { ...rec, players, count, donation: { amount: paidAmount, orderId } });
+    const saved = addRegistration('soccer', { ...rec, players, count });
     postSheet('reg_soccer', saved);
     alert('Squadra calcio registrata. Potete donare quando volete.');
     navigate('');
   };
-
-  const pledge = {
-    id: `soccer_${Date.now()}`,
-    purpose: 'donation',
-    amount: requiredAmount,
-  };
-
-  // Meta torneo per banner sinistro
+// Meta torneo per banner sinistro
   const meta = EVENT_CONFIG?.soccer || {};
-  const when = meta.time || EVENT_CONFIG?.time || '—';
+  const when = meta.time || EVENT_CONFIG?.time || 'dalle 9:30 alle 14:00';
   const where = EVENT_CONFIG?.location || '—';
 
   return (
@@ -66,7 +49,7 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
         chips={[
           `Data: ${EVENT_CONFIG.date}`,
           `Luogo: ${EVENT_CONFIG.location}`,
-          'Donazione consigliata: 20 €/persona',
+          'Donazione consigliata: 15 €/persona',
         ]}
       />
 
@@ -102,7 +85,7 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
               <li><span className="font-medium">Luogo:</span> {where}</li>
               <li><span className="font-medium">Orario:</span> {when}</li>
               <li><span className="font-medium">Formato:</span> 5 vs 5 (misto)</li>
-              <li><span className="font-medium">Min. donazione:</span> 20 €/persona — 100 €/squadra</li>
+              <li><span className="font-medium">Min. donazione:</span> 15 €/persona — 75 €/squadra</li>
             </ul>
           </aside>
 
@@ -115,7 +98,7 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
               </p>
             )}
             <p className="mt-2 text-sm">
-              <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 €/persona - 100 €/squadra).{' '}
+              <strong>Donazione propedeutica all’iscrizione</strong> (min. 15 €/persona - 75 €/squadra).{' '}
               <span className="text-red-600">Il pranzo non è incluso.</span>
             </p>
 
@@ -128,14 +111,7 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium">Email capitanə</label>
-                  <input
-                    name="donationRef"
-                    placeholder="email o ID ricevuta"
-                    value={orderId || ''} readOnly disabled={soccerFull}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
-                </div>
+                
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -179,60 +155,26 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
               {/* DONAZIONE (come prima, solo impaginata) */}
               {!soccerFull && (
                 <div className="mt-4 rounded-xl bg-amber-50 p-3 ring-1 ring-amber-200">
-                  <h3 className="text-sm sm:text-base font-semibold">Donazione obbligatoria per iscriversi</h3>
-                  <p className="mt-1 text-xs sm:text-sm">
+                  <h1 className="text-2xl m:text-base font-semibold">La quota <strong>intera</strong> viene donata a Gaza Sunbirds</h1>
+                  <h3 className="mt-1 text-sm sm:text-base font-semibold">Donazione obbligatoria per iscriversi</h3>
+                  <p className="mt-2 text-xs sm:text-sm">
                     Minimo <strong>{MIN_PER_PERSON} €</strong> a persona (min. squadra <strong>{MIN_PER_TEAM} €</strong>).
-                    Con <strong>{normalizedMembers}</strong> componenti l'importo richiesto è <strong>{requiredAmount} €</strong>.
                   </p>
-                  <div className="mt-1 max-w-xs mx-auto">
-                    <PayPalPayBox
-                      compact
-                      pledge={pledge}
-                      onPaid={(amt, id) => { setPaidAmount(Number(amt || 0)); setOrderId(id); }}
-                    />
-                  </div>
-                  <p className={`mt-1 text-xs ${donationOk ? 'text-green-700' : 'text-red-700'}`}>
-                    {donationOk
-                      ? `Donazione registrata: ${paidAmount} € (ID ordine: ${orderId || '—'})`
-                      : `Donazione non ancora sufficiente: ${paidAmount} € su ${requiredAmount} €`}
-                  </p>
+                  <PaymentOptions />
                 </div>
               )}
 
               <div className="flex gap-3">
                 <button
                   type="submit"
-                  disabled={soccerFull || !donationOk}
+                  disabled={soccerFull}
                   className="rounded-xl px-4 py-2 font-semibold text-white disabled:opacity-50"
                   style={{ backgroundColor: THEME.primary }}
                 >
-                  {soccerFull
-                    ? 'Iscrizioni chiuse (pieno)'
-                    : donationOk
-                    ? 'Invia iscrizione squadra'
-                    : 'Completa la donazione per proseguire'}
+                  {soccerFull ? 'Iscrizioni chiuse (pieno)' : 'Invia iscrizione squadra'}
                 </button>
               </div>
             </form>
-          </div>
-
-          {/* Top teams (resta, solo posizione sotto) */}
-          <div className="lg:col-span-4">
-            <div className="mt-6 rounded-2xl border border-slate-200 p-5 bg-white shadow-sm">
-              <h3 className="font-semibold">Top squadre per donazioni</h3>
-              {topTeams.length === 0 ? (
-                <p className="mt-2 text-sm text-slate-600">Ancora nessuna squadra in classifica.</p>
-              ) : (
-                <ol className="mt-2 text-sm list-decimal pl-5 space-y-1">
-                  {topTeams.map((t, i) => (
-                    <li key={i}>
-                      <span className="font-medium">{t.teamName || '—'}</span> —{' '}
-                      {formatCurrency(t.total, EVENT_CONFIG.currency)}
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </div>
           </div>
 
           <div className="lg:col-span-4">

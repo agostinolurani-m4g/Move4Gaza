@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { EVENT_CONFIG, THEME } from '../config.js';
 import GradientHeader from '../components/GradientHeader.jsx';
 import GPXMap from '../components/GPXMap.jsx';
+import PaymentOptions from '../components/PaymentOptions.jsx';
 import { postSheet, fetchTopTeamsJSONP } from '../services.js';
 import { formatCurrency } from '../utils/formatCurrency.js';
-import PayPalPayBox from '../components/PayPalPayBox.jsx';
-
+const MIN_PER_PERSON = 15;
 const Run = ({ addRegistration, navigate, remoteStats }) => {
   const [members, setMembers] = useState(4);
-  const [topTeams, setTopTeams] = useState([]);
-  const [paidAmount, setPaidAmount] = useState(0);
-  const [orderId, setOrderId] = useState(null);
-
-  useEffect(() => {
+  const [topTeams, setTopTeams] = useState([]);useEffect(() => {
     const load = () => {
       fetchTopTeamsJSONP('run', 5)
         .then(setTopTeams)
@@ -26,22 +22,16 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
   const teamsNow = remoteStats?.totals?.teamsRun ?? 0;
   const runFull = teamsNow >= (EVENT_CONFIG.limits?.runTeamsMax || Infinity);
 
-  // Donazione: 20 €/persona
-  const MIN_PER_PERSON = 20;
-  const normalizedMembers = Math.min(10, Math.max(3, Number(members) || 3));
-  const requiredAmount = MIN_PER_PERSON * normalizedMembers;
-  const donationOk = paidAmount >= requiredAmount;
-
-  // Dati percorso (per banner a sinistra)
+  // Donazione: 20 €/personaconst normalizedMembers = Math.min(10, Math.max(3, Number(members) || 3));// Dati percorso (per banner a sinistra)
   const route = EVENT_CONFIG?.routes?.run || {};
   const meta = route.meta || {};
   const lengthVal =
-    meta.length || meta.distance || meta.distanceKm || meta.distance_km;
+    meta.length || meta.distance || meta.distanceKm || meta.distance_km|| route.distance;
   const elevVal = meta.elevation || meta.elevationM || meta.elevation_m;
-  const startVal = meta.start || EVENT_CONFIG?.run?.start || EVENT_CONFIG?.locationStart;
+  const startVal = route.start || meta.start || EVENT_CONFIG?.run?.start || EVENT_CONFIG?.locationStart;
   const finishVal = meta.finish || EVENT_CONFIG?.run?.finish || EVENT_CONFIG?.locationFinish;
   const timeVal =
-    meta.time ||
+    route.time || meta.time ||
     (meta.startTime && meta.endTime ? `${meta.startTime} – ${meta.endTime}` : EVENT_CONFIG?.run?.time);
 
   const fmtLen = typeof lengthVal === 'number' ? `${lengthVal} km` : (lengthVal || '—');
@@ -50,10 +40,7 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
   const submit = (e) => {
     e.preventDefault();
     if (runFull) return;
-    if (!donationOk) {
-      alert('Completa prima la donazione per procedere con l’iscrizione.');
-      return;
-    }
+    
     const fd = new FormData(e.currentTarget);
     const count = Number(fd.get('count') || members || 3);
     const runners = Array.from({ length: count }, (_, i) => fd.get(`runner_${i + 1}`)).filter(Boolean);
@@ -64,29 +51,20 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
       ...rec,
       runners,
       count,
-      donation: { amount: paidAmount, orderId },
     });
 
     postSheet('reg_run', saved);
     alert('Squadra corsa registrata. Grazie per la donazione!');
     navigate('');
   };
-
-  const pledge = {
-    id: `run_${Date.now()}`,
-    purpose: 'donation',
-    amount: requiredAmount,
-  };
-
-  return (
+return (
     <>
       <GradientHeader
         title="Run4Gaza"
         subtitle="Corsa singola o staffetta di 14 km che corrisponde alla percentuale di territorio Palestinese non occupato da Israele"
         chips={[
           `Data: ${EVENT_CONFIG.date}`,
-          'Partenza e Arrivo: Arci Olmi',
-          'Donazione consigliata: 20 €',
+          'Partenza e Arrivo: Arci Olmi'
         ]}
       />
 
@@ -113,9 +91,7 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
               <h3 className="font-semibold">Info percorso</h3>
               <ul className="mt-2 text-sm space-y-1">
                 <li><span className="font-medium">Lunghezza:</span> {fmtLen}</li>
-                <li><span className="font-medium">Dislivello:</span> {fmtElev}</li>
-                <li><span className="font-medium">Partenza:</span> {startVal || '—'}</li>
-                <li><span className="font-medium">Arrivo:</span> {finishVal || '—'}</li>
+                <li><span className="font-medium">Partenza e Arrivo:</span> {startVal || '—'}</li>
                 <li><span className="font-medium">Orari:</span> {timeVal || '—'}</li>
               </ul>
               <div className="mt-3 flex gap-2">
@@ -183,50 +159,33 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
       </section>
 
       {/* FORM ISCRIZIONE + DONAZIONE (solo qui sotto) */}
+
       <section className="py-8">
         <div className="max-w-3xl mx-auto px-4">
           <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
-            <h2 className="text-lg font-semibold">Iscrizione — Corsa (squadra)</h2>
+            <h2 className="text-lg font-semibold">Iscrizione — Corsa singola</h2>
             {runFull && (
               <p className="mt-2 text-sm text-red-600">
-                <strong>Limite squadre raggiunto</strong>. Tieni d’occhio questa pagina per eventuali riaperture.
+                <strong>Limite iscrizioni raggiunto</strong>. Tieni d’occhio questa pagina per eventuali riaperture.
               </p>
             )}
             <p className="mt-2 text-sm">
-              <strong>Donazione propedeutica all’iscrizione</strong> (min. 20 €/persona).{' '}
+              <strong>Donazione propedeutica all’iscrizione</strong> (min. 15 €/persona).{' '}
               <span className="text-red-600">Il pranzo non è incluso.</span>
             </p>
 
             <form onSubmit={submit} className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-1">
-                <label className="block text-sm font-medium">Nome squadra</label>
-                <input
-                  name="teamName"
-                  required
-                  disabled={runFull}
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
-                />
-              </div>
-              <div className="md:col-span-1">
-                <label className="block text-sm font-medium">Instagram squadra (opz.)</label>
-                <input
-                  name="instagram"
-                  placeholder="https://instagram.com/tuasquadra"
-                  disabled={runFull}
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
-                />
-              </div>
               <div>
-                <label className="block text-sm font-medium">Referente</label>
+                <label className="block text-sm font-medium">Nome e cognome</label>
                 <input
-                  name="captain"
+                  name="name"
                   required
                   disabled={runFull}
                   className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium">Email referente</label>
+                <label className="block text-sm font-medium">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -240,94 +199,70 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
                 <input
                   type="tel"
                   name="phone"
+                  required
                   disabled={runFull}
                   className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium">N. componenti</label>
-                <input
-                  type="number"
-                  name="count"
-                  min={3}
-                  max={10}
-                  value={members}
-                  onChange={(e) => setMembers(Number(e.target.value))}
+                <label className="block text-sm font-medium">Distanza</label>
+                <select
+                  name="distance"
+                  required
                   disabled={runFull}
                   className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
+                >
+                  <option value="7">7 km (singola)</option>
+                  <option value="14">14 km (singolo)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Partecipi in staffetta?</label>
+                <select
+                  name="staffetta"
+                  required
+                  disabled={runFull}
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
+                >
+                  <option value="no">No</option>
+                  <option value="si">Sì</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Nome squadra (opzionale)</label>
+                <input
+                  name="teamName"
+                  disabled={runFull}
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
+                  placeholder="Se partecipi in staffetta"
                 />
               </div>
-
-              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[...Array(Math.min(10, Math.max(3, members)))].map((_, i) => (
-                  <div key={i}>
-                    <label className="block text-xs font-medium">Runner {i + 1}</label>
-                    <input
-                      name={`runner_${i + 1}`}
-                      disabled={runFull}
-                      className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium">Rif. donazione</label>
-                  <input
-                    name="donationRef"
-                    placeholder="email o ID ricevuta"
-                    value={orderId || ''}
-                    readOnly
-                    disabled={runFull}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
-                  />
-                </div>
-                <div className="self-end text-sm">
-                  <label className="inline-flex items-center gap-2">
-                    <input type="checkbox" name="waiver" required disabled={runFull} />
-                    <span>Dichiaro idoneità fisica dei partecipanti.</span>
-                  </label>
-                </div>
+              <div className="self-end text-sm md:col-span-2">
+                <label className="inline-flex items-center gap-2">
+                  <input type="checkbox" name="waiver" required disabled={runFull} />
+                  <span>Dichiaro idoneità fisica.</span>
+                </label>
               </div>
 
               {!runFull && (
                 <div className="md:col-span-2 mt-2 rounded-xl bg-amber-50 p-3 ring-1 ring-amber-200">
                   <h3 className="text-sm sm:text-base font-semibold">Donazione obbligatoria per iscriversi</h3>
                   <p className="mt-1 text-xs sm:text-sm">
-                    Minimo <strong>{MIN_PER_PERSON} €</strong> a persona. Con <strong>{normalizedMembers}</strong>{' '}
-                    componenti l'importo richiesto è <strong>{requiredAmount} €</strong>.
+                    Minimo <strong>{MIN_PER_PERSON} €</strong> a persona.
                   </p>
-                  <div className="mt-1 max-w-xs mx-auto">
-                    <PayPalPayBox
-                      compact
-                      pledge={pledge}
-                      onPaid={(amt, id) => {
-                        setPaidAmount(Number(amt || 0));
-                        setOrderId(id);
-                      }}
-                    />
-                  </div>
-                  <p className={`mt-1 text-xs ${donationOk ? 'text-green-700' : 'text-red-700'}`}>
-                    {donationOk
-                      ? `Donazione registrata: ${paidAmount} € (ID ordine: ${orderId || '—'})`
-                      : `Donazione non ancora sufficiente: ${paidAmount} € su ${requiredAmount} €`}
-                  </p>
+                  <p className="mt-3"></p>
+                  <PaymentOptions />
                 </div>
               )}
 
               <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
                 <button
                   type="submit"
-                  disabled={runFull || !donationOk}
+                  disabled={runFull}
                   className="flex-1 rounded-xl px-4 py-2 font-semibold text-white disabled:opacity-50"
                   style={{ backgroundColor: THEME.primary }}
                 >
-                  {runFull
-                    ? 'Iscrizioni chiuse (pieno)'
-                    : donationOk
-                    ? 'Invia iscrizione squadra'
-                    : 'Completa la donazione per proseguire'}
+                  {runFull ? 'Iscrizioni chiuse (pieno)' : 'Invia iscrizione'}
                 </button>
                 <button
                   type="button"
@@ -339,23 +274,7 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
               </div>
             </form>
           </div>
-
-          {/* Top teams by donations */}
-          <div className="mt-6 rounded-2xl border border-slate-200 p-5 bg-white shadow-sm">
-            <h3 className="font-semibold">Top squadre per donazioni</h3>
-            {topTeams.length === 0 ? (
-              <p className="mt-2 text-sm text-slate-600">Ancora nessuna squadra in classifica.</p>
-            ) : (
-              <ol className="mt-2 text-sm list-decimal pl-5 space-y-1">
-                {topTeams.map((t, i) => (
-                  <li key={i}>
-                    <span className="font-medium">{t.teamName || '—'}</span> —{' '}
-                    {formatCurrency(t.total, EVENT_CONFIG.currency)}
-                  </li>
-                ))}
-              </ol>
-            )}
-          </div>
+          
 
           <div className="mt-6">
             <button

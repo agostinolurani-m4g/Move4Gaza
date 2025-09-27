@@ -1,12 +1,12 @@
 import React from 'react';
 import { EVENT_CONFIG } from '../config.js';
-import PreCheckout from '../components/PreCheckout.jsx';
+import PaymentOptions from '../components/PaymentOptions.jsx';
 import BeneficiaryBadge from '../components/BeneficiaryBadge.jsx';
 
 // Donation page where users can record a pledge and choose a payment method.
 // Presents information about minimum recommended amounts, transparency and
-// acknowledges the beneficiary. Uses PreCheckout to handle pledge creation.
-const Donate = ({ addPledge, navigate, markPledgePaid }) => {
+// acknowledges the beneficiary. Uses PaymentOptions to handle pledge creation.
+const Donate = () => {
   return (
     <section className="py-12 bg-white">
       <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -29,7 +29,7 @@ const Donate = ({ addPledge, navigate, markPledgePaid }) => {
         </div>
         {/* Right column: donation form and a repeated badge */}
         <div>
-          <PreCheckout
+          <PaymentOptions
             addPledge={addPledge}
             navigate={navigate}
             markPledgePaid={markPledgePaid}

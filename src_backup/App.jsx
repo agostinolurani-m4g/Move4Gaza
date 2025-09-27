@@ -284,6 +284,7 @@ function Nav({ navigate }) {
           <a href="#/bike" onClick={(e)=>{e.preventDefault(); navigate('bike');}} className="hover:underline">Bici</a>
           <a href="#/soccer" onClick={(e)=>{e.preventDefault(); navigate('soccer');}} className="hover:underline">Calcio</a>
           <a href="#/run" onClick={(e)=>{e.preventDefault(); navigate('run');}} className="hover:underline">Corsa</a>
+          <a href="#/entrance" onClick={(e)=>{e.preventDefault(); navigate('entrance');}} className="hover:underline">Incontri</a>
           <a href="#/donate" onClick={(e)=>{e.preventDefault(); navigate('donate');}} className="inline-flex items-center rounded-lg px-3 py-1.5 text-white" style={{ backgroundColor: THEME.primary }}>Dona</a>
         </div>
       </div>

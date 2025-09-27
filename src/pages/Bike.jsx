@@ -2,50 +2,31 @@ import React, { useState } from 'react';
 import { EVENT_CONFIG, THEME } from '../config.js';
 import GradientHeader from '../components/GradientHeader.jsx';
 import GPXMap from '../components/GPXMap.jsx';
+import PaymentOptions from '../components/PaymentOptions.jsx';
 import { postSheet, fetchRegistrationsJSONP } from '../services.js';
-import PayPalPayBox from '../components/PayPalPayBox.jsx';
-
 fetchRegistrationsJSONP('bike', 500).then((data) => {
   console.log('Fetched bike registrations:', data);
 });
+const MIN_PER_PERSON = 15;
+const requiredAmount = 15;
 
 const Bike = ({ addRegistration, navigate }) => {
   const [level, setLevel] = useState('Principiante');
-  const [distance, setDistance] = useState('112');
-
-  const [paidAmount, setPaidAmount] = useState(0);
-  const [orderId, setOrderId] = useState(null);
-
-  const MIN_PER_PERSON = 20;
-  const requiredAmount = MIN_PER_PERSON;
-  const donationOk = paidAmount >= requiredAmount;
-
-  const submit = (e) => {
+  const [distance, setDistance] = useState('112');const submit = (e) => {
     e.preventDefault();
-    if (!donationOk) {
-      alert('Completa prima la donazione (min. 20 €) per procedere con l’iscrizione.');
-      return;
-    }
+    
     const fd = new FormData(e.currentTarget);
     const plain = Object.fromEntries(fd.entries());
     const saved = addRegistration('bike', {
       ...plain,
       distance,
-      donation: { amount: paidAmount, orderId },
     });
     postSheet('reg_bike', saved);
     e.currentTarget.reset();
     alert('Iscrizione bici registrata. Grazie per la donazione!');
     navigate('');
   };
-
-  const pledge = {
-    id: `bike_${Date.now()}`,
-    purpose: 'donation',
-    amount: requiredAmount,
-  };
-
-  // Dati route selezionata per banner sinistro
+// Dati route selezionata per banner sinistro
   const route = EVENT_CONFIG.routes.bike[distance] || {};
   const meta = route.meta || {};
   const fmtLen = typeof meta.distance === 'number' ? `${meta.distance} km` : (meta.distance || meta.length || '—');
@@ -224,14 +205,7 @@ const Bike = ({ addRegistration, navigate }) => {
                   <label className="block text-sm font-medium">Squadra (opz.)</label>
                   <input name="teamName" placeholder="nome squadra (se vuoi)" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium">Riferimento donazione</label>
-                  <input
-                    name="donationRef"
-                    placeholder="email o ID ricevuta"
-                    value={orderId || ''} readOnly
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
-                </div>
+                
               </div>
 
               <div className="mt-2 rounded-xl bg-amber-50 p-3 ring-1 ring-amber-200">
@@ -239,21 +213,7 @@ const Bike = ({ addRegistration, navigate }) => {
                 <p className="mt-1 text-xs sm:text-sm">
                   Minimo <strong>{MIN_PER_PERSON} €</strong>. Importo richiesto: <strong>{requiredAmount} €</strong>.
                 </p>
-                <div className="mt-1 max-w-xs mx-auto">
-                  <PayPalPayBox
-                    compact
-                    pledge={pledge}
-                    onPaid={(amt, id) => {
-                      setPaidAmount(Number(amt || 0));
-                      setOrderId(id);
-                    }}
-                  />
-                </div>
-                <p className={`mt-1 text-xs ${donationOk ? 'text-green-700' : 'text-red-700'}`}>
-                  {donationOk
-                    ? `Donazione registrata: ${paidAmount} € (ID ordine: ${orderId || '—'})`
-                    : `Donazione non ancora sufficiente: ${paidAmount} € su ${requiredAmount} €`}
-                </p>
+                <PaymentOptions />
               </div>
 
               <div className="flex gap-3">
@@ -261,9 +221,9 @@ const Bike = ({ addRegistration, navigate }) => {
                   className="rounded-xl px-4 py-2 font-semibold text-white disabled:opacity-50"
                   style={{ backgroundColor: THEME.primary }}
                   type="submit"
-                  disabled={!donationOk}
+                  
                 >
-                  {donationOk ? 'Invia iscrizione' : 'Completa la donazione per proseguire'}
+                  Invia iscrizione
                 </button>
               </div>
 

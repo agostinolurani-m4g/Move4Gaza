@@ -13,7 +13,6 @@ import Bike from './pages/Bike.jsx';
 import Soccer from './pages/Soccer.jsx';
 import Run from './pages/Run.jsx';
 import Donate from './pages/Donate.jsx';
-import ConfirmPayment from './pages/ConfirmPayment.jsx';
 import Registration from './pages/Registration.jsx';
 
 export default function App() {
@@ -39,9 +38,7 @@ export default function App() {
       {page === 'registration' ? (
         <Registration navigate={navigate} />
       ) : page === 'donate' ? (
-        <Donate addPledge={addPledge} navigate={navigate} markPledgePaid={markPledgePaid} />
-      ) : page.startsWith('confirm') ? (
-        <ConfirmPayment markPledgePaid={markPledgePaid} />
+        <Donate />
       ) : page === 'beneficiary' ? (
         <Beneficiary />
       ) : page === 'bike' ? (
