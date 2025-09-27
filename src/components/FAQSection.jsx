@@ -59,7 +59,7 @@ const FAQSection = ({ navigate }) => {
           >
             <h3 className="font-semibold text-black">La donazione è obbligatoria? Cosa include?</h3>
             <p className="text-sm text-black mt-1">
-              Sì: la donazione (<strong>min. 20 €</strong>) è{' '}
+              Sì: la donazione (<strong>min. 15 €</strong>) è{' '}
               <strong>propedeutica all’iscrizione</strong>.{' '}
               <strong>Non include</strong> beni/servizi (es. <strong>pranzo non incluso</strong>).
             </p>

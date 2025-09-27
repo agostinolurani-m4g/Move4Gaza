@@ -37,6 +37,12 @@ const Registration = ({ navigate }) => {
             </p>
           </section>
           <section className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+            <h2 className="text-xl font-semibold">Support4Gaza</h2>
+            <p className="mt-2 text-slate-700">
+              {EVENT_CONFIG.descrizione_ingresso}
+            </p>
+          </section>
+          <section className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
             <h3 className="text-lg font-semibold">Iscriviti allo sport</h3>
             <div className="mt-3 flex flex-wrap gap-3">
               <a onClick={(e)=>{e.preventDefault();navigate('bike')}} href="#/bike"
@@ -53,6 +59,16 @@ const Registration = ({ navigate }) => {
                  className="inline-flex bg-green-700 items-center rounded-xl px-4 py-2 font-semibold text-black"
                  style={{ backgroundColor: '#009739' }}>
                  Iscriviti – Corsa
+              </a>
+            </div>
+          </section>
+          <section className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
+            <h3 className="text-lg font-semibold">Facci sapere se vieni comunque, anche senza sudare!</h3>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <a onClick={(e)=>{e.preventDefault();navigate('entrance')}} href="#/entrance"
+                 className="inline-flex bg-green-700 items-center rounded-xl px-4 py-2 font-semibold text-black"
+                 style={{ backgroundColor: '#009739' }}>
+                 Incontri - Tifo
               </a>
             </div>
           </section>

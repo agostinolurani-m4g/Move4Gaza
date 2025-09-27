@@ -16,7 +16,7 @@ const Bike = ({ addRegistration, navigate }) => {
   const [paidAmount, setPaidAmount] = useState(0);
   const [orderId, setOrderId] = useState(null);
 
-  const MIN_PER_PERSON = 20;
+  const MIN_PER_PERSON = 15;
   const requiredAmount = MIN_PER_PERSON;
   const donationOk = paidAmount >= requiredAmount;
 

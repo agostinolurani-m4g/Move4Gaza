@@ -2,11 +2,19 @@ import React from 'react';
 import { EVENT_CONFIG } from '../config.js';
 import GradientHeader from '../components/GradientHeader.jsx';
 import BeneficiaryCard from '../components/BeneficiaryCard.jsx';
-
-// Detailed description of the beneficiary and links to their initiatives.
+// ...existing code...
 const Beneficiary = () => {
   const B = EVENT_CONFIG.beneficiary || {};
   const L = B.links || {};
+
+  // Array di immagini (sostituisci i percorsi con quelli reali)
+  const boxImages = [
+    import.meta.env.BASE_URL + 'bene_chi.JPG',
+    import.meta.env.BASE_URL + 'bene_mission.jpg',
+    import.meta.env.BASE_URL + 'bene_dist.png',
+    import.meta.env.BASE_URL + 'bene_aid.jpg',
+  ];
+
   return (
     <>
       <GradientHeader
@@ -55,7 +63,8 @@ const Beneficiary = () => {
 
           {/* Info boxes */}
           <div className="grid md:grid-cols-2 gap-4 mb-10">
-            <div className="rounded-2xl border border-slate-200 p-5">
+            <div className="rounded-2xl border border-slate-200 p-5 flex flex-col items-center">
+              <img src={boxImages[0]} alt="Chi sono" className="w-24 h-24 object-cover rounded-xl mb-3" />
               <h3 className="font-semibold">Chi sono</h3>
               <p className="text-sm text-slate-700 mt-1">
                 Team di paraciclismo fondato a Gaza; dal 2020 percorsi per amputatə e
@@ -71,7 +80,8 @@ const Beneficiary = () => {
                 .
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 p-5">
+            <div className="rounded-2xl border border-slate-200 p-5 flex flex-col items-center">
+              <img src={boxImages[1]} alt="Missione" className="w-24 h-24 object-cover rounded-xl mb-3" />
               <h3 className="font-semibold">Missione</h3>
               <p className="text-sm text-slate-700 mt-1">
                 Aiuti comunitari, protezione dei civili e sport accessibile.
@@ -86,17 +96,21 @@ const Beneficiary = () => {
                 .
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 p-5">
+            <div className="rounded-2xl border border-slate-200 p-5 flex flex-col items-center">
+              <img src={boxImages[2]} alt="Dove vanno i fondi" className="w-24 h-24 object-cover rounded-xl mb-3" />
               <h3 className="font-semibold">Dove vanno i fondi</h3>
               <p className="text-sm text-slate-700 mt-1">
                 Beni essenziali, distribuzioni locali, inclusione e sport. Report, campagne e shop sul loro sito.
               </p>
             </div>
-            <BeneficiaryCard
-              title="Aid & Programmi"
-              href={L.aidUrl}
-              desc="Distribuzioni locali, reti di volontari, aggiornamenti."
-            />
+            <div className="flex flex-col items-center">
+              <img src={boxImages[3]} alt="Aid & Programmi" className="w-24 h-24 object-cover rounded-xl mb-3" />
+              <BeneficiaryCard
+                title="Aid & Programmi"
+                href={L.aidUrl}
+                desc="Distribuzioni locali, reti di volontari, aggiornamenti."
+              />
+            </div>
           </div>
 
           {/* Legal notes */}

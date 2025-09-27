@@ -11,6 +11,7 @@ const Hero = ({ navigate }) => {
     EVENT_CONFIG.logoUrl_secondary ||
     EVENT_CONFIG.logoUrl; // fallback finale
 
+  
   return (
     <header className="relative isolate">
       <div className="max-w-6xl mx-auto px-4 pt-20 pb-14 text-center">
@@ -22,14 +23,14 @@ const Hero = ({ navigate }) => {
           loading="lazy"
         />
 
-        {/* Luogo + (logo) + data */}
+        {/* Luogo + data */}
         <div className="mt-10">
           <p className="text-lg sm:text-xl font-semibold tracking-wide text-black">
             {EVENT_CONFIG.location}
           </p>
 
-          {/* LOGO sotto il location (opzionale) */}
-          {locationLogo && (
+          {/* LOGO sotto il location (rimosso) */}
+          {/* {locationLogo && (
             <img
               src={locationLogo}
               alt={`${EVENT_CONFIG.title} logo`}
@@ -38,7 +39,7 @@ const Hero = ({ navigate }) => {
               width={80}
               height={80}
             />
-          )}
+          )} */}
 
           <p className="text-base sm:text-lg font-bold tracking-wide text-black/90 mt-2">
             {EVENT_CONFIG.date}

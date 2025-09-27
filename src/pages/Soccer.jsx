@@ -24,8 +24,8 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
   const soccerMax = EVENT_CONFIG.limits?.soccerTeamsMax || Infinity;
   const soccerFull = teamsNow >= soccerMax;
 
-  const MIN_PER_PERSON = 20;
-  const MIN_PER_TEAM = 100;
+  const MIN_PER_PERSON = 15;
+  const MIN_PER_TEAM = 75;
   const normalizedMembers = Math.min(12, Math.max(5, Number(members) || 5));
   const requiredAmount = Math.max(MIN_PER_TEAM, MIN_PER_PERSON * normalizedMembers);
   const donationOk = paidAmount >= requiredAmount;

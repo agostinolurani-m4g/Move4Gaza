@@ -27,7 +27,7 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
   const runFull = teamsNow >= (EVENT_CONFIG.limits?.runTeamsMax || Infinity);
 
   // Donazione: 20 €/persona
-  const MIN_PER_PERSON = 20;
+  const MIN_PER_PERSON = 15;
   const normalizedMembers = Math.min(10, Math.max(3, Number(members) || 3));
   const requiredAmount = MIN_PER_PERSON * normalizedMembers;
   const donationOk = paidAmount >= requiredAmount;
