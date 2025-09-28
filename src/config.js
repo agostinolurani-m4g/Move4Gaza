@@ -89,7 +89,7 @@ export const EVENT_CONFIG = {
   // Default poster fallback uses the same locandina PNG
   logoUrl_mix: import.meta.env.BASE_URL + "M4G-mix.svg",
   logoUrl_mix: import.meta.env.BASE_URL + "M4G-mix.svg",
-  contactEmail: "amaro.bici",
+  contactEmail: "amaro.bici@gmail.com",
   whatsapp: "",
   cause: {
     heading: "Perché lo facciamo",
