@@ -33,7 +33,7 @@ const Bike = ({ addRegistration, navigate }) => {
   const fmtElev = typeof meta.elevation === 'number' ? `${meta.elevation} m D+` : (meta.elevation || '—');
   const startVal = meta.start || EVENT_CONFIG?.bike?.start || EVENT_CONFIG?.location;
   const finishVal = meta.finish || EVENT_CONFIG?.bike?.finish || EVENT_CONFIG?.location;
-  const timeVal = meta.time || EVENT_CONFIG?.bike?.time || EVENT_CONFIG?.time;
+  const timeVal = "08:30-09:30" || meta.time || EVENT_CONFIG?.bike?.time || EVENT_CONFIG?.time;
 
   return (
     <>
