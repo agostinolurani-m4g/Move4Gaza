@@ -63,11 +63,17 @@ export const EVENT_CONFIG = {
         gpx: import.meta.env.BASE_URL + "routes/rideforgaza112.gpx",
         stravaRouteId: "",
         stravaSegmentUrl: "",
+        distance: 112
+        start: "Arci Olmi, via degli Ulivi 2, Milano.",
+        time: "11:00",
       },
       "20":  {
         gpx: import.meta.env.BASE_URL + "routes/amgaz_bici_short.gpx",
         stravaRouteId: "",
         stravaSegmentUrl: "",
+        distance: 25
+        start: "Arci Olmi, via degli Ulivi 2, Milano.",
+        time: "11:00",
       },
     },
     run: {
