@@ -32,7 +32,7 @@ const Ingresso = ({ addRegistration, navigate }) => {
   return (
     <>
       <GradientHeader
-        title="Ride4Gaza — Ingresso"
+        title="Support4Gaza — Ingresso"
         subtitle="Registrazione per chi partecipa al pranzo e/o segue gli interventi finali."
         chips={[
           `Data: ${EVENT_CONFIG.date}`,
