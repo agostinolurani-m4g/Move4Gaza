@@ -74,7 +74,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
               ),
             },
             {
-              label: 'Iscritti bici',
+              label: 'IscrittƏ bici',
               value: remoteStats?.totals?.riders ?? derived.riders,
             },
             {
