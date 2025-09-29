@@ -24,7 +24,6 @@ const realtaAderenti = [
     "Prima Traccia",
     "Popolare Ciclistica",
     "Rimaflow",
-    "Saichepuoi",
     "St. Ambroeus FC",
     "Trace.cc",
     "Turbolento",
