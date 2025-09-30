@@ -19,6 +19,7 @@ const realtaAderenti = [
     "Maledette Biciclette Milanesi",
     "Maloha Trail",
     "Maradonne",
+    "Milano Bicycle Coalition",
     "Patatrack.cc",
     "Pink Wave Cycling Team",
     "Prima Traccia",
