@@ -8,7 +8,7 @@ const Hero = ({ navigate }) => {
   // Sottotitolo resiliente
   const subtitle =
     EVENT_CONFIG.subtitle ||
-    "Non si può stare fermi! sabato 18 ottobre ti aspettiamo per una giornata di mobilitazione sportiva e collettiva per raccogliere fondi a favore dell'associazione Gaza Sunbirds" ||
+    "Non si può stare fermə! sabato 18 ottobre ti aspettiamo per una giornata di mobilitazione sportiva e collettiva per raccogliere fondi a favore dell'associazione Gaza Sunbirds" ||
     EVENT_CONFIG.tagline ||
     EVENT_CONFIG.slogan;
   // Logo da mostrare sotto il location: scegli in modo resiliente tra più chiavi possibili
