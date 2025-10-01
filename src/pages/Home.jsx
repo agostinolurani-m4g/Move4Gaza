@@ -6,6 +6,7 @@ import Hero from '../components/Hero.jsx';
 import FAQSection from '../components/FAQSection.jsx';
 import { fetchRegistrationsJSONP } from '../services.js';
 const realtaAderenti = [
+    "Alfabeti ODV",
     "Amaro",
     //"Casello San Cristoforo",
     "Ciclochard",
