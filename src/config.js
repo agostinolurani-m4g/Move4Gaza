@@ -7,6 +7,8 @@
 // Main event configuration describing the high‑level details of the fundraiser
 // and the available disciplines. The import.meta.env.BASE_URL prefix is
 // preserved to ensure relative assets are resolved correctly by the bundler.
+const paypalLink = import.meta.env.VITE_PAYPAL_LINK;
+const ibanLink = import.meta.env.VITE_IBAN_LINK;
 export const EVENT_CONFIG = {
   title: "Move for Gaza",
   tagline: "Pedala, gioca, corri — insieme per Gaza",
@@ -85,7 +87,7 @@ export const EVENT_CONFIG = {
       time: "11:00",
     },
   },
-  payments: { paypalLink: "https://www.paypal.com/pool/9iq3YyxOcH?sr=wccr", iban: "IT36X0623001621000040418795", ibanOwner: "Amaro ASD", ibanBank: "NOME BANCA", stripeComingSoon: false },
+  payments: { paypalLink: paypalLink, iban: ibanLink, ibanOwner: "Amaro ASD", ibanBank: "NOME BANCA", stripeComingSoon: false },
   forms: { bike: "", soccer: "", run: "" },
   // Use the updated locandina PNG as default poster
   logoUrl: import.meta.env.BASE_URL + "locandina.png",
