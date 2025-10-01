@@ -7,8 +7,6 @@
 // Main event configuration describing the high‑level details of the fundraiser
 // and the available disciplines. The import.meta.env.BASE_URL prefix is
 // preserved to ensure relative assets are resolved correctly by the bundler.
-const paypalLink = import.meta.env.VITE_PAYPAL_LINK;
-const ibanLink = import.meta.env.VITE_IBAN_LINK;
 export const EVENT_CONFIG = {
   title: "Move for Gaza",
   tagline: "Pedala, gioca, corri — insieme per Gaza",
@@ -33,12 +31,12 @@ export const EVENT_CONFIG = {
   "a suddi Milano (115 km) presso il campo sportivo dell'Arci Olmi. \n Dopo un pranzo sociale (verso le 14:00) aperto anche a chi non partecipa agli" +
   " eventi sportivi, il pomeriggio è dedicato a momenti di approfondimento e confronto con ospiti e testimonianze dirette dalla Palestina.",
 
-  descrizione_evento_perche: "La Move4Gaza è un evento sportivo non competitivo per raccogliere fondi a sostegno degli aiuti umanitari, " + 
-  "nasce dall'esigenza di fare qualcosa di concreto per la popolazione di Gaza, in questo momento drammatico, con l'obiettivo e la sperzanza" + 
-  "non solo di contribuire in maniera concreta, ma di dare la possibilità a tuttə le persone che in questo momento come noi vogliono cambiare le cose" + 
+  descrizione_evento_perche: "La Move4Gaza è un evento sportivo non competitivo per raccogliere fondi a sostegno degli aiuti umanitari, " +
+  "nasce dall'esigenza di fare qualcosa di concreto per la popolazione di Gaza, in questo momento drammatico, con l'obiettivo e la sperzanza" +
+  "non solo di contribuire in maniera concreta, ma di dare la possibilità a tuttə le persone che in questo momento come noi vogliono cambiare le cose" +
   " di poterlo fare, ma soprattutto di poter costruire in futuro qualcosa di molto più grande ed importante. \n" +
   "La sensazione di impotenza che proviamo non deve fermarci, possiamo fare molte cose, speriamo che oggi nasca una nuova consapevolezza di ciò che possiamo fare.",
-  
+
   descrizione_calcio: "Il torneo di calcio non competitivo a 5 si svolge presso il campo sportivo dell'Arci Olmi a Milano. " +
   "Le squadre sono miste e aperte a tuttə, ogni squadra gioca 3 partite da 20 minuti, tra una partita ci saranno momenti per mangiare o bere" +
   " qualcosa. La donazione minima è di 75 € a squadra (15 € a persona), chi vuole può donare di più. \n" +
@@ -48,10 +46,10 @@ export const EVENT_CONFIG = {
   descrizione_bici: "Il percorso lungo circa 115 km ricalca la lunghezza del perimetro della striscia di Gaza con partenza ed arrivo " +
   "all'Arci Olmi di Milano dove si svolgerà l'evento. Il percorso si snoda su strade secondarie e piste ciclabili, con alcuni tratti " +
   "sterrati. Il dislivello è di circa 300 m. Non è una gara, ma un evento sociale e solidale, si raccomanda di pedalare in sicurezza. " +
-  "Dopo Pavia segnaliamo scarsità di punti di ristoro da tenere in considerazione. ", 
+  "Dopo Pavia segnaliamo scarsità di punti di ristoro da tenere in considerazione. ",
 
   descrizione_corsa: "La corsa non competitiva di circa 7 km si svolge su un percorso cittadino che parte e arriva all'Arci Olmi di Milano. " +
-  "Il percorso è adatto a tuttə, con la possibilità di fare una staffetta in due persone (7 + 7) e per i più carichi 14 in solitaria. " + 
+  "Il percorso è adatto a tuttə, con la possibilità di fare una staffetta in due persone (7 + 7) e per i più carichi 14 in solitaria. " +
   "La donazione minima è di 15 € a persona, " +
   "chi vuole può donare di più. \n La corsa inizia alle 11:00, seguita dal pranzo sociale " +
   "(non incluso nella donazione). Durante la corsa non sono previsti punti di ristoro e assistenza medica, il tracciato gps è scaricabile e il tracciato sarà segnato.",
@@ -87,7 +85,7 @@ export const EVENT_CONFIG = {
       time: "11:00",
     },
   },
-  payments: { paypalLink: paypalLink, iban: ibanLink, ibanOwner: "Amaro ASD", ibanBank: "NOME BANCA", stripeComingSoon: false },
+  payments: { paypalLink: "https://www.paypal.com/pool/9iq3YyxOcH?sr=wccr", iban: "IT36X0623001621000040418795", ibanOwner: "Amaro ASD", ibanBank: "NOME BANCA", stripeComingSoon: false },
   forms: { bike: "", soccer: "", run: "" },
   // Use the updated locandina PNG as default poster
   logoUrl: import.meta.env.BASE_URL + "locandina.png",

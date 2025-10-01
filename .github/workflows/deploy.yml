@@ -2,45 +2,26 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: github-pages            # <-- metti qui il nome dell'environment che contiene i segreti
-    env:
-      PAYPAL_LINK: ${{ secrets.PAYPAL_LINK }}
-      IBAN_LINK:   ${{ secrets.IBAN_LINK }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
       - run: npm ci
-
-      # Espongo le variabili per Vite in UN SOLO step
-      - name: Export env for Vite
-        run: |
-          echo "VITE_PAYPAL_LINK=$PAYPAL_LINK" >> "$GITHUB_ENV"
-          echo "VITE_IBAN_LINK=$IBAN_LINK"     >> "$GITHUB_ENV"
-
       - run: npm run build
-
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    # Facoltativo ma consigliato: lega il job all’environment 'github-pages' del deploy
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
