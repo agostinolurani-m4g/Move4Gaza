@@ -16,6 +16,7 @@ const realtaAderenti = [
     "Errantes",
     "Famole Strane",
     "Fulgenzio Tacconi",
+    "GGGG Bicis",
     "Giovani Palestinesi Milano",
     "Maledette Biciclette Milanesi",
     "Maloha Trail",
@@ -27,6 +28,7 @@ const realtaAderenti = [
     "Popolare Ciclistica",
     "Rimaflow",
     "St. Ambroeus FC",
+    "StellaRossa.cc",
     "Trace.cc",
     "Turbolento",
     "Upcycle Cafè",
@@ -84,7 +86,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
             },
             {
               label: 'Squadre corsa',
-              value: remoteStats?.totals?.runnersRun ?? derived.runnersRun,
+              value: remoteStats?.totals?.teamsRun ?? derived.teamsRun,
             },
           ].map((s, i) => (
             <div
@@ -213,7 +215,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
               <h3 className="text-xl font-semibold text-black">Giro in bici</h3>
               <p className="mt-2 text-sm text-black">
                 Tracciato che ricalca forma e larghezza della Striscia di Gaza. Ritmo
-                sociale, non competitivo. 
+                sociale, non competitivo.
               </p>
               <div
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold "
@@ -233,7 +235,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
             >
               <h3 className="text-xl font-semibold text-black">Giro cittadino in bici</h3>
               <p className="mt-2 text-sm text-black">
-                Tracciato di 20 km sul naviglio grande e per campi per raggiungere l'evento all'Arci Olmi. 
+                Tracciato di 20 km sul naviglio grande e per campi per raggiungere l'evento all'Arci Olmi.
               </p>
               <div
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold "
@@ -293,7 +295,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
             >
               <h3 className="text-xl font-semibold text-black">Vieni anche solo per gli incontri!</h3>
               <p className="mt-2 text-sm text-black">
-                Non vuoi correre, sudare e faticare? Vieni comunque a mangiare e seguire gli incontri! 
+                Non vuoi correre, sudare e faticare? Vieni comunque a mangiare e seguire gli incontri!
                 L'importante è stare insieme, creare movimento e donare. Ti aspettiamo!
               </p>
               <div
@@ -356,3 +358,4 @@ const Home = ({ navigate, derived, remoteStats }) => {
 };
 
 export default Home;
+

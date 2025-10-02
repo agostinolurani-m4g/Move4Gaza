@@ -20,7 +20,6 @@ export async function postSheet(type, payload) {
     /* noop */
   }
 }
-
 export function fetchRegistrationsJSONP(kind = 'bike', limit = 50) {
   return new Promise((resolve) => {
     if (!SHEETS_CONFIG.url) return resolve([]);
@@ -42,7 +41,6 @@ export function fetchRegistrationsJSONP(kind = 'bike', limit = 50) {
     setTimeout(() => resolve([]), 8000);
   });
 }
-
 // Fetch the most recent paid pledges using JSONP. The sheet script will
 // return an object with an items array that contains donations.
 export function fetchRecentDonationsJSONP(limit = 6) {
@@ -91,13 +89,14 @@ export function fetchTopTeamsJSONP(kind = 'soccer', limit = 5) {
   });
 }
 
+// Retrieve aggregated statistics from the sheet via JSONP. The returned value
+// exposes totals for raised funds and number of teams.
 export function fetchSheetStatsJSONP() {
   return new Promise((resolve, reject) => {
     if (!SHEETS_CONFIG.url) return resolve(null);
     const cb = 'cb_stats_' + Math.random().toString(36).slice(2);
     window[cb] = (data) => {
-      const normalized = normalizeStatsPayload(data);
-      resolve(normalized);
+      resolve(data);
       try { delete window[cb]; } catch {}
     };
     const s = document.createElement('script');
@@ -111,27 +110,4 @@ export function fetchSheetStatsJSONP() {
     document.body.appendChild(s);
     setTimeout(() => resolve(null), 8000);
   });
-}
-
-// --- helpers ---------------------------------------------------------------
-
-function normalizeStatsPayload(data) {
-  const d = data || {};
-  const totals = d.totals || {};
-  // preferisci runnersRun; se non presente prova alias runRunners; fallback 0
-  const runnersRun =
-    typeof totals.runnersRun === 'number' ? totals.runnersRun :
-    typeof totals.runRunners === 'number' ? totals.runRunners : 0;
-
-  return {
-    ...d,
-    totals: {
-      ...totals,
-      // chiave “ufficiale”
-      runnersRun,
-      // alias comodo in lettura (stesso valore)
-      runRunners: runnersRun,
-      // teamsRun resta invariato per retrocompatibilità lato UI
-    }
-  };
 }

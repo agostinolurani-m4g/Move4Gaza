@@ -64,11 +64,11 @@ export function useDB() {
     const teamsSoccer = new Set(
       db.registrations.soccer.map((t) => (t.teamName || "").trim().toLowerCase())
     ).size;
-    const runnersRun = new Set(
+    const teamsRun = new Set(
       db.registrations.run.map((t) => (t.teamName || "").trim().toLowerCase())
     ).size;
     const riders = db.registrations.bike.length;
-    return { raised, teamsSoccer, runnersRun, riders };
+    return { raised, teamsSoccer, teamsRun, riders };
   }, [db]);
 
   return { db, addPledge, markPledgePaid, addRegistration, derived };
