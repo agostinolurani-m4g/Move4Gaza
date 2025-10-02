@@ -86,7 +86,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
             },
             {
               label: 'Squadre corsa',
-              value: remoteStats?.totals?.teamsRun ?? derived.teamsRun,
+              value: remoteStats?.totals?.runnersRun ?? derived.runnersRun,
             },
           ].map((s, i) => (
             <div
