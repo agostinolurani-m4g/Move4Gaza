@@ -19,7 +19,7 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
     return () => clearInterval(id);
   }, []);
 
-  const teamsNow = remoteStats?.totals?.teamsRun ?? 0;
+  const teamsNow = remoteStats?.totals?.runnersRun ?? 0;
   const runFull = teamsNow >= (EVENT_CONFIG.limits?.runTeamsMax || Infinity);
 
   // Donazione: 20 €/personaconst normalizedMembers = Math.min(10, Math.max(3, Number(members) || 3));// Dati percorso (per banner a sinistra)

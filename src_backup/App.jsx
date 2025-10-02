@@ -184,9 +184,9 @@ function useDB() {
   const derived = useMemo(() => {
     const raised = db.pledges.filter(p => p.status === "paid").reduce((s,p)=> s + (Number(p.amount)||0), 0);
     const teamsSoccer = new Set(db.registrations.soccer.map(t => (t.teamName||"").trim().toLowerCase())).size;
-    const teamsRun = new Set(db.registrations.run.map(t => (t.teamName||"").trim().toLowerCase())).size;
+    const runnersRun = new Set(db.registrations.run.map(t => (t.teamName||"").trim().toLowerCase())).size;
     const riders = db.registrations.bike.length;
-    return { raised, teamsSoccer, teamsRun, riders };
+    return { raised, teamsSoccer, runnersRun, riders };
   }, [db]);
 
   return { db, addPledge, markPledgePaid, addRegistration, derived };
