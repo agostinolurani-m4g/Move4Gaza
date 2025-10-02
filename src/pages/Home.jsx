@@ -81,11 +81,11 @@ const Home = ({ navigate, derived, remoteStats }) => {
               value: remoteStats?.totals?.riders ?? derived.riders,
             },
             {
-              label: 'Squadre calcio',
-              value: remoteStats?.totals?.teamsSoccer ?? derived.teamsSoccer,
+              label: 'IscrittƏ calcio',
+              value:  Number(remoteStats?.totals?.teamsSoccer ?? derived.teamsSoccer) * 6,
             },
             {
-              label: 'Squadre corsa',
+              label: 'IscrittƏ corsa',
               value: remoteStats?.totals?.teamsRun ?? derived.teamsRun,
             },
           ].map((s, i) => (
