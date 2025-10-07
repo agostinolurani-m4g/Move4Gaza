@@ -8,10 +8,12 @@ import { fetchRegistrationsJSONP } from '../services.js';
 const realtaAderenti = [
     "Alfabeti ODV",
     "Amaro",
+    "Ape_milano",
     //"Casello San Cristoforo",
     "Ciclochard",
     "Ciclofficina Bincio",
     "Circonvalley",
+    "Cucina Franca",
     "Eleganza Cycling",
     "Errantes",
     "Famole Strane",
