@@ -237,7 +237,7 @@ const Home = ({ navigate, derived, remoteStats }) => {
             >
               <h3 className="text-xl font-semibold text-black">Giro cittadino in bici</h3>
               <p className="mt-2 text-sm text-black">
-                Tracciato di 20 km sul naviglio grande e per campi per raggiungere l'evento all'Arci Olmi.
+                Tracciato di 24 km sul naviglio grande e per campi per raggiungere l'evento all'Arci Olmi.
               </p>
               <div
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold "

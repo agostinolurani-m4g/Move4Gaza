@@ -42,7 +42,7 @@ const FAQSection = ({ navigate }) => {
             <h3 className="font-semibold text-black">Come funzionano i vari eventi?</h3>
             <ul className="text-sm text-black mt-1 list-disc pl-5 space-y-1">
               <li>
-                <strong>Bici</strong>: 112 km (Gaza in scala) e 20 km (cittadino). Ritmo sociale, non competitivo.
+                <strong>Bici</strong>: 112 km (Gaza in scala) e 24 km (cittadino). Ritmo sociale, non competitivo.
               </li>
               <li>
                 <strong>Calcio</strong>: 5 vs 5 per l’inclusione. 4 partite da 15’ garantite.

@@ -17,7 +17,7 @@ export const EVENT_CONFIG = {
   bike: {
     distances: [
       { key: "112", label: "112 km — Perimetro di Gaza in scala reale" },
-      { key: "20",  label: "25 km — percorso cittadino" },
+      { key: "24",  label: "24 km — percorso cittadino" },
     ],
   },
   arciOlmi: "arci_olmi.jpeg",
@@ -46,7 +46,8 @@ export const EVENT_CONFIG = {
   descrizione_bici: "Il percorso lungo circa 115 km ricalca la lunghezza del perimetro della striscia di Gaza con partenza ed arrivo " +
   "all'Arci Olmi di Milano dove si svolgerà l'evento. Il percorso si snoda su strade secondarie e piste ciclabili, con alcuni tratti " +
   "sterrati. Il dislivello è di circa 300 m. Non è una gara, ma un evento sociale e solidale, si raccomanda di pedalare in sicurezza. " +
-  "Dopo Pavia segnaliamo scarsità di punti di ristoro da tenere in considerazione. ",
+  "Dopo Pavia segnaliamo scarsità di punti di ristoro da tenere in considerazione. Percorso cittadino di 24 km a partire dall'Arci Olmi "+
+  "per i campi del Parco Agricolo Sud.",
 
   descrizione_corsa: "La corsa non competitiva di circa 7 km si svolge su un percorso cittadino che parte e arriva all'Arci Olmi di Milano. " +
   "Il percorso è adatto a tuttə, con la possibilità di fare una staffetta in due persone (7 + 7) e per i più carichi 14 in solitaria. " +
@@ -67,11 +68,11 @@ export const EVENT_CONFIG = {
         start: "Arci Olmi, via degli Ulivi 2, Milano.",
         time: "11:00",
       },
-      "20":  {
+      "24":  {
         gpx: import.meta.env.BASE_URL + "routes/amgaz_bici_short.gpx",
         stravaRouteId: "",
         stravaSegmentUrl: "",
-        distance: 25,
+        distance: 24,
         start: "Arci Olmi, via degli Ulivi 2, Milano.",
         time: "11:00",
       },

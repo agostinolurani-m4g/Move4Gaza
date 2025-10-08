@@ -126,7 +126,7 @@ const Bike = ({ addRegistration, navigate }) => {
                 label={
                   distance === '112'
                     ? 'Il tracciato 112 km ricalca forma e larghezza della Striscia di Gaza.'
-                    : 'Percorso 20 km cittadino, ritmo sociale.'
+                    : 'Percorso 24 km cittadino, ritmo sociale.'
                 }
                 downloadName={distance === '112' ? 'bike-112.gpx' : 'bike-20.gpx'}
               />
@@ -160,7 +160,7 @@ const Bike = ({ addRegistration, navigate }) => {
             </div>
 
             <p className="mt-2 text-xs text-slate-600">
-              112 km: ricalca forma e larghezza della Striscia di Gaza. 20 km: cittadino, ritmo sociale.
+              112 km: ricalca forma e larghezza della Striscia di Gaza. 24 km: cittadino, ritmo sociale.
             </p>
           </div>
 
