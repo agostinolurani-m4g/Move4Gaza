@@ -85,7 +85,7 @@ export const EVENT_CONFIG = {
       time: "11:00",
     },
   },
-  payments: { paypalLink: "https://www.paypal.com/pool/9iq3YyxOcH?sr=wccr", iban: "IT36X0623001621000040418795", ibanOwner: "Amaro ASD", ibanBank: "NOME BANCA", stripeComingSoon: false },
+  payments: { paypalLink: "https://www.paypal.com/pool/9iq3YyxOcH?sr=wccr", paypalLinkMerch: "https://www.paypal.com/pool/9iFZmpi7XK", iban: "IT36X0623001621000040418795", ibanOwner: "Amaro ASD", ibanBank: "NOME BANCA", stripeComingSoon: false },
   forms: { bike: "", soccer: "", run: "" },
   // Use the updated locandina PNG as default poster
   logoUrl: import.meta.env.BASE_URL + "locandina.png",
