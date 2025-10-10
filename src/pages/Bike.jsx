@@ -12,7 +12,8 @@ const requiredAmount = 15;
 
 const Bike = ({ addRegistration, navigate }) => {
   const [level, setLevel] = useState('Principiante');
-  const [distance, setDistance] = useState('112');const submit = (e) => {
+  const [distance, setDistance] = useState('112');
+  const submit = (e) => {
     e.preventDefault();
     
     const fd = new FormData(e.currentTarget);
