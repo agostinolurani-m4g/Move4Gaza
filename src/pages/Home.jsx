@@ -353,102 +353,149 @@ const Home = ({ navigate, derived, remoteStats }) => {
               </div>
             )}
         </div>
-            {/* MERCH – CTA carina */}
-            <section className="mt-12">
-              <div className="max-w-6xl mx-auto px-4">
-                {/* Cornice sfumata come highlight */}
-                <div
-                  className="relative overflow-hidden rounded-3xl p-[1px] shadow ring-1 ring-black/10"
-                  style={{
-                    background: `linear-gradient(90deg, ${THEME.primary}, ${THEME.accentRed})`,
-                  }}
-                >
-                  <div className="rounded-3xl bg-white">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 md:p-8 items-center">
-                      {/* Testo */}
-                      <div className="md:col-span-2 text-black">
-                        <p className="text-xs tracking-wider uppercase font-semibold opacity-70">
-                          Merch solidale
-                        </p>
-                        <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold leading-tight">
-                          Acquista un ricordo per sostenere la raccolta fondi
-                        </h2>
-                        <p className="mt-3 text-sm sm:text-base text-black/70 leading-relaxed">
-                          Calze e T-shirt sostenibili, libere e solidali. Prezzo <b>15 €</b>.
-                          Tutti i ricavi saranno inviati a <b>Gaza Sunbirds</b>.
-                          Materiali certificati <i>OEKO-TEX®</i> — cotone 🇮🇹 e bambù 🇵🇹.
-                          Disponibili 1 - 2 - 4.
-                        </p>
-                        <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                          <span className="rounded-full px-3 py-1 bg-black/5">Calze: 1-2-4 (36-40 / 41-45)</span>
-                          <span className="rounded-full px-3 py-1 bg-black/5">T-shirt unisex: XS-XL</span>
-                          <span className="rounded-full px-3 py-1 bg-black/5">Design giallo.Studio</span>
-                          <span className="rounded-full px-3 py-1 bg-black/5">Socks With A Cause</span>
-                        </div>
+        {/* Mini sezione Agenda */}
+        <section className="mt-12">
+          <div className="max-w-6xl mx-auto px-4">
+            <div
+              className="relative overflow-hidden rounded-3xl p-[1px] shadow ring-1 ring-black/10"
+              style={{ background: `linear-gradient(90deg, ${THEME.primary}, ${THEME.accentRed})` }}
+            >
+              <div className="rounded-3xl bg-white p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                <div className="text-black">
+                  <p className="text-xs tracking-wider uppercase font-semibold opacity-70">
+                    Programma della giornata
+                  </p>
+                  <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold leading-tight">
+                    Agenda: sport, pranzo e interventi
+                  </h2>
+                  <p className="mt-3 text-sm sm:text-base text-black/70">
+                    Mattino: <b>calcio</b>, <b>corsa</b>, <b>ciclismo</b> · Pranzo <b>13:00–15:00</b> · Interventi <b>17:00–18:00</b>.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-full px-3 py-1 bg-black/5">Calcio 09:30–11:30</span>
+                    <span className="rounded-full px-3 py-1 bg-black/5">Corsa 10:00–11:30</span>
+                    <span className="rounded-full px-3 py-1 bg-black/5">Bici 10:00–13:00</span>
+                  </div>
+                </div>
 
-                        <div className="mt-5 flex gap-3">
-                          <button
-                            onClick={() => navigate('merch')}
-                            className="rounded-xl px-5 py-3 font-semibold text-white shadow hover:opacity-95 transition"
-                            style={{ backgroundColor: THEME.primary }}
-                            type="button"
-                          >
-                            Vai al merch →
-                          </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => navigate('eventprogram')}
+                    className="rounded-xl px-5 py-3 font-semibold text-white shadow hover:opacity-95 transition"
+                    style={{ backgroundColor: THEME.primary }}
+                    type="button"
+                  >
+                    Vai all’agenda →
+                  </button>
+                  <a
+                    href="#/eventprogram"
+                    onClick={(e) => { e.preventDefault(); navigate('eventprogram'); }}
+                    className="rounded-xl px-5 py-3 font-semibold ring-1 ring-black/10"
+                  >
+                    Guarda i dettagli
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                          {/* Fall-back link, utile se vuoi anche href diretto */}
-                          <a
-                            href="#/merch"
-                            onClick={(e) => { e.preventDefault(); navigate('merch'); }}
-                            className="rounded-xl px-5 py-3 font-semibold ring-1 ring-black/10"
-                          >
-                            Scopri di più
-                          </a>
-                        </div>
-                      </div>
+        {/* MERCH – CTA carina */}
+        <section className="mt-12">
+          <div className="max-w-6xl mx-auto px-4">
+            {/* Cornice sfumata come highlight */}
+            <div
+              className="relative overflow-hidden rounded-3xl p-[1px] shadow ring-1 ring-black/10"
+              style={{
+                background: `linear-gradient(90deg, ${THEME.primary}, ${THEME.accentRed})`,
+              }}
+            >
+              <div className="rounded-3xl bg-white">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 md:p-8 items-center">
+                  {/* Testo */}
+                  <div className="md:col-span-2 text-black">
+                    <p className="text-xs tracking-wider uppercase font-semibold opacity-70">
+                      Merch solidale
+                    </p>
+                    <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold leading-tight">
+                      Acquista un ricordo per sostenere la raccolta fondi
+                    </h2>
+                    <p className="mt-3 text-sm sm:text-base text-black/70 leading-relaxed">
+                      Calze e T-shirt sostenibili, libere e solidali. Prezzo <b>15 €</b>.
+                      Tutti i ricavi saranno inviati a <b>Gaza Sunbirds</b>.
+                      Materiali certificati <i>OEKO-TEX®</i> — cotone 🇮🇹 e bambù 🇵🇹.
+                      Disponibili 1 - 2 - 4.
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                      <span className="rounded-full px-3 py-1 bg-black/5">Calze: 1-2-4 (36-40 / 41-45)</span>
+                      <span className="rounded-full px-3 py-1 bg-black/5">T-shirt unisex: XS-XL</span>
+                      <span className="rounded-full px-3 py-1 bg-black/5">Design giallo.Studio</span>
+                      <span className="rounded-full px-3 py-1 bg-black/5">Socks With A Cause</span>
+                    </div>
 
-                      {/* Media / thumbs – usa le tue immagini se disponibili */}
-                        <div className="relative text-black">
+                    <div className="mt-5 flex gap-3">
+                      <button
+                        onClick={() => navigate('merch')}
+                        className="rounded-xl px-5 py-3 font-semibold text-white shadow hover:opacity-95 transition"
+                        style={{ backgroundColor: THEME.primary }}
+                        type="button"
+                      >
+                        Vai al merch →
+                      </button>
 
-                        <div className="aspect-[4/3] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
-                          {/* Se hai i file in /public/images aggiorna gli src sotto */}
-                          <img
-                            src="/magliette_m4g.png"
-                            alt="T-shirt Move4Gaza"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="aspect-[4/3 ] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
-                          {/* Se hai i file in /public/images aggiorna gli src sotto */}
-                          <img
-                            src="/calze_m4g.jpeg"
-                            alt="Calze solidali"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="mt-3 grid grid-cols-2 gap-2">
-                          <div className="rounded-xl border border-slate-200 bg-slate-50 h-20 w-full flex items-center justify-center text-xs text-slate-500">
-                            Prezzo 15 €
-                          </div>
-                        </div>
+                      {/* Fall-back link, utile se vuoi anche href diretto */}
+                      <a
+                        href="#/merch"
+                        onClick={(e) => { e.preventDefault(); navigate('merch'); }}
+                        className="rounded-xl px-5 py-3 font-semibold ring-1 ring-black/10"
+                      >
+                        Scopri di più
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Media / thumbs – usa le tue immagini se disponibili */}
+                    <div className="relative text-black">
+
+                    <div className="aspect-[4/3] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
+                      {/* Se hai i file in /public/images aggiorna gli src sotto */}
+                      <img
+                        src="/magliette_m4g.png"
+                        alt="T-shirt Move4Gaza"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="aspect-[4/3 ] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
+                      {/* Se hai i file in /public/images aggiorna gli src sotto */}
+                      <img
+                        src="/calze_m4g.jpeg"
+                        alt="Calze solidali"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 h-20 w-full flex items-center justify-center text-xs text-slate-500">
+                        Prezzo 15 €
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* bottone extra, mobile-first (opzionale) */}
-              <div className="mt-6 text-center md:hidden">
-                <button
-                  onClick={() => navigate('merch')}
-                  className="inline-flex items-center justify-center rounded-full px-6 py-3 font-semibold text-white shadow hover:opacity-95"
-                  style={{ backgroundColor: THEME.accentRed }}
-                  type="button"
-                >
-                  Acquista un ricordo
-                </button>
-              </div>
-            </section>
+          {/* bottone extra, mobile-first (opzionale) */}
+          <div className="mt-6 text-center md:hidden">
+            <button
+              onClick={() => navigate('merch')}
+              className="inline-flex items-center justify-center rounded-full px-6 py-3 font-semibold text-white shadow hover:opacity-95"
+              style={{ backgroundColor: THEME.accentRed }}
+              type="button"
+            >
+              Acquista un ricordo
+            </button>
+          </div>
+        </section>
         <FAQSection navigate={navigate} />
       </section>
     </>
