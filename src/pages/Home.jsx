@@ -382,7 +382,8 @@ const Home = ({ navigate, derived, remoteStats }) => {
                         <div className="mt-4 flex flex-wrap gap-2 text-xs">
                           <span className="rounded-full px-3 py-1 bg-black/5">Calze: 1-2-4 (36-40 / 41-45)</span>
                           <span className="rounded-full px-3 py-1 bg-black/5">T-shirt unisex: XS-XL</span>
-                          <span className="rounded-full px-3 py-1 bg-black/5">Design Giallo.Studio</span>
+                          <span className="rounded-full px-3 py-1 bg-black/5">Design giallo.Studio</span>
+                          <span className="rounded-full px-3 py-1 bg-black/5">Calze With A Cause</span>
                         </div>
 
                         <div className="mt-5 flex gap-3">

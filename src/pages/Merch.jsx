@@ -59,7 +59,7 @@ const Merch = ({ addRegistration, navigate }) => {
           <div className="rounded-2xl bg-white p-5 shadow ring-1 ring-black/10">
             <h2 className="text-lg font-semibold">Calze Solidali</h2>
             <p className="mt-2 text-sm text-black/80">
-              Calze <strong>Socks With A Cause</strong> (link IG in pagina social) – produzione solidale.
+              Calze <strong>Socks With A Cause</strong> – produzione solidale.
               <br />
               <strong>Modelli disponibili:</strong> 1, 2 e 4.
               <br />
@@ -156,7 +156,7 @@ const Merch = ({ addRegistration, navigate }) => {
           <div className="rounded-2xl bg-white p-5 shadow ring-1 ring-black/10">
             <h2 className="text-lg font-semibold">T‑Shirt Move4Gaza</h2>
             <p className="mt-2 text-sm text-black/80">
-              Design <strong>Giallo.Studio</strong> e produzione sostenibile di <strong>Legno</strong>. Modello unisex.
+              Design <strong>giallo.Studio</strong> e produzione sostenibile di <strong>Legno</strong>. Modello unisex.
               Taglie disponibili: XS, S, M, L, XL.
             </p>
             <div className="aspect-[4/3 ] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
