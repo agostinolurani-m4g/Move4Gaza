@@ -27,29 +27,29 @@ const fmtTime = (t) => t; // i tempi arrivano già formattati tipo "09:30"
 // ==== DATI DI DEFAULT (modificabili da config) ====
 const DEFAULT_AGENDA = {
   morning: [
-    { id: 'soccer', label: 'Calcio', start: '09:30', end: '11:30', location: 'Campi 5vs5' },
-    { id: 'run', label: 'Corsa', start: '10:00', end: '11:30', location: 'Percorso 7/14 km' },
-    { id: 'bike', label: 'Ciclismo', start: '10:00', end: '13:00', location: 'Lungo & Corto' },
+    { id: 'soccer', label: 'Calcio', start: '09:30', end: '13:30', location: 'Arci Olmi, Campi 5vs5' },
+    { id: 'run', label: 'Corsa', start: '11:00', end: '12:30', location: 'Arci Olmi, Percorso Parco Agricolo Sud 7/14 km' },
+    { id: 'bike', label: 'Ciclismo', start: '08:30 - 09:30', end: '13:00', location: 'Arci Olmi, Lungo' },
+    { id: 'bike', label: 'Ciclismo', start: '10:30', end: '13:00', location: 'Arci Olmi, Corto' },
   ],
-  lunch: { start: '13:00', end: '15:00', location: 'Area ristoro' },
-  talks: { start: '17:00', end: '18:00', location: 'Sala/Palco principale' },
+  lunch: { start: '13:00', end: '15:00', location: 'Arci Olmi, Area ristoro' },
+  talks: { start: '15:00', end: '-16:30', location: 'Arci Olmi, palco' },
 };
 
 const DEFAULT_TALKS = [
   // Esempio struttura: orario, relatore, durata, tema
-  { time: '17:00', speaker: 'TBD #1', duration: '10′', topic: 'Introduzione & saluti' },
-  { time: '17:10', speaker: 'TBD #2', duration: '15′', topic: 'Progetto e impatto' },
-  { time: '17:25', speaker: 'TBD #3', duration: '15′', topic: 'Testimonianza/Case' },
-  { time: '17:40', speaker: 'TBD #4', duration: '15′', topic: 'Q&A / conclusioni' },
+  { time: '15:00', speaker: 'Tommaso Proverbio', duration: '10′', topic: 'Introduzione & presentazioni' },
+  { time: '15:10', speaker: 'Mirta Bonvicini', duration: '15′', topic: 'Testimonianze' },
+  { time: '15:45', speaker: 'GP', duration: '15′', topic: 'Futuro' },
+  { time: '16:15', speaker: 'Khader Tamimi ', duration: '15′', topic: 'Q&A / conclusioni' },
 ];
 
 const DEFAULT_LUNCH = {
   description:
-    'Pausa pranzo conviviale con piatti semplici e accessibili. Pasti vegetariani disponibili. Porta la tua borraccia!',
+    'Pausa pranzo conviviale offerto da Ape Milano e Cucina Franca, pepepe',
   distributors: [
-    { name: '—', role: 'Distribuzione' },
-    { name: '—', role: 'Cassa/Token' },
-    { name: '—', role: 'Cucina' },
+    { name: 'Ape Milano', role: 'Distribuzione' },
+    { name: 'Cucina Franca', role: 'Cucina' },
   ],
 };
 
@@ -172,7 +172,7 @@ const MainEvents = ({ activities }) => (
 
 // Sezione: SUMMIT dell'agenda (timeline principale)
 const AgendaSummit = ({ agenda }) => (
-  <Section id="agenda" title="Timeline dell\'evento" subtitle="Orari & luoghi">
+  <Section id="agenda" title="Timeline dell'evento" subtitle="Orari & luoghi">
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Mattino */}
       <Card>
@@ -220,40 +220,6 @@ const AgendaSummit = ({ agenda }) => (
   </Section>
 );
 
-// Mini-agende dettagliate per ciascun momento
-const MiniAgende = ({ agenda }) => (
-  <Section id="miniagende" title="Mini-agende" subtitle="Dettagli per momento">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <Card>
-        <h3 className="text-lg font-semibold">Calcio</h3>
-        <p className="text-sm text-slate-700">Orari: {fmtTime(agenda.morning.find(x=>x.id==='soccer')?.start)}–{fmtTime(agenda.morning.find(x=>x.id==='soccer')?.end)}</p>
-        <ul className="mt-2 text-sm list-disc pl-5 space-y-1 text-slate-700">
-          <li>Ritrovo squadre • 15′ prima del fischio iniziale</li>
-          <li>Gironi/partite • campi 5vs5</li>
-          <li>Premiazione informale a fine mattinata</li>
-        </ul>
-      </Card>
-      <Card>
-        <h3 className="text-lg font-semibold">Corsa</h3>
-        <p className="text-sm text-slate-700">Orari: {fmtTime(agenda.morning.find(x=>x.id==='run')?.start)}–{fmtTime(agenda.morning.find(x=>x.id==='run')?.end)}</p>
-        <ul className="mt-2 text-sm list-disc pl-5 space-y-1 text-slate-700">
-          <li>Briefing percorso • 10′ prima della partenza</li>
-          <li>1 giro = 7 km • 2 giri = 14 km</li>
-          <li>Ristoro leggero al rientro</li>
-        </ul>
-      </Card>
-      <Card>
-        <h3 className="text-lg font-semibold">Ciclismo</h3>
-        <p className="text-sm text-slate-700">Orari: {fmtTime(agenda.morning.find(x=>x.id==='bike')?.start)}–{fmtTime(agenda.morning.find(x=>x.id==='bike')?.end)}</p>
-        <ul className="mt-2 text-sm list-disc pl-5 space-y-1 text-slate-700">
-          <li>Scelta sul posto: corto o lungo</li>
-          <li>Andatura sociale • staffette apri/chiudi</li>
-          <li>Rientro in tempo per il pranzo</li>
-        </ul>
-      </Card>
-    </div>
-  </Section>
-);
 
 // Sezione pranzo con slot 3 partecipanti
 const LunchSection = ({ lunchCfg }) => {
@@ -271,7 +237,7 @@ const LunchSection = ({ lunchCfg }) => {
           <p className="mt-3 text-sm text-slate-700">{description}</p>
         </Card>
         <Card>
-          <h3 className="text-lg font-semibold">Distribuzione cibo (3 persone)</h3>
+          <h3 className="text-lg font-semibold">Distribuzione cibo</h3>
           <ul className="mt-2 text-sm space-y-2">
             {distributors.map((d, i) => (
               <li key={i} className="flex items-center justify-between">
@@ -280,16 +246,8 @@ const LunchSection = ({ lunchCfg }) => {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-slate-500">Modifica questi nomi in <code>EVENT_CONFIG.lunch.distributors</code>.</p>
         </Card>
-        <Card>
-          <h3 className="text-lg font-semibold">Note organizzative</h3>
-          <ul className="mt-2 text-sm list-disc pl-5 space-y-1 text-slate-700">
-            <li>Piatti compostabili, porta borraccia</li>
-            <li>Opzioni veg disponibili</li>
-            <li>Gestione code e token pasto</li>
-          </ul>
-        </Card>
+
       </div>
     </Section>
   );
@@ -317,14 +275,7 @@ const InterventiSection = ({ talks, agenda }) => (
           ))}
         </div>
       </Card>
-      <Card>
-        <h3 className="text-lg font-semibold">Informazioni per relatori</h3>
-        <ul className="mt-2 text-sm list-disc pl-5 space-y-1 text-slate-700">
-          <li>Microfono e proiezione disponibili (arrivare 15′ prima)</li>
-          <li>Tempo assegnato indicato in scaletta</li>
-          <li>Q&A finale se il tempo lo consente</li>
-        </ul>
-      </Card>
+      
     </div>
   </Section>
 );
@@ -352,15 +303,13 @@ const EventProgram = () => {
         <div className="max-w-6xl mx-auto px-4">
           <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-black">Programma della giornata</h1>
           <p className="mt-2 text-black/80 max-w-2xl">
-            Sport, convivio e interventi: scopri orari, modalità e la scaletta completa dell\'evento.
+            Sport, convivio e interventi: scopri orari, modalità e la scaletta completa dell'evento.
           </p>
         </div>
       </section>
 
       <PreambleAgenda agenda={agenda} />
-      <MainEvents activities={activities} />
       <AgendaSummit agenda={agenda} />
-      <MiniAgende agenda={agenda} />
       <LunchSection lunchCfg={DEFAULT_LUNCH} />
       <InterventiSection talks={talks} agenda={agenda} />
 

@@ -372,9 +372,10 @@ const Home = ({ navigate, derived, remoteStats }) => {
                     Mattino: <b>calcio</b>, <b>corsa</b>, <b>ciclismo</b> · Pranzo <b>13:00–15:00</b> · Interventi <b>17:00–18:00</b>.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                    <span className="rounded-full px-3 py-1 bg-black/5">Calcio 09:30–11:30</span>
-                    <span className="rounded-full px-3 py-1 bg-black/5">Corsa 10:00–11:30</span>
-                    <span className="rounded-full px-3 py-1 bg-black/5">Bici 10:00–13:00</span>
+                    <span className="rounded-full px-3 py-1 bg-black/5">Calcio 9:30-13:30</span>
+                    <span className="rounded-full px-3 py-1 bg-black/5">Corsa 11:00</span>
+                    <span className="rounded-full px-3 py-1 bg-black/5">Bici lungo 8:30-9:30</span>
+                    <span className="rounded-full px-3 py-1 bg-black/5">Bici breve 10:30</span>
                   </div>
                 </div>
 
