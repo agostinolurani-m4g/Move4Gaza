@@ -377,9 +377,10 @@ const Home = ({ navigate, derived, remoteStats }) => {
                           Calze e T-shirt sostenibili, libere e solidali. Prezzo <b>15 €</b>.
                           Tutti i ricavi saranno inviati a <b>Gaza Sunbirds</b>.
                           Materiali certificati <i>OEKO-TEX®</i> — cotone 🇮🇹 e bambù 🇵🇹.
+                          Disponibili 1 - 2 - 4.
                         </p>
                         <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                          <span className="rounded-full px-3 py-1 bg-black/5">Calze: 1-5 (36-40 / 41-45)</span>
+                          <span className="rounded-full px-3 py-1 bg-black/5">Calze: 1-2-4 (36-40 / 41-45)</span>
                           <span className="rounded-full px-3 py-1 bg-black/5">T-shirt unisex: XS-XL</span>
                           <span className="rounded-full px-3 py-1 bg-black/5">Design Giallo.Studio</span>
                         </div>
@@ -406,7 +407,8 @@ const Home = ({ navigate, derived, remoteStats }) => {
                       </div>
 
                       {/* Media / thumbs – usa le tue immagini se disponibili */}
-                      <div className="relative">
+                        <div className="relative text-black">
+
                         <div className="aspect-[4/3] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
                           {/* Se hai i file in /public/images aggiorna gli src sotto */}
                           <img
@@ -415,11 +417,15 @@ const Home = ({ navigate, derived, remoteStats }) => {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <div className="mt-3 grid grid-cols-3 gap-2">
-                          <img src="/calze_m4g.jpeg" alt="Calze solidali" className="rounded-xl border border-slate-200 object-cover h-20 w-full" />
-                          <div className="rounded-xl border border-slate-200 bg-slate-50 h-20 w-full flex items-center justify-center text-xs text-slate-500">
-                            Modelli 1–5
-                          </div>
+                        <div className="aspect-[4/3 ] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
+                          {/* Se hai i file in /public/images aggiorna gli src sotto */}
+                          <img
+                            src="/calze_m4g.jpeg"
+                            alt="Calze solidali"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="mt-3 grid grid-cols-2 gap-2">
                           <div className="rounded-xl border border-slate-200 bg-slate-50 h-20 w-full flex items-center justify-center text-xs text-slate-500">
                             Prezzo 15 €
                           </div>

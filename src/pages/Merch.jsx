@@ -14,28 +14,19 @@ const PRICE_EUR = 15;
 const Merch = ({ addRegistration, navigate }) => {
   const [loading, setLoading] = useState(false);
 
-  const goHome = () => {
-    // prova prima il tuo router custom…
-    try { typeof navigate === 'function' && navigate(''); } catch {}
-    // …poi fallback su hash (la tua app usa link tipo "#/...")
-    if (!location.hash || location.hash !== '#/') {
-      location.hash = '/';
-    }
-  };
+  const goHome = () => navigate('/', { replace: true }); // ← assoluto, non ""
 
   const submit = (kind) => async (e) => {
     e.preventDefault();
-    const form = e.currentTarget; // salva il ref PRIMA degli await
+    const form = e.currentTarget;
     const fd = new FormData(form);
     const plain = Object.fromEntries(fd.entries());
 
-    // salva anche 'item' coerente con kind
     const saved = addRegistration('merch', {
       ...plain,
       item: plain.item || kind,
-      kind, // "socks" | "tshirt"
+      kind,
       price: PRICE_EUR,
-      // opzionale: garantisci id/createdAt se addRegistration non li mette
       id: crypto?.randomUUID?.() || `reg_${Date.now().toString(36)}`,
       createdAt: new Date().toISOString(),
     });
@@ -45,9 +36,7 @@ const Merch = ({ addRegistration, navigate }) => {
       await postSheet('reg_merch', saved);
       form?.reset?.();
       alert('Ordine registrato! Ti inviamo una mail con le istruzioni di pagamento.');
-
-      // Rimanda il navigate al prossimo tick per sicurezza
-      setTimeout(goHome, 0);
+      setTimeout(() => window.location.replace('/'), 0);
     } catch (err) {
       console.error('[MERCH] submit error', err);
       alert("Errore nell'invio. Riprova o scrivici a info@move4gaza.org");
@@ -72,11 +61,19 @@ const Merch = ({ addRegistration, navigate }) => {
             <p className="mt-2 text-sm text-black/80">
               Calze <strong>Socks With A Cause</strong> (link IG in pagina social) – produzione solidale.
               <br />
-              <strong>Modelli:</strong> 1, 2, 3, 4, 5.
+              <strong>Modelli disponibili:</strong> 1, 2 e 4.
               <br />
-              <strong>Materiali:</strong> 1, 2 e 5 in <em>cotone pettinato</em> (spugna/deportivo), 3 in <em>cotone mercerizzato</em>, 4 in <em>bambù</em>. Cotone 🇮🇹 – Bambù 🇵🇹 – tutti certificati OEKO‑TEX®.
+              <strong>Materiali:</strong> 1 e 2 in <em>cotone pettinato</em> (spugna/deportivo), 4 in <em>bambù</em>. Cotone 🇮🇹 – Bambù 🇵🇹 – tutti certificati OEKO‑TEX®.
             </p>
             <div className="mt-2 text-sm text-black/70">Taglie: 36–40 (Small) • 41–45 (Large).</div>
+            <div className="aspect-[4/3 ] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
+              {/* Se hai i file in /public/images aggiorna gli src sotto */}
+              <img
+                src="/calze_m4g.jpeg"
+                alt="Calze solidali"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
 
           <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
@@ -110,9 +107,7 @@ const Merch = ({ addRegistration, navigate }) => {
                   <select name="model" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2">
                     <option value="1">1 – Cotone pettinato</option>
                     <option value="2">2 – Cotone pettinato</option>
-                    <option value="3">3 – Cotone mercerizzato</option>
                     <option value="4">4 – Bambù</option>
-                    <option value="5">5 – Cotone pettinato</option>
                   </select>
                 </div>
                 <div>
@@ -164,6 +159,14 @@ const Merch = ({ addRegistration, navigate }) => {
               Design <strong>Giallo.Studio</strong> e produzione sostenibile di <strong>Legno</strong>. Modello unisex.
               Taglie disponibili: XS, S, M, L, XL.
             </p>
+            <div className="aspect-[4/3 ] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
+                  {/* Se hai i file in /public/images aggiorna gli src sotto */}
+                  <img
+                    src="/magliette_m4g.png"
+                    alt="Magliette solidali"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
           </div>
 
           <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
@@ -238,14 +241,14 @@ const Merch = ({ addRegistration, navigate }) => {
           </div>
 
           <div className="mt-6">
-            <a
-              href="#/"
-              onClick={(e) => { e.preventDefault(); navigate(''); }}
+            <button
+              type="button"
+              onClick={() => navigate('')}
               className="text-sm font-semibold"
               style={{ color: THEME.primary }}
             >
               ← Torna alla home
-            </a>
+            </button>
           </div>
         </div>
       </section>
