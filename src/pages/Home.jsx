@@ -31,6 +31,7 @@ const realtaAderenti = [
     "Rimaflow",
     "St. Ambroeus FC",
     "StellaRossa.cc",
+    "Tondo Forno Radicale",
     "Trace.cc",
     "Turbolento",
     "Upcycle Cafè",
