@@ -29,6 +29,7 @@ const realtaAderenti = [
     "Pink Wave Cycling Team",
     "Prima Traccia",
     "Popolare Ciclistica",
+    "Recup",
     "Rimaflow",
     "St. Ambroeus FC",
     "StellaRossa.cc",
