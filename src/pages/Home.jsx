@@ -13,6 +13,7 @@ const realtaAderenti = [
     "Ciclochard",
     "Ciclofficina Bincio",
     "Circonvalley",
+    "Ciclo Club Scappati di Casa",
     "Cucina Franca",
     "Eleganza Cycling",
     "Errantes",
