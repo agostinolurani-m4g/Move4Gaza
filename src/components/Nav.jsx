@@ -26,6 +26,14 @@ const Nav = ({ navigate }) => {
         </a>
 
         <div className="flex items-center gap-3 text-sm font-medium">
+            <a
+              href="#/menu"
+              onClick={(e) => { e.preventDefault(); navigate('menu'); }}
+              className="hover:underline"
+            >
+              Menu
+            </a>
+
           <a
             href="#/registration"
             onClick={(e) => { e.preventDefault(); navigate('registration'); }}
