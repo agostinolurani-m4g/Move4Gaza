@@ -86,7 +86,12 @@ export const EVENT_CONFIG = {
       time: "11:00",
     },
   },
-  payments: { paypalLink: "https://www.paypal.com/pool/9iq3YyxOcH?sr=wccr", paypalLinkMerch: "https://www.paypal.com/pool/9iFZmpi7XK", iban: "IT36X0623001621000040418795", ibanOwner: "Amaro ASD", ibanBank: "NOME BANCA", stripeComingSoon: false },
+  payments: { paypalLink: "https://www.paypal.com/pool/9iq3YyxOcH?sr=wccr",
+                paypalLinkMerch: "https://www.paypal.com/pool/9iFZmpi7XK",
+                iban: "IT36X0623001621000040418795",
+                ibanOwner: "Amaro ASD",
+                ibanBank: "NOME BANCA",
+                stripeComingSoon: false},
   forms: { bike: "", soccer: "", run: "" },
   // Use the updated locandina PNG as default poster
   logoUrl: import.meta.env.BASE_URL + "locandina.png",
@@ -126,7 +131,7 @@ export const EVENT_CONFIG = {
 
 // Google Sheets integration configuration for persisting pledges and registrations.
 export const SHEETS_CONFIG = {
-  url: "https://script.google.com/macros/s/AKfycbw_tcxSBg99HWfLSLp4JkE8BlQWd-XgLEMCwWwnRVyUclLI9aw7vqhyAaufND1qqJkD/exec",
+  url: "https://script.google.com/macros/s/AKfycbzSARiicbSic-M_U6YwPYFDo12c4hC9T0_2WziAMyZqOpy1b-XDdurO_SyEUc0_1QA_/exec",
   secret: "Amaro25",
 };
 

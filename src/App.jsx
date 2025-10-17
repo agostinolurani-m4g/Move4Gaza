@@ -16,6 +16,7 @@ import Donate from './pages/Donate.jsx';
 import Entrance from './pages/Entrance.jsx';
 import Registration from './pages/Registration.jsx';
 import Merch from './pages/Merch.jsx';
+import Menu from './pages/Menu.jsx';
 
 export default function App() {
   const { addPledge, markPledgePaid, addRegistration, derived } = useDB();
@@ -53,6 +54,8 @@ export default function App() {
         <Entrance addRegistration={addRegistration} navigate={navigate} />
       ): page === 'merch' ? (
         <Merch addRegistration={addRegistration} navigate={navigate} />
+      ): page === 'menu' ? (
+        <Menu navigate={navigate} />
       ): (
         <Home navigate={navigate} derived={derived} remoteStats={remoteStats} />
       )}
