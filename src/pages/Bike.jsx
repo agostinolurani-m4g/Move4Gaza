@@ -36,6 +36,7 @@ const Bike = ({ addRegistration, navigate }) => {
   const finishVal = meta.finish || EVENT_CONFIG?.bike?.finish || EVENT_CONFIG?.location;
   const timeVal = "08:30-09:30" || meta.time || EVENT_CONFIG?.bike?.time || EVENT_CONFIG?.time;
 
+  const bikeFull = 100 >= (80 ?? EVENT_CONFIG.limits?.runTeamsMax || Infinity);
   return (
     <>
       <GradientHeader
@@ -173,6 +174,11 @@ const Bike = ({ addRegistration, navigate }) => {
         <div className="max-w-3xl mx-auto px-4">
           <div className="rounded-2xl bg-white p-6 shadow ring-1 ring-black/10">
             <h2 className="text-lg font-semibold">Modulo — Bici (individuale)</h2>
+            {bikeFull && (
+              <p className="mt-2 text-sm text-red-600">
+                <strong>Limite iscrizioni raggiunto</strong>. Puoi venire direttamente domani al campo!!! Arci Olmi, via degli ulivi 2!!
+              </p>
+            )}
             <p className="mt-2 text-sm">
               <strong>Donazione propedeutica all’iscrizione</strong> (minimo {MIN_PER_PERSON} €).{' '}
               <span className="text-red-600">Il pranzo non è incluso.</span>
@@ -182,29 +188,29 @@ const Bike = ({ addRegistration, navigate }) => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium">Nome</label>
-                  <input name="name" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+                  <input name="name" required disabled={bikeFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium">Cognome</label>
-                  <input name="surname" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+                  <input name="surname" required disabled={bikeFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium">Email</label>
-                  <input type="email" name="email" required className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+                  <input type="email" name="email" required disabled={bikeFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium">Telefono</label>
-                  <input type="tel" name="phone" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+                  <input type="tel" name="phone" disabled={bikeFull} className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium">Squadra (opz.)</label>
-                  <input name="teamName" placeholder="nome squadra (se vuoi)" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
+                  <input name="teamName" disabled={bikeFull} placeholder="nome squadra (se vuoi)" className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2" />
                 </div>
                 
               </div>
@@ -220,6 +226,7 @@ const Bike = ({ addRegistration, navigate }) => {
               <div className="flex gap-3">
                 <button
                   className="rounded-xl px-4 py-2 font-semibold text-white disabled:opacity-50"
+                  disabled={bikeFull}
                   style={{ backgroundColor: THEME.primary }}
                   type="submit"
                   

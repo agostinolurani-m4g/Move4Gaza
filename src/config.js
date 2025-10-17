@@ -131,10 +131,9 @@ export const EVENT_CONFIG = {
 
 // Google Sheets integration configuration for persisting pledges and registrations.
 export const SHEETS_CONFIG = {
-  url: "https://script.google.com/macros/s/AKfycbzstrmRLRX3BDezN0Knl2KL71ZTnjQdo4iFAkWEb2ztGOwaC7KYJmyp2bEK7BR9JuuE/exec",
+  url: "https://script.google.com/macros/s/AKfycbzX1GSwvKjF_GcaFheEn4YpOvqpIzp0GFg4TKsywjpixF4EJdyk4b45MdaTNzi5gHaw/exec",
   secret: "Amaro25",
 };
-
 // Theme tokens used throughout the app. Colours mirror the existing palette
 // defined in the original monolithic file for continuity.
 export const THEME = {

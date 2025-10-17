@@ -20,7 +20,7 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
   }, []);
 
   const teamsNow = remoteStats?.totals?.teamsRun ?? 0;
-  const runFull = teamsNow >= (EVENT_CONFIG.limits?.runTeamsMax || Infinity);
+  const runFull = teamsNow >= (80 ?? EVENT_CONFIG.limits?.runTeamsMax || Infinity);
 
   // Donazione: 20 €/personaconst normalizedMembers = Math.min(10, Math.max(3, Number(members) || 3));// Dati percorso (per banner a sinistra)
   const route = EVENT_CONFIG?.routes?.run || {};
@@ -40,7 +40,7 @@ const Run = ({ addRegistration, navigate, remoteStats }) => {
   const submit = (e) => {
     e.preventDefault();
     if (runFull) return;
-    
+
     const fd = new FormData(e.currentTarget);
     const count = Number(fd.get('count') || members || 3);
     const runners = Array.from({ length: count }, (_, i) => fd.get(`runner_${i + 1}`)).filter(Boolean);
@@ -166,7 +166,7 @@ return (
             <h2 className="text-lg font-semibold">Iscrizione — Corsa singola</h2>
             {runFull && (
               <p className="mt-2 text-sm text-red-600">
-                <strong>Limite iscrizioni raggiunto</strong>. Tieni d’occhio questa pagina per eventuali riaperture.
+                <strong>Limite iscrizioni raggiunto</strong>. Puoi venire direttamente domani al campo!!! Arci Olmi, via degli ulivi 2!!
               </p>
             )}
             <p className="mt-2 text-sm">
@@ -258,7 +258,7 @@ return (
               <div className="md:col-span-2 flex flex-col sm:flex-row gap-3">
                 <button
                   type="submit"
-                  disabled={runFull}
+                  disabled={bikeFull}
                   className="flex-1 rounded-xl px-4 py-2 font-semibold text-white disabled:opacity-50"
                   style={{ backgroundColor: THEME.primary }}
                 >
