@@ -3,7 +3,7 @@ import { THEME } from '../config.js';
 
 // Inserisci qui l’URL completo del tuo Apps Script (exec)
 const SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbzstrmRLRX3BDezN0Knl2KL71ZTnjQdo4iFAkWEb2ztGOwaC7KYJmyp2bEK7BR9JuuE/exec';
+  'https://script.google.com/macros/s/AKfycbzX1GSwvKjF_GcaFheEn4YpOvqpIzp0GFg4TKsywjpixF4EJdyk4b45MdaTNzi5gHaw/exec';
 
 const SECRET = 'Amaro25';
 
