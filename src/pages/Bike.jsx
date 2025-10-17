@@ -36,7 +36,7 @@ const Bike = ({ addRegistration, navigate }) => {
   const finishVal = meta.finish || EVENT_CONFIG?.bike?.finish || EVENT_CONFIG?.location;
   const timeVal = "08:30-09:30" || meta.time || EVENT_CONFIG?.bike?.time || EVENT_CONFIG?.time;
 
-  const bikeFull = 100 >= (80 ?? EVENT_CONFIG.limits?.runTeamsMax || Infinity);
+  const bikeFull = 100 >= 80;
   return (
     <>
       <GradientHeader
