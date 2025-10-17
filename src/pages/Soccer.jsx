@@ -21,7 +21,7 @@ const Soccer = ({ addRegistration, navigate, remoteStats }) => {
     return () => clearInterval(id);
   }, []);
 
-  const teamsNow = remoteStats?.totals?.teamsSoccer ?? EVENT_CONFIG.soccer?.teamsCount ?? 0;
+  const teamsNow = 12 ?? remoteStats?.totals?.teamsSoccer ?? EVENT_CONFIG.soccer?.teamsCount ?? 0;
   const soccerMax = EVENT_CONFIG.limits?.soccerTeamsMax || Infinity;
   const soccerFull = teamsNow >= soccerMax;const normalizedMembers = Math.min(12, Math.max(5, Number(members) || 5));const submit = (e) => {
     e.preventDefault();
