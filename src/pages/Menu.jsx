@@ -3,7 +3,8 @@ import GradientHeader from '../components/GradientHeader.jsx';
 import ModifiedPaymentOptionsNexy from '../components/ModifiedPaymentOptionsNexy.jsx';
 import { THEME } from '../config.js';
 
-const Menu = ({ navigate }) => {
+// Componente Menu modificato per usare il nuovo PaymentOptions con campi nome/cognome
+const ModifiedMenu = ({ navigate }) => {
   return (
     <>
       <GradientHeader
@@ -21,7 +22,6 @@ const Menu = ({ navigate }) => {
               tramite NexyPay.
             </p>
             <div className="mt-4 aspect-[2/3] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
-              {/* Sostituisci src con il file del menu una volta caricato in /public/images */}
               <img
                 src="/M4G_cibo.png"
                 alt="Menu del pranzo"
@@ -29,7 +29,6 @@ const Menu = ({ navigate }) => {
               />
             </div>
             <div className="mt-4 aspect-[2/3] w-full rounded-2xl border border-slate-200 bg-slate-50 overflow-hidden">
-              {/* Sostituisci src con il file del menu una volta caricato in /public/images */}
               <img
                 src="/M4G_bere.png"
                 alt="Bevande del pranzo"
@@ -56,4 +55,4 @@ const Menu = ({ navigate }) => {
   );
 };
 
-export default Menu;
+export default ModifiedMenu;
