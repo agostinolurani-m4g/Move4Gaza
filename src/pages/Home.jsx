@@ -5,6 +5,9 @@ import { fetchRecentDonationsJSONP } from '../services.js';
 import Hero from '../components/Hero.jsx';
 import FAQSection from '../components/FAQSection.jsx';
 import { fetchRegistrationsJSONP } from '../services.js';
+import HomeDonationButton from '../components/HomeDonationButton.jsx';
+
+// List of participating organisations
 const realtaAderenti = [
     "Alfabeti ODV",
     "Amaro",
@@ -39,6 +42,8 @@ const realtaAderenti = [
     "Upcycle Cafè",
     "Wizard Cycling Crew",
 ];
+
+// Preload some registration data for debug/analytics purposes
 fetchRegistrationsJSONP('reg_bike', 500).then((data) => {
   console.log('Fetched bike registrations:', data);
 });
@@ -311,50 +316,54 @@ const Home = ({ navigate, derived, remoteStats }) => {
               </div>
             </a>
           </div>
-            <h2 className="mt-10 text-2xl sm:text-3xl font-bold mb-6">A chi doniamo</h2>
-            {EVENT_CONFIG.beneficiary && (
-              <div
-                className="mt-8 rounded-2xl p-6 shadow ring-1 ring-black/10 cursor-pointer"
-                style={{ backgroundColor: THEME.primary }}
-                onClick={() => navigate('beneficiary')}
-                tabIndex={0}
-                role="button"
-                aria-label="Vai alla pagina beneficiario"
-                onKeyPress={e => { if (e.key === 'Enter') navigate('beneficiary'); }}
-              >
-                <h3 className="text-lg font-semibold">Beneficiario</h3>
-                <p className="mt-1 text-sm text-black">
-                  {EVENT_CONFIG.beneficiary.blurb}
-                </p>
-                <p className="mt-2 text-sm">
-                  <a
-                    className="underline"
-                    href={EVENT_CONFIG.beneficiary.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={e => {
-                      e.preventDefault();
-                      navigate('beneficiary');
-                    }}
-                  >
-                    {EVENT_CONFIG.beneficiary.name}
-                  </a>{' '}
-                  {EVENT_CONFIG.beneficiary.cf ? (
-                    <>— {EVENT_CONFIG.beneficiary.cf}</>
-                  ) : null}
-                </p>
-                <button
-                  className="mt-4 rounded-full px-4 py-2 bg-white text-black font-semibold shadow hover:bg-slate-100 transition"
-                  type="button"
+          <h2 className="mt-10 text-2xl sm:text-3xl font-bold mb-6">A chi doniamo</h2>
+          {EVENT_CONFIG.beneficiary && (
+            <div
+              className="mt-8 rounded-2xl p-6 shadow ring-1 ring-black/10 cursor-pointer"
+              style={{ backgroundColor: THEME.primary }}
+              onClick={() => navigate('beneficiary')}
+              tabIndex={0}
+              role="button"
+              aria-label="Vai alla pagina beneficiario"
+              onKeyPress={e => { if (e.key === 'Enter') navigate('beneficiary'); }}
+            >
+              <h3 className="text-lg font-semibold">Beneficiario</h3>
+              <p className="mt-1 text-sm text-black">
+                {EVENT_CONFIG.beneficiary.blurb}
+              </p>
+              <p className="mt-2 text-sm">
+                <a
+                  className="underline"
+                  href={EVENT_CONFIG.beneficiary.url}
+                  target="_blank"
+                  rel="noreferrer"
                   onClick={e => {
-                    e.stopPropagation();
+                    e.preventDefault();
                     navigate('beneficiary');
                   }}
                 >
-                  Dettagli →
-                </button>
-              </div>
-            )}
+                  {EVENT_CONFIG.beneficiary.name}
+                </a>{' '}
+                {EVENT_CONFIG.beneficiary.cf ? (
+                  <>— {EVENT_CONFIG.beneficiary.cf}</>
+                ) : null}
+              </p>
+              <button
+                className="mt-4 rounded-full px-4 py-2 bg-white text-black font-semibold shadow hover:bg-slate-100 transition"
+                type="button"
+                onClick={e => {
+                  e.stopPropagation();
+                  navigate('beneficiary');
+                }}
+              >
+                Dettagli →
+              </button>
+            </div>
+          )}
+        </div>
+        {/* Donation button added at the bottom of the Home page */}
+        <div className="mt-12 flex justify-center">
+          <HomeDonationButton returnUrl="https://move-4-gaza.com" cancelUrl="https://move-4-gaza.com" />
         </div>
             {/* MERCH – CTA carina */}
             <section className="mt-12">
@@ -459,4 +468,3 @@ const Home = ({ navigate, derived, remoteStats }) => {
 };
 
 export default Home;
-
