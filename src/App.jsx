@@ -54,8 +54,6 @@ export default function App() {
         <Entrance addRegistration={addRegistration} navigate={navigate} />
       ): page === 'merch' ? (
         <Merch addRegistration={addRegistration} navigate={navigate} />
-      ): page === 'menu' ? (
-        <Menu navigate={navigate} />
       ): (
         <Home navigate={navigate} derived={derived} remoteStats={remoteStats} />
       )}
