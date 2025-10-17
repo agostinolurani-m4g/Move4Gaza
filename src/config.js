@@ -131,7 +131,7 @@ export const EVENT_CONFIG = {
 
 // Google Sheets integration configuration for persisting pledges and registrations.
 export const SHEETS_CONFIG = {
-  url: "https://script.google.com/macros/s/AKfycbzSARiicbSic-M_U6YwPYFDo12c4hC9T0_2WziAMyZqOpy1b-XDdurO_SyEUc0_1QA_/exec",
+  url: "https://script.google.com/macros/s/AKfycbzX1GSwvKjF_GcaFheEn4YpOvqpIzp0GFg4TKsywjpixF4EJdyk4b45MdaTNzi5gHaw/exec",
   secret: "Amaro25",
 };
 

@@ -3,13 +3,13 @@ import { THEME } from '../config.js';
 
 // Inserisci qui l’URL completo del tuo Apps Script (exec)
 const SCRIPT_URL =
-  'https://script.google.com/macros/s/AKfycbzsiFCo5hlg-PLGTKEphWo89cpS8bmAVXF__IYxjc0CcvGbsIuOOYjCQT7AGvEyayu_/exec';
+  'https://script.google.com/macros/s/AKfycbzX1GSwvKjF_GcaFheEn4YpOvqpIzp0GFg4TKsywjpixF4EJdyk4b45MdaTNzi5gHaw/exec';
 
 const SECRET = 'Amaro25';
 
 // Opzioni di default per returnUrl, cancelUrl e description. Modifica secondo necessità.
-const RETURN_URL = 'https://move-4-gaza.it/#/menu';
-const CANCEL_URL = 'https://move-4-gaza.it/#/menu';
+const RETURN_URL = 'https://www.move-4-gaza.it/#/menu';
+const CANCEL_URL = 'https://www.move-4-gaza.it/#/menu';
 const DESCRIPTION = 'Donazione';
 
 /**
